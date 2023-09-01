@@ -8,9 +8,9 @@ import (
 
 func setupCustomerRouter(router fiber.Router) {
 	customers := router.Group("/customers")
-	customers.Get(
-		"/:id",
-		middlewares.EnsureAuth(),
-		container.CustomerHandler.GetUserById,
-	)
+	customers.Get("/:id", middlewares.EnsureAuth(), container.CustomerHandler.GetUserById)
+
+	auth := router.Group("/auth")
+	auth.Post("/register/customers", container.AuthHandler.Register)
+	auth.Post("/login/customers", container.AuthHandler.Login)
 }

@@ -8,6 +8,5 @@ func FiberSetupRouters(app *fiber.App) {
 	router := app.Group("/api")
 
 	setupAppRouter(router)
-	setupAuthRouter(router)
 	setupCustomerRouter(router)
 }
