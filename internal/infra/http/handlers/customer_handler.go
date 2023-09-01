@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/fio-de-navalha/fdn-back/internal/application"
-	customer "github.com/fio-de-navalha/fdn-back/internal/domain/customer/entities"
+	"github.com/fio-de-navalha/fdn-back/internal/domain/customer"
 	"github.com/fio-de-navalha/fdn-back/internal/helpers"
 	"github.com/gofiber/fiber/v2"
 )

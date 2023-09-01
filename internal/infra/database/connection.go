@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	customer "github.com/fio-de-navalha/fdn-back/internal/domain/customer/entities"
+	"github.com/fio-de-navalha/fdn-back/internal/domain/customer"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

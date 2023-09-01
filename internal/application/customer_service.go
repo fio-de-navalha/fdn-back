@@ -4,62 +4,61 @@ import (
 	"errors"
 	"fmt"
 
-	entity "github.com/fio-de-navalha/fdn-back/internal/domain/customer/entities"
-	repository "github.com/fio-de-navalha/fdn-back/internal/domain/customer/repositories"
+	"github.com/fio-de-navalha/fdn-back/internal/domain/customer"
 	"github.com/fio-de-navalha/fdn-back/pkg/cryptography"
 )
 
 type CustomerServices struct {
-	customerRepository repository.CustomerRepository
+	customerRepository customer.CustomerRepository
 }
 
-func NewCustomerServices(customerRepository repository.CustomerRepository) *CustomerServices {
+func NewCustomerServices(customerRepository customer.CustomerRepository) *CustomerServices {
 	return &CustomerServices{
 		customerRepository: customerRepository,
 	}
 }
 
-func (s *CustomerServices) GetManyCustomers() ([]*entity.Customer, error) {
-	users, err := s.customerRepository.FindMany()
+func (s *CustomerServices) GetManyCustomers() ([]*customer.Customer, error) {
+	cus, err := s.customerRepository.FindMany()
 	if err != nil {
 		// TODO: add better error handling
 		fmt.Println(err)
 	}
-	return users, nil
+	return cus, nil
 }
 
-func (s *CustomerServices) GetCustomerById(id string) (*entity.Customer, error) {
-	user, err := s.customerRepository.FindById(id)
+func (s *CustomerServices) GetCustomerById(id string) (*customer.Customer, error) {
+	cus, err := s.customerRepository.FindById(id)
 	if err != nil {
 		// TODO: add better error handling
 		fmt.Println(err)
 	}
-	return user, nil
+	return cus, nil
 }
 
-func (s *CustomerServices) GetCustomerByPhone(phone string) (*entity.Customer, error) {
-	user, err := s.customerRepository.FindByPhone(phone)
+func (s *CustomerServices) GetCustomerByPhone(phone string) (*customer.Customer, error) {
+	cus, err := s.customerRepository.FindByPhone(phone)
 	if err != nil {
 		// TODO: add better error handling
 		fmt.Println(err)
 	}
-	return user, nil
+	return cus, nil
 }
 
-func (s *CustomerServices) RegisterCustomer(input entity.CustomerInput) error {
+func (s *CustomerServices) RegisterCustomer(input customer.CustomerInput) error {
 	hashedPassword, err := cryptography.HashPassword(input.Password)
 	if err != nil {
 		return err
 	}
 
-	input = entity.CustomerInput{
+	input = customer.CustomerInput{
 		Name:     input.Name,
 		Phone:    input.Phone,
 		Password: hashedPassword,
 	}
 
-	customer := entity.NewCustomer(input)
-	_, err = s.customerRepository.Create(customer)
+	cus := customer.NewCustomer(input)
+	_, err = s.customerRepository.Create(cus)
 	if err != nil {
 		// TODO: add better error handling
 		fmt.Println(err)
@@ -67,27 +66,27 @@ func (s *CustomerServices) RegisterCustomer(input entity.CustomerInput) error {
 	return nil
 }
 
-func (s *CustomerServices) LoginCustomer(input entity.LoginInput) (*entity.LoginResponse, error) {
-	customer, err := s.customerRepository.FindByPhone(input.Phone)
+func (s *CustomerServices) LoginCustomer(input customer.LoginInput) (*customer.LoginResponse, error) {
+	cus, err := s.customerRepository.FindByPhone(input.Phone)
 	if err != nil {
 		return nil, err
 	}
-	if customer == nil {
+	if cus == nil {
 		return nil, errors.New("invalid credentials")
 	}
 
-	validPassword := cryptography.ComparePassword(customer.Password, input.Password)
+	validPassword := cryptography.ComparePassword(cus.Password, input.Password)
 	if !validPassword {
 		return nil, errors.New("invalid credentials")
 	}
 
-	token, err := cryptography.GenerateToken(customer.ID)
+	token, err := cryptography.GenerateToken(cus.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	return &entity.LoginResponse{
+	return &customer.LoginResponse{
 		AccessToken: token,
-		Customer:    customer,
+		Customer:    cus,
 	}, nil
 }
