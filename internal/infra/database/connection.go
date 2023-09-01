@@ -4,9 +4,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/fio-de-navalha/fdn-back/internal/domain/barber"
-	"github.com/fio-de-navalha/fdn-back/internal/domain/customer"
-	"github.com/fio-de-navalha/fdn-back/internal/domain/service"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -21,15 +18,15 @@ func Connect() error {
 		log.Fatal("Failed to connect to database")
 	}
 
-	// Auto-migrate the User model to create the users table
-	err = DB.AutoMigrate(
-		&customer.Customer{},
-		&barber.Barber{},
-		&service.Service{},
-	)
-	if err != nil {
-		return err
-	}
+	// // Auto-migrate the User model to create the users table
+	// err = DB.AutoMigrate(
+	// 	&customer.Customer{},
+	// 	&barber.Barber{},
+	// 	&service.Service{},
+	// )
+	// if err != nil {
+	// 	return err
+	// }
 
 	return nil
 }
