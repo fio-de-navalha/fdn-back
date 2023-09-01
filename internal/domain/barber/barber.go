@@ -32,9 +32,10 @@ type LoginResponse struct {
 
 func NewBarber(input BarberInput) *Barber {
 	return &Barber{
-		ID:       uuid.NewString(),
-		Name:     input.Name,
-		Email:    input.Email,
-		Password: input.Password,
+		ID:        uuid.NewString(),
+		Name:      input.Name,
+		Email:     input.Email,
+		Password:  input.Password,
+		CreatedAt: time.Now(),
 	}
 }
