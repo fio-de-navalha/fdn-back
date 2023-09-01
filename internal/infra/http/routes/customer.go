@@ -11,6 +11,6 @@ func setupCustomerRouter(router fiber.Router) {
 	customers.Get("/:id", middlewares.EnsureAuth(), container.CustomerHandler.GetUserById)
 
 	auth := router.Group("/auth")
-	auth.Post("/register/customers", container.AuthHandler.Register)
-	auth.Post("/login/customers", container.AuthHandler.Login)
+	auth.Post("/register/customers", container.CustomerHandler.Register)
+	auth.Post("/login/customers", container.CustomerHandler.Login)
 }
