@@ -4,7 +4,9 @@ import (
 	"log"
 	"os"
 
+	"github.com/fio-de-navalha/fdn-back/internal/domain/barber"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/customer"
+	"github.com/fio-de-navalha/fdn-back/internal/domain/service"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -20,7 +22,12 @@ func Connect() error {
 	}
 
 	// Auto-migrate the User model to create the users table
-	if err := DB.AutoMigrate(&customer.Customer{}); err != nil {
+	err = DB.AutoMigrate(
+		&customer.Customer{},
+		&barber.Barber{},
+		&service.Service{},
+	)
+	if err != nil {
 		return err
 	}
 
