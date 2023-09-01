@@ -7,11 +7,6 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-type Claims struct {
-	UserId string
-	jwt.StandardClaims
-}
-
 var JwtSecret = []byte(os.Getenv("JWT_SECRET"))
 
 func GenerateToken(userId string) (string, error) {
