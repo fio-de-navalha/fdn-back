@@ -14,21 +14,23 @@ type Barber struct {
 	CreatedAt time.Time `json:"createdAt"`
 }
 
-type BarberInput struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
+type (
+	BarberInput struct {
+		Name     string `json:"name" validate:"required,min=8,max=32"`
+		Email    string `json:"email" validate:"required,min=8,max=32"`
+		Password string `json:"password" validate:"required,min=8"`
+	}
 
-type LoginInput struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
+	LoginInput struct {
+		Email    string `json:"email" validate:"required,min=8,max=32"`
+		Password string `json:"password" validate:"required,min=8"`
+	}
 
-type LoginResponse struct {
-	AccessToken string  `json:"access_token"`
-	Barber      *Barber `json:"barber"`
-}
+	LoginResponse struct {
+		AccessToken string  `json:"access_token"`
+		Barber      *Barber `json:"barber"`
+	}
+)
 
 func NewBarber(input BarberInput) *Barber {
 	return &Barber{

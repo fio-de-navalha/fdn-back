@@ -3,7 +3,7 @@ package handlers
 import (
 	"github.com/fio-de-navalha/fdn-back/internal/application"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/service"
-	"github.com/fio-de-navalha/fdn-back/internal/helpers"
+	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -22,8 +22,9 @@ func (h *ServiceHandler) GetByBarberId(c *fiber.Ctx) error {
 
 	res, err := h.serviceService.GetServicesByBarberId(barberId)
 	if err != nil {
-		response := helpers.NewErrorResponse(err.Error())
-		return c.Status(fiber.StatusBadRequest).JSON(response)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(res)
@@ -31,8 +32,17 @@ func (h *ServiceHandler) GetByBarberId(c *fiber.Ctx) error {
 
 func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 	body := new(service.CreateServiceDto)
-	if err := c.BodyParser(body); err != nil {
-		return err
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
+	}
+
+	validate := validator.New()
+	if err := validate.Struct(body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
 	input := service.CreateServiceDto{
@@ -44,8 +54,9 @@ func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 
 	err := h.serviceService.CreateService(input)
 	if err != nil {
-		response := helpers.NewErrorResponse(err.Error())
-		return c.Status(fiber.StatusBadRequest).JSON(response)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
 	return c.Status(fiber.StatusCreated).Send(nil)
@@ -54,8 +65,10 @@ func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 func (h *ServiceHandler) Update(c *fiber.Ctx) error {
 	serviceId := c.Params("serviceId")
 	body := new(service.UpdateServiceDto)
-	if err := c.BodyParser(body); err != nil {
-		return err
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
 	}
 
 	input := service.UpdateServiceDto{
@@ -67,8 +80,9 @@ func (h *ServiceHandler) Update(c *fiber.Ctx) error {
 
 	err := h.serviceService.UpdateService(serviceId, input)
 	if err != nil {
-		response := helpers.NewErrorResponse(err.Error())
-		return c.Status(fiber.StatusBadRequest).JSON(response)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
 	return c.JSON(nil)

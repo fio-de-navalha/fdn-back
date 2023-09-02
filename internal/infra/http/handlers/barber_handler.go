@@ -3,7 +3,7 @@ package handlers
 import (
 	"github.com/fio-de-navalha/fdn-back/internal/application"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/barber"
-	"github.com/fio-de-navalha/fdn-back/internal/helpers"
+	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -22,13 +22,14 @@ func (h *BarberHandler) GetById(c *fiber.Ctx) error {
 
 	res, err := h.barberService.GetBarberById(id)
 	if err != nil {
-		response := helpers.NewErrorResponse(err.Error())
-		return c.Status(fiber.StatusBadRequest).JSON(response)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
 	}
-
 	if res == nil {
-		response := helpers.NewErrorResponse("Barber not found")
-		return c.Status(fiber.StatusNotFound).JSON(response)
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "Barber not found",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(res)
@@ -36,8 +37,16 @@ func (h *BarberHandler) GetById(c *fiber.Ctx) error {
 
 func (h *BarberHandler) Register(c *fiber.Ctx) error {
 	body := new(barber.BarberInput)
-	if err := c.BodyParser(body); err != nil {
-		return err
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
+	}
+	validate := validator.New()
+	if err := validate.Struct(body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
 	input := barber.BarberInput{
@@ -48,8 +57,9 @@ func (h *BarberHandler) Register(c *fiber.Ctx) error {
 
 	err := h.barberService.RegisterBarber(input)
 	if err != nil {
-		response := helpers.NewErrorResponse(err.Error())
-		return c.Status(fiber.StatusBadRequest).JSON(response)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
 	}
 
 	return c.Status(fiber.StatusCreated).Send(nil)
@@ -57,8 +67,17 @@ func (h *BarberHandler) Register(c *fiber.Ctx) error {
 
 func (h *BarberHandler) Login(c *fiber.Ctx) error {
 	body := new(barber.LoginInput)
-	if err := c.BodyParser(body); err != nil {
-		return err
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
+	}
+
+	validate := validator.New()
+	if err := validate.Struct(body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
 	input := barber.LoginInput{
@@ -68,8 +87,9 @@ func (h *BarberHandler) Login(c *fiber.Ctx) error {
 
 	res, err := h.barberService.LoginBarber(input)
 	if err != nil {
-		response := helpers.NewErrorResponse(err.Error())
-		return c.Status(fiber.StatusBadRequest).JSON(response)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
 	return c.JSON(res)
