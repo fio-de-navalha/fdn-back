@@ -6,5 +6,5 @@ CREATE TABLE IF NOT EXISTS services (
     duration_in_min INTEGER NOT NULL,
     available BOOLEAN  NOT NULL,
     created_at TIMESTAMP NOT NULL,
-    CONSTRAINT fk_barber FOREIGN KEY (barber_id) REFERENCES barbers (id)
+    CONSTRAINT fk_barber_x_service FOREIGN KEY (barber_id) REFERENCES barbers (id)
 );
