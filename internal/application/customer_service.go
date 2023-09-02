@@ -46,6 +46,14 @@ func (s *CustomerService) GetCustomerByPhone(phone string) (*customer.Customer, 
 }
 
 func (s *CustomerService) RegisterCustomer(input customer.CustomerInput) error {
+	barberExists, err := s.customerRepository.FindByPhone(input.Phone)
+	if err != nil {
+		return err
+	}
+	if barberExists != nil {
+		return errors.New("customer alredy exists")
+	}
+
 	hashedPassword, err := cryptography.HashPassword(input.Password)
 	if err != nil {
 		return err

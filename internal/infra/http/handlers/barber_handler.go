@@ -58,7 +58,7 @@ func (h *BarberHandler) Register(c *fiber.Ctx) error {
 	err := h.barberService.RegisterBarber(input)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid request body",
+			"error": err.Error(),
 		})
 	}
 

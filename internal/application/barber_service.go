@@ -46,6 +46,14 @@ func (s *BarberService) GetBarberByEmail(email string) (*barber.Barber, error) {
 }
 
 func (s *BarberService) RegisterBarber(input barber.BarberInput) error {
+	barberExists, err := s.barberRepository.FindByEmail(input.Email)
+	if err != nil {
+		return err
+	}
+	if barberExists != nil {
+		return errors.New("barber alredy exists")
+	}
+
 	hashedPassword, err := cryptography.HashPassword(input.Password)
 	if err != nil {
 		return err
@@ -63,7 +71,6 @@ func (s *BarberService) RegisterBarber(input barber.BarberInput) error {
 		// TODO: add better error handling
 		fmt.Println(err)
 	}
-	fmt.Println("hereeeee")
 	return nil
 }
 
