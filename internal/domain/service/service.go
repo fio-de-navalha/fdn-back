@@ -12,17 +12,18 @@ type Service struct {
 	Name          string    `json:"name"`
 	Price         int32     `json:"price"`
 	DurationInMin int32     `json:"durationInMin"`
-	IsAvailable   bool      `json:"isAvailable"`
+	Available     bool      `json:"available"`
 	CreatedAt     time.Time `json:"createdAt"`
 }
 
 func NewService(input CreateServiceInput) *Service {
 	return &Service{
 		ID:            uuid.NewString(),
+		BarberId:      input.BarberId,
 		Name:          input.Name,
 		Price:         input.Price,
 		DurationInMin: input.DurationInMin,
-		IsAvailable:   true,
+		Available:     true,
 		CreatedAt:     time.Now(),
 	}
 }

@@ -75,7 +75,7 @@ func (h *ServiceHandler) Update(c *fiber.Ctx) error {
 		Name:          body.Name,
 		Price:         body.Price,
 		DurationInMin: body.DurationInMin,
-		IsAvailable:   body.IsAvailable,
+		Available:     body.Available,
 	}
 
 	err := h.serviceService.UpdateService(serviceId, input)

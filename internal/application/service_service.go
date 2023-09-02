@@ -1,6 +1,7 @@
 package application
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"reflect"
@@ -29,7 +30,14 @@ func (s *ServiceService) GetServicesByBarberId(barberId string) ([]*service.Serv
 
 func (s *ServiceService) CreateService(input service.CreateServiceInput) error {
 	ser := service.NewService(input)
-	_, err := s.serviceRepository.Save(ser)
+
+	b, err := json.Marshal(ser)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(string(b))
+
+	_, err = s.serviceRepository.Save(ser)
 	if err != nil {
 		// TODO: add better error handling
 		fmt.Println(err)
@@ -55,7 +63,7 @@ func (s *ServiceService) UpdateService(serviceId string, input service.UpdateSer
 	updateField(&ser.Name, input.Name)
 	updateField(&ser.Price, input.Price)
 	updateField(&ser.DurationInMin, input.DurationInMin)
-	updateField(&ser.IsAvailable, input.IsAvailable)
+	updateField(&ser.Available, input.Available)
 
 	_, err = s.serviceRepository.Save(ser)
 	if err != nil {
