@@ -69,7 +69,6 @@ func (s *ServiceService) UpdateService(serviceId string, input service.UpdateSer
 			reflect.ValueOf(dest).Elem().Set(reflect.ValueOf(source).Elem())
 		}
 	}
-
 	updateField(&ser.Name, input.Name)
 	updateField(&ser.Price, input.Price)
 	updateField(&ser.DurationInMin, input.DurationInMin)
