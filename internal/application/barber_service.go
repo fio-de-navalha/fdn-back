@@ -58,11 +58,12 @@ func (s *BarberService) RegisterBarber(input barber.BarberInput) error {
 	}
 
 	bar := barber.NewBarber(input)
-	_, err = s.barberRepository.Create(bar)
+	_, err = s.barberRepository.Save(bar)
 	if err != nil {
 		// TODO: add better error handling
 		fmt.Println(err)
 	}
+	fmt.Println("hereeeee")
 	return nil
 }
 

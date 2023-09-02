@@ -17,7 +17,7 @@ func NewCustomerHandler(customerService application.CustomerService) *CustomerHa
 	}
 }
 
-func (h *CustomerHandler) GetUserById(c *fiber.Ctx) error {
+func (h *CustomerHandler) GetById(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	res, err := h.customerService.GetCustomerById(id)

@@ -49,8 +49,8 @@ func (r *gormBarberRepository) FindByEmail(email string) (*barber.Barber, error)
 	return &barber, nil
 }
 
-func (r *gormBarberRepository) Create(barber *barber.Barber) (*barber.Barber, error) {
-	result := r.db.Create(barber)
+func (r *gormBarberRepository) Save(barber *barber.Barber) (*barber.Barber, error) {
+	result := r.db.Save(barber)
 	if result.Error != nil {
 		return nil, result.Error
 	}

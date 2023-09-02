@@ -17,7 +17,7 @@ func NewBarberHandler(barberService application.BarberService) *BarberHandler {
 	}
 }
 
-func (h *BarberHandler) GetUserById(c *fiber.Ctx) error {
+func (h *BarberHandler) GetById(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	res, err := h.barberService.GetBarberById(id)

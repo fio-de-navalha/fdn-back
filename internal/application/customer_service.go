@@ -58,7 +58,7 @@ func (s *CustomerService) RegisterCustomer(input customer.CustomerInput) error {
 	}
 
 	cus := customer.NewCustomer(input)
-	_, err = s.customerRepository.Create(cus)
+	_, err = s.customerRepository.Save(cus)
 	if err != nil {
 		// TODO: add better error handling
 		fmt.Println(err)

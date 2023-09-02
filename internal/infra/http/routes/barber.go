@@ -8,9 +8,9 @@ import (
 
 func setupBarberRouter(router fiber.Router) {
 	barbers := router.Group("/barbers")
-	barbers.Get("/:id", middlewares.EnsureAuth(), container.CustomerHandler.GetUserById)
+	barbers.Get("/:id", middlewares.EnsureAuth(), container.BarberHandler.GetById)
 
 	auth := router.Group("/auth")
-	auth.Post("/register/barbers", container.CustomerHandler.Register)
-	auth.Post("/login/barbers", container.CustomerHandler.Login)
+	auth.Post("/register/barbers", container.BarberHandler.Register)
+	auth.Post("/login/barbers", container.BarberHandler.Login)
 }

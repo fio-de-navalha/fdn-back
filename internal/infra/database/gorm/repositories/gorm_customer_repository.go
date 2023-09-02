@@ -49,8 +49,8 @@ func (r *gormCustomerRepository) FindByPhone(phone string) (*customer.Customer, 
 	return &customer, nil
 }
 
-func (r *gormCustomerRepository) Create(customer *customer.Customer) (*customer.Customer, error) {
-	result := r.db.Create(customer)
+func (r *gormCustomerRepository) Save(customer *customer.Customer) (*customer.Customer, error) {
+	result := r.db.Save(customer)
 	if result.Error != nil {
 		return nil, result.Error
 	}
