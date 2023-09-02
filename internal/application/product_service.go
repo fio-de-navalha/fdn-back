@@ -13,9 +13,10 @@ type ProductService struct {
 	barberService     BarberService
 }
 
-func NewProductService(productRepository product.ProductRepository) *ProductService {
+func NewProductService(productRepository product.ProductRepository, barberService BarberService) *ProductService {
 	return &ProductService{
 		productRepository: productRepository,
+		barberService: barberService,
 	}
 }
 
@@ -36,7 +37,7 @@ func (s *ProductService) GetProductsByBarberId(barberId string) ([]*product.Prod
 	return res, nil
 }
 
-func (s *ProductService) CreateService(input product.CreateProductInput) error {
+func (s *ProductService) CreateProduct(input product.CreateProductInput) error {
 	barberExists, err := s.barberService.GetBarberById(input.BarberId)
 	if err != nil {
 		return err

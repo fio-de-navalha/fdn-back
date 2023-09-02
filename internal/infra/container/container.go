@@ -15,6 +15,9 @@ var (
 
 	ServiceService *application.ServiceService
 	ServiceHandler *handlers.ServiceHandler
+
+	ProductService *application.ProductService
+	ProductHandler *handlers.ProductHandler
 )
 
 func LoadContainers() {
@@ -29,4 +32,8 @@ func LoadContainers() {
 	serviceRepo := gorm_repository.NewGormServiceRepository()
 	ServiceService = application.NewServiceService(serviceRepo, *BarberService)
 	ServiceHandler = handlers.NewServiceHandler(*ServiceService)
+
+	productRepo := gorm_repository.NewGormProductRepository()
+	ProductService = application.NewProductService(productRepo, *BarberService)
+	ProductHandler = handlers.NewProductHandler(*ProductService)
 }
