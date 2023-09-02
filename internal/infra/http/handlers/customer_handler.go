@@ -8,10 +8,10 @@ import (
 )
 
 type CustomerHandler struct {
-	customerService application.CustomerServices
+	customerService application.CustomerService
 }
 
-func NewCustomerHandler(customerService application.CustomerServices) *CustomerHandler {
+func NewCustomerHandler(customerService application.CustomerService) *CustomerHandler {
 	return &CustomerHandler{
 		customerService: customerService,
 	}

@@ -8,17 +8,17 @@ import (
 	"github.com/fio-de-navalha/fdn-back/pkg/cryptography"
 )
 
-type CustomerServices struct {
+type CustomerService struct {
 	customerRepository customer.CustomerRepository
 }
 
-func NewCustomerServices(customerRepository customer.CustomerRepository) *CustomerServices {
-	return &CustomerServices{
+func NewCustomerService(customerRepository customer.CustomerRepository) *CustomerService {
+	return &CustomerService{
 		customerRepository: customerRepository,
 	}
 }
 
-func (s *CustomerServices) GetManyCustomers() ([]*customer.Customer, error) {
+func (s *CustomerService) GetManyCustomers() ([]*customer.Customer, error) {
 	cus, err := s.customerRepository.FindMany()
 	if err != nil {
 		// TODO: add better error handling
@@ -27,7 +27,7 @@ func (s *CustomerServices) GetManyCustomers() ([]*customer.Customer, error) {
 	return cus, nil
 }
 
-func (s *CustomerServices) GetCustomerById(id string) (*customer.Customer, error) {
+func (s *CustomerService) GetCustomerById(id string) (*customer.Customer, error) {
 	cus, err := s.customerRepository.FindById(id)
 	if err != nil {
 		// TODO: add better error handling
@@ -36,7 +36,7 @@ func (s *CustomerServices) GetCustomerById(id string) (*customer.Customer, error
 	return cus, nil
 }
 
-func (s *CustomerServices) GetCustomerByPhone(phone string) (*customer.Customer, error) {
+func (s *CustomerService) GetCustomerByPhone(phone string) (*customer.Customer, error) {
 	cus, err := s.customerRepository.FindByPhone(phone)
 	if err != nil {
 		// TODO: add better error handling
@@ -45,7 +45,7 @@ func (s *CustomerServices) GetCustomerByPhone(phone string) (*customer.Customer,
 	return cus, nil
 }
 
-func (s *CustomerServices) RegisterCustomer(input customer.CustomerInput) error {
+func (s *CustomerService) RegisterCustomer(input customer.CustomerInput) error {
 	hashedPassword, err := cryptography.HashPassword(input.Password)
 	if err != nil {
 		return err
@@ -66,7 +66,7 @@ func (s *CustomerServices) RegisterCustomer(input customer.CustomerInput) error 
 	return nil
 }
 
-func (s *CustomerServices) LoginCustomer(input customer.LoginInput) (*customer.LoginResponse, error) {
+func (s *CustomerService) LoginCustomer(input customer.LoginInput) (*customer.LoginResponse, error) {
 	cus, err := s.customerRepository.FindByPhone(input.Phone)
 	if err != nil {
 		return nil, err

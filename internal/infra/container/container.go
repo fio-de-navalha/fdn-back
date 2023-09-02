@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	CustomerService *application.CustomerServices
+	CustomerService *application.CustomerService
 	CustomerHandler *handlers.CustomerHandler
 
 	BarberService *application.BarberService
@@ -16,7 +16,7 @@ var (
 
 func LoadContainers() {
 	customerRepo := gorm_repository.NewGormCustomerRepository()
-	CustomerService = application.NewCustomerServices(customerRepo)
+	CustomerService = application.NewCustomerService(customerRepo)
 	CustomerHandler = handlers.NewCustomerHandler(*CustomerService)
 
 	barberRepo := gorm_repository.NewGormBarberRepository()
