@@ -28,12 +28,12 @@ func (s *BarberService) GetManyBarbers() ([]*barber.Barber, error) {
 }
 
 func (s *BarberService) GetBarberById(id string) (*barber.Barber, error) {
-	cus, err := s.barberRepository.FindById(id)
+	bar, err := s.barberRepository.FindById(id)
 	if err != nil {
 		// TODO: add better error handling
 		fmt.Println(err)
 	}
-	return cus, nil
+	return bar, nil
 }
 
 func (s *BarberService) GetBarberByEmail(email string) (*barber.Barber, error) {
