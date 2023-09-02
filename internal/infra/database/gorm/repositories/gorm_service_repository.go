@@ -17,33 +17,33 @@ func NewGormServiceRepository() *gormServiceRepository {
 }
 
 func (r *gormServiceRepository) FindById(id string) (*service.Service, error) {
-	var service service.Service
-	result := r.db.First(&service, "id = ?", id)
+	var s service.Service
+	result := r.db.First(&s, "id = ?", id)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			return nil, nil
 		}
 		return nil, result.Error
 	}
-	return &service, nil
+	return &s, nil
 }
 
 func (r *gormServiceRepository) FindByBarberId(barberId string) ([]*service.Service, error) {
-	var services []*service.Service
-	result := r.db.Find(&services, "barber_id = ?", barberId)
+	var s []*service.Service
+	result := r.db.Find(&s, "barber_id = ?", barberId)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			return nil, nil
 		}
 		return nil, result.Error
 	}
-	return services, nil
+	return s, nil
 }
 
-func (r *gormServiceRepository) Save(service *service.Service) (*service.Service, error) {
-	result := r.db.Save(service)
+func (r *gormServiceRepository) Save(s *service.Service) (*service.Service, error) {
+	result := r.db.Save(s)
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	return service, nil
+	return s, nil
 }
