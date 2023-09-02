@@ -88,7 +88,7 @@ func (s *BarberService) LoginBarber(input barber.LoginInput) (*barber.LoginRespo
 		return nil, errors.New("invalid credentials")
 	}
 
-	token, err := cryptography.GenerateToken(bar.ID)
+	token, err := cryptography.GenerateToken(bar.ID, "barber")
 	if err != nil {
 		return nil, err
 	}

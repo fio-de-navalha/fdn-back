@@ -8,6 +8,7 @@ import (
 
 func setupServiceRouter(router fiber.Router) {
 	services := router.Group("/barbers/:barberId")
+
 	services.Get("/services", container.ServiceHandler.GetByBarberId)
-	services.Post("/services", middlewares.EnsureAuth(), container.ServiceHandler.Create)
+	services.Post("/services", middlewares.EnsureBarberRole(), container.ServiceHandler.Create)
 }

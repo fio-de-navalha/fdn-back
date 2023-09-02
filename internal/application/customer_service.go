@@ -88,7 +88,7 @@ func (s *CustomerService) LoginCustomer(input customer.LoginInput) (*customer.Lo
 		return nil, errors.New("invalid credentials")
 	}
 
-	token, err := cryptography.GenerateToken(cus.ID)
+	token, err := cryptography.GenerateToken(cus.ID, "customer")
 	if err != nil {
 		return nil, err
 	}
