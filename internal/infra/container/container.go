@@ -12,6 +12,9 @@ var (
 
 	BarberService *application.BarberService
 	BarberHandler *handlers.BarberHandler
+
+	ServiceService *application.ServiceService
+	ServiceHandler *handlers.ServiceHandler
 )
 
 func LoadContainers() {
@@ -22,4 +25,8 @@ func LoadContainers() {
 	barberRepo := gorm_repository.NewGormBarberRepository()
 	BarberService = application.NewBarberService(barberRepo)
 	BarberHandler = handlers.NewBarberHandler(*BarberService)
+
+	serviceRepo := gorm_repository.NewGormServiceRepository()
+	ServiceService = application.NewServiceService(serviceRepo)
+	ServiceHandler = handlers.NewServiceHandler(*ServiceService)
 }
