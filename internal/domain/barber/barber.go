@@ -3,6 +3,7 @@ package barber
 import (
 	"time"
 
+	"github.com/fio-de-navalha/fdn-back/internal/domain/product"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/service"
 	"github.com/google/uuid"
 )
@@ -14,6 +15,7 @@ type Barber struct {
 	Password  string            `json:"password"`
 	CreatedAt time.Time         `json:"createdAt"`
 	Services  []service.Service `json:"services"`
+	Products  []product.Product `json:"products"`
 }
 
 func NewBarber(input BarberInput) *Barber {

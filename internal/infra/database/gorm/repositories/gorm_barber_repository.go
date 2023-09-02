@@ -27,7 +27,11 @@ func (r *gormBarberRepository) FindMany() ([]*barber.Barber, error) {
 
 func (r *gormBarberRepository) FindById(id string) (*barber.Barber, error) {
 	var bar barber.Barber
-	result := r.db.Model(&barber.Barber{}).Preload("Services").First(&bar, "id = ?", id)
+	result := r.db.Model(&barber.Barber{}).
+		Preload("Services").
+		Preload("Products").
+		First(&bar, "id = ?", id)
+
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			return nil, nil
