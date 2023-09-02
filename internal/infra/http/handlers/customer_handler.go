@@ -20,30 +20,30 @@ func NewCustomerHandler(customerService application.CustomerServices) *CustomerH
 func (h *CustomerHandler) GetUserById(c *fiber.Ctx) error {
 	id := c.Params("id")
 
-	user, err := h.customerService.GetCustomerById(id)
+	res, err := h.customerService.GetCustomerById(id)
 	if err != nil {
 		response := helpers.NewErrorResponse(err.Error())
 		return c.Status(fiber.StatusBadRequest).JSON(response)
 	}
 
-	if user == nil {
+	if res == nil {
 		response := helpers.NewErrorResponse("User not found")
 		return c.Status(fiber.StatusNotFound).JSON(response)
 	}
 
-	return c.Status(fiber.StatusOK).JSON(user)
+	return c.Status(fiber.StatusOK).JSON(res)
 }
 
 func (h *CustomerHandler) Register(c *fiber.Ctx) error {
-	u := new(customer.CustomerInput)
-	if err := c.BodyParser(u); err != nil {
+	body := new(customer.CustomerInput)
+	if err := c.BodyParser(body); err != nil {
 		return err
 	}
 
 	input := customer.CustomerInput{
-		Name:     u.Name,
-		Phone:    u.Phone,
-		Password: u.Password,
+		Name:     body.Name,
+		Phone:    body.Phone,
+		Password: body.Password,
 	}
 
 	err := h.customerService.RegisterCustomer(input)
@@ -56,14 +56,14 @@ func (h *CustomerHandler) Register(c *fiber.Ctx) error {
 }
 
 func (h *CustomerHandler) Login(c *fiber.Ctx) error {
-	u := new(customer.LoginInput)
-	if err := c.BodyParser(u); err != nil {
+	body := new(customer.LoginInput)
+	if err := c.BodyParser(body); err != nil {
 		return err
 	}
 
 	input := customer.LoginInput{
-		Phone:    u.Phone,
-		Password: u.Password,
+		Phone:    body.Phone,
+		Password: body.Password,
 	}
 
 	resp, err := h.customerService.LoginCustomer(input)
