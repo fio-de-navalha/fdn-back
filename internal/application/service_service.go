@@ -27,7 +27,7 @@ func (s *ServiceService) GetServicesByBarberId(barberId string) ([]*service.Serv
 	return res, nil
 }
 
-func (s *ServiceService) CreateService(input service.CreateServiceDto) error {
+func (s *ServiceService) CreateService(input service.CreateServiceInput) error {
 	ser := service.NewService(input)
 	_, err := s.serviceRepository.Save(ser)
 	if err != nil {
@@ -37,7 +37,7 @@ func (s *ServiceService) CreateService(input service.CreateServiceDto) error {
 	return nil
 }
 
-func (s *ServiceService) UpdateService(serviceId string, input service.UpdateServiceDto) error {
+func (s *ServiceService) UpdateService(serviceId string, input service.UpdateServiceInput) error {
 	ser, err := s.serviceRepository.FindById(serviceId)
 	if err != nil {
 		return err

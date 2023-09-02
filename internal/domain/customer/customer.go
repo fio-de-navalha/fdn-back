@@ -14,22 +14,6 @@ type Customer struct {
 	CreatedAt time.Time `json:"createdAt"`
 }
 
-type CustomerInput struct {
-	Name     string `json:"name"`
-	Phone    string `json:"phone"`
-	Password string `json:"password"`
-}
-
-type LoginInput struct {
-	Phone    string `json:"phone"`
-	Password string `json:"password"`
-}
-
-type LoginResponse struct {
-	AccessToken string    `json:"access_token"`
-	Customer    *Customer `json:"customer"`
-}
-
 func NewCustomer(input CustomerInput) *Customer {
 	return &Customer{
 		ID:        uuid.NewString(),

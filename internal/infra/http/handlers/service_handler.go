@@ -31,7 +31,7 @@ func (h *ServiceHandler) GetByBarberId(c *fiber.Ctx) error {
 }
 
 func (h *ServiceHandler) Create(c *fiber.Ctx) error {
-	body := new(service.CreateServiceDto)
+	body := new(service.CreateServiceInput)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid request body",
@@ -45,7 +45,7 @@ func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 		})
 	}
 
-	input := service.CreateServiceDto{
+	input := service.CreateServiceInput{
 		BarberId:      body.BarberId,
 		Name:          body.Name,
 		Price:         body.Price,
@@ -64,14 +64,14 @@ func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 
 func (h *ServiceHandler) Update(c *fiber.Ctx) error {
 	serviceId := c.Params("serviceId")
-	body := new(service.UpdateServiceDto)
+	body := new(service.UpdateServiceInput)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid request body",
 		})
 	}
 
-	input := service.UpdateServiceDto{
+	input := service.UpdateServiceInput{
 		Name:          body.Name,
 		Price:         body.Price,
 		DurationInMin: body.DurationInMin,

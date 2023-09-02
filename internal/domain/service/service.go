@@ -16,22 +16,7 @@ type Service struct {
 	CreatedAt     time.Time `json:"createdAt"`
 }
 
-type CreateServiceDto struct {
-	BarberId      string `json:"barberId"`
-	Name          string `json:"name"`
-	Price         int32  `json:"price"`
-	DurationInMin int32  `json:"durationInMin"`
-	IsAvailable   bool   `json:"isAvailable"`
-}
-
-type UpdateServiceDto struct {
-	Name          *string `json:"name"`
-	Price         *int32  `json:"price"`
-	DurationInMin *int32  `json:"durationInMin"`
-	IsAvailable   *bool   `json:"isAvailable"`
-}
-
-func NewService(input CreateServiceDto) *Service {
+func NewService(input CreateServiceInput) *Service {
 	return &Service{
 		ID:            uuid.NewString(),
 		Name:          input.Name,
