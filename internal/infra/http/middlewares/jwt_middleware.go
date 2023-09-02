@@ -10,11 +10,13 @@ import (
 
 func errorHandler(c *fiber.Ctx, err error) error {
 	if err.Error() == "Missing or malformed JWT" {
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{"status": "error", "message": "Missing or malformed JWT", "data": nil})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Missing or malformed JWT",
+		})
 	} else {
-		c.Status(fiber.StatusUnauthorized)
-		return c.JSON(fiber.Map{"status": "error", "message": "Invalid or expired JWT", "data": nil})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Invalid or expired JWT",
+		})
 	}
 }
 
@@ -28,17 +30,27 @@ func EnsureAuth() func(c *fiber.Ctx) error {
 func EnsureBarberRole() func(c *fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 		authorization := c.Get("Authorization")
+		if authorization == "" {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Missing JWT Token",
+			})
+		}
 		token := strings.Split(authorization, "Bearer ")
-
+		if len(token) == 1 {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Missing JWT Token",
+			})
+		}
 		jwtToken, err := cryptography.ParseToken(token[1])
 		if err != nil {
-			c.Status(fiber.StatusUnauthorized)
-			return c.JSON(fiber.Map{"error": "Unauthorized"})
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Unauthorized"},
+			)
 		}
-
 		if jwtToken["role"] != "barber" {
-			c.Status(fiber.StatusForbidden)
-			return c.JSON(fiber.Map{"error": "Permission denied"})
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"error": "Permission denied"},
+			)
 		}
 
 		return c.Next()
