@@ -7,7 +7,7 @@ import (
 )
 
 type Service struct {
-	ID            string    `json:"id"`
+	ID            string    `json:"id" gorm:"primaryKey"`
 	BarberId      string    `json:"barberId"`
 	Name          string    `json:"name"`
 	Price         int32     `json:"price"`

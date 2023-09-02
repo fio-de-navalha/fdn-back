@@ -26,15 +26,15 @@ func (r *gormBarberRepository) FindMany() ([]*barber.Barber, error) {
 }
 
 func (r *gormBarberRepository) FindById(id string) (*barber.Barber, error) {
-	var barber barber.Barber
-	result := r.db.First(&barber, "id = ?", id)
+	var bar barber.Barber
+	result := r.db.Model(&barber.Barber{}).Preload("Services").First(&bar, "id = ?", id)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			return nil, nil
 		}
 		return nil, result.Error
 	}
-	return &barber, nil
+	return &bar, nil
 }
 
 func (r *gormBarberRepository) FindByEmail(email string) (*barber.Barber, error) {
