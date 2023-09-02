@@ -1,7 +1,6 @@
 package application
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"reflect"
@@ -11,15 +10,25 @@ import (
 
 type ServiceService struct {
 	serviceRepository service.ServiceRepository
+	barberService     BarberService
 }
 
-func NewServiceService(serviceRepository service.ServiceRepository) *ServiceService {
+func NewServiceService(serviceRepository service.ServiceRepository, barberService BarberService) *ServiceService {
 	return &ServiceService{
 		serviceRepository: serviceRepository,
+		barberService:     barberService,
 	}
 }
 
 func (s *ServiceService) GetServicesByBarberId(barberId string) ([]*service.Service, error) {
+	barberExists, err := s.barberService.GetBarberById(barberId)
+	if err != nil {
+		return nil, err
+	}
+	if barberExists == nil {
+		return nil, errors.New("barber not found")
+	}
+
 	res, err := s.serviceRepository.FindByBarberId(barberId)
 	if err != nil {
 		// TODO: add better error handling
@@ -29,14 +38,15 @@ func (s *ServiceService) GetServicesByBarberId(barberId string) ([]*service.Serv
 }
 
 func (s *ServiceService) CreateService(input service.CreateServiceInput) error {
-	ser := service.NewService(input)
-
-	b, err := json.Marshal(ser)
+	barberExists, err := s.barberService.GetBarberById(input.BarberId)
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
-	fmt.Println(string(b))
+	if barberExists == nil {
+		return errors.New("barber not found")
+	}
 
+	ser := service.NewService(input)
 	_, err = s.serviceRepository.Save(ser)
 	if err != nil {
 		// TODO: add better error handling

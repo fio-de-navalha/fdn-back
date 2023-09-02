@@ -27,6 +27,6 @@ func LoadContainers() {
 	BarberHandler = handlers.NewBarberHandler(*BarberService)
 
 	serviceRepo := gorm_repository.NewGormServiceRepository()
-	ServiceService = application.NewServiceService(serviceRepo)
+	ServiceService = application.NewServiceService(serviceRepo, *BarberService)
 	ServiceHandler = handlers.NewServiceHandler(*ServiceService)
 }
