@@ -22,7 +22,7 @@ func Server() {
 
 	app.Use(swagger.New(swagger.Config{
 		BasePath: "/api",
-		FilePath: "./docs/swagger.json",
+		FilePath: "./api/swagger.json",
 	}))
 
 	err := app.Listen(":" + os.Getenv("PORT"))
