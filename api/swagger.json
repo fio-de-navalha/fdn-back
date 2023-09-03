@@ -103,53 +103,10 @@
                   "type": "string"
                 },
                 "services": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "barberId": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "price": {
-                        "type": "number"
-                      },
-                      "durationInMin": {
-                        "type": "number"
-                      },
-                      "available": {
-                        "type": "boolean"
-                      }
-                    }
-                  }
+                  "$ref": "#/definitions/ServiceList"
                 },
                 "products": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "barberId": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "price": {
-                        "type": "number"
-                      },
-                      "available": {
-                        "type": "boolean"
-                      }
-                    }
-                  }
+                  "$ref": "#/definitions/ProductList"
                 }
               }
             }
@@ -174,30 +131,7 @@
           "200": {
             "description": "Successful response",
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string"
-                  },
-                  "barberId": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "price": {
-                    "type": "number"
-                  },
-                  "durationInMin": {
-                    "type": "number"
-                  },
-                  "available": {
-                    "type": "boolean"
-                  }
-                }
-              }
+              "$ref": "#/definitions/ServiceList"
             }
           }
         }
@@ -245,6 +179,16 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/400"
+            }
+          },
+          "401": {
+            "schema": {
+              "$ref": "#/definitions/401"
+            }
           }
         }
       }
@@ -297,6 +241,16 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/400"
+            }
+          },
+          "401": {
+            "schema": {
+              "$ref": "#/definitions/401"
+            }
           }
         }
       }
@@ -318,27 +272,7 @@
           "200": {
             "description": "Successful response",
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string"
-                  },
-                  "barberId": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "price": {
-                    "type": "number"
-                  },
-                  "available": {
-                    "type": "boolean"
-                  }
-                }
-              }
+              "$ref": "#/definitions/ProductList"
             }
           }
         }
@@ -383,6 +317,16 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/400"
+            }
+          },
+          "401": {
+            "schema": {
+              "$ref": "#/definitions/401"
+            }
           }
         }
       }
@@ -432,6 +376,16 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/BadRequest"
+            }
+          },
+          "401": {
+            "schema": {
+              "$ref": "#/definitions/401"
+            }
           }
         }
       }
@@ -442,6 +396,81 @@
       "type": "apiKey",
       "name": "Authorization",
       "in": "header"
+    }
+  },
+  "definitions": {
+    "Service": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "barberId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number"
+        },
+        "durationInMin": {
+          "type": "number"
+        },
+        "available": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ServiceList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Service"
+      }
+    },
+    "Product": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "barberId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number"
+        },
+        "available": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ProductList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Product"
+      }
+    },
+    "400": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string",
+          "example": "bad request"
+        }
+      }
+    },
+    "401": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string",
+          "example": "unauthorized"
+        }
+      }
     }
   }
 }
