@@ -35,7 +35,7 @@ func Server() {
 			}
 			return c.Query("refresh") == "true"
 		},
-		Expiration:   30 * time.Minute,
+		Expiration:   120 * time.Second,
 		CacheControl: true,
 	}))
 	app.Use(recover.New(recover.Config{
