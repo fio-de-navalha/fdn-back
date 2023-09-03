@@ -21,15 +21,5 @@ func Connect() error {
 		log.Fatal("Failed to connect to database")
 	}
 
-	// // Auto-migrate the User model to create the users table
-	// err = DB.AutoMigrate(
-	// 	&customer.Customer{},
-	// 	&barber.Barber{},
-	// 	&service.Service{},
-	// )
-	// if err != nil {
-	// 	return err
-	// }
-
 	return nil
 }
