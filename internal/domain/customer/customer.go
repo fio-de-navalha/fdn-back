@@ -7,7 +7,7 @@ import (
 )
 
 type Customer struct {
-	ID        string    `json:"id"`
+	ID        string    `json:"id" gorm:"primaryKey"`
 	Name      string    `json:"name"`
 	Phone     string    `json:"phone"`
 	Password  string    `json:"password"`
