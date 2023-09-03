@@ -5,6 +5,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func setupAppRouter(router fiber.Router) {
+func setupHealthRouter(router fiber.Router) {
 	router.Get("/health", handlers.GetHealth)
 }

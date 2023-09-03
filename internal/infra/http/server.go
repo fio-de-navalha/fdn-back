@@ -12,21 +12,27 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/idempotency"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
 func Server() {
 	app := fiber.New()
 
+	app.Use(cors.New())
 	app.Use(idempotency.New())
 	app.Use(limiter.New(limiter.Config{
+		Next: func(c *fiber.Ctx) bool {
+			return c.Path() == "/api/health" || c.Path() == "/metrics"
+		},
 		Max:               15,
 		Expiration:        30 * time.Second,
 		LimiterMiddleware: limiter.SlidingWindow{},
 	}))
 	app.Use(cache.New(cache.Config{
 		Next: func(c *fiber.Ctx) bool {
+			if c.Path() == "/api/health" || c.Path() == "/metrics" {
+				return true
+			}
 			return c.Query("refresh") == "true"
 		},
 		Expiration:   30 * time.Minute,
@@ -35,12 +41,9 @@ func Server() {
 	app.Use(recover.New(recover.Config{
 		EnableStackTrace: true,
 	}))
-	app.Use(cors.New())
 	app.Use(logger.New(logger.Config{
 		Format: "${time} | ${ip}:${port} | ${latency} | ${status} | ${method} ${path}\n",
 	}))
-
-	app.Get("/metrics", monitor.New(monitor.Config{Title: "Backend Metrics Page"}))
 
 	routes.FiberSetupRouters(app)
 
