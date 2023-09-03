@@ -141,7 +141,7 @@
         "summary": "Create a service",
         "security": [
           {
-            "APIKeyHeader": []
+            "BearerAuth": []
           }
         ],
         "parameters": [
@@ -199,7 +199,7 @@
         "summary": "Update a service",
         "security": [
           {
-            "APIKeyHeader": []
+            "BearerAuth": []
           }
         ],
         "parameters": [
@@ -282,7 +282,7 @@
         "summary": "Create a product",
         "security": [
           {
-            "APIKeyHeader": []
+            "BearerAuth": []
           }
         ],
         "parameters": [
@@ -337,7 +337,7 @@
         "summary": "Update a product",
         "security": [
           {
-            "APIKeyHeader": []
+            "BearerAuth": []
           }
         ],
         "parameters": [
@@ -392,10 +392,11 @@
     }
   },
   "securityDefinitions": {
-    "APIKeyHeader": {
+    "BearerAuth": {
       "type": "apiKey",
       "name": "Authorization",
-      "in": "header"
+      "in": "header",
+      "description": "You need to add `Bearer` prefix in the beginning"
     }
   },
   "definitions": {
