@@ -16,6 +16,6 @@ FROM alpine:3.18 as binary
 COPY --from=base /app/main .
 COPY --from=base /app/.env .
 COPY --from=base /app/db ./db
-COPY --from=base /app/docs ./docs
+COPY --from=base /app/api ./api
 EXPOSE 8080
 CMD ["./main"]
