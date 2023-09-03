@@ -1,10 +1,9 @@
 CREATE TABLE IF NOT EXISTS services (
-    id VARCHAR(255) NOT NULL PRIMARY KEY,
-    barber_id VARCHAR(255) NOT NULL,
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    barber_id UUID REFERENCES barbers(id),
     name VARCHAR(45) NOT NULL,
     price INTEGER NOT NULL,
     duration_in_min INTEGER NOT NULL,
     available BOOLEAN  NOT NULL,
-    created_at TIMESTAMP NOT NULL,
-    CONSTRAINT fk_barber_x_service FOREIGN KEY (barber_id) REFERENCES barbers (id)
+    created_at TIMESTAMP NOT NULL
 );

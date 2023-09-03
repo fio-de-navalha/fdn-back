@@ -11,4 +11,5 @@ func setupProductRouter(router fiber.Router) {
 
 	products.Get("/products", container.ProductHandler.GetByBarberId)
 	products.Post("/products", middlewares.EnsureBarberRole(), container.ProductHandler.Create)
+	products.Put("/products/:productId", middlewares.EnsureBarberRole(), container.ProductHandler.Update)
 }

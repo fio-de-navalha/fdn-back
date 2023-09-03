@@ -16,7 +16,7 @@ func NewGormProductRepository() *gormProductRepository {
 	}
 }
 
-func (r *gormProductRepository) FindById(id string) (*product.Product, error) {
+func (r *gormProductRepository) FindById(id uint) (*product.Product, error) {
 	var p product.Product
 	result := r.db.First(&p, "id = ?", id)
 	if result.Error != nil {

@@ -1,8 +1,7 @@
 CREATE TABLE IF NOT EXISTS products (
-    id VARCHAR(255) NOT NULL PRIMARY KEY,
-    barber_id VARCHAR(255) NOT NULL,
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    barber_id UUID REFERENCES barbers(id),
     name VARCHAR(45) NOT NULL,
     price INTEGER NOT NULL,
-    available BOOLEAN  NOT NULL,
-    CONSTRAINT fk_barber_x_product FOREIGN KEY (barber_id) REFERENCES barbers (id)
+    available BOOLEAN  NOT NULL
 );

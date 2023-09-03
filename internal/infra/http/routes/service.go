@@ -11,4 +11,5 @@ func setupServiceRouter(router fiber.Router) {
 
 	services.Get("/services", container.ServiceHandler.GetByBarberId)
 	services.Post("/services", middlewares.EnsureBarberRole(), container.ServiceHandler.Create)
+	services.Put("/services/:serviceId", middlewares.EnsureBarberRole(), container.ServiceHandler.Update)
 }

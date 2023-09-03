@@ -3,7 +3,6 @@ package application
 import (
 	"errors"
 	"fmt"
-	"reflect"
 
 	"github.com/fio-de-navalha/fdn-back/internal/domain/service"
 )
@@ -55,7 +54,7 @@ func (s *ServiceService) CreateService(input service.CreateServiceInput) error {
 	return nil
 }
 
-func (s *ServiceService) UpdateService(serviceId string, input service.UpdateServiceInput) error {
+func (s *ServiceService) UpdateService(serviceId uint, input service.UpdateServiceInput) error {
 	ser, err := s.serviceRepository.FindById(serviceId)
 	if err != nil {
 		return err
@@ -64,15 +63,18 @@ func (s *ServiceService) UpdateService(serviceId string, input service.UpdateSer
 		return errors.New("service not found")
 	}
 
-	updateField := func(dest, source interface{}) {
-		if source != nil {
-			reflect.ValueOf(dest).Elem().Set(reflect.ValueOf(source).Elem())
-		}
+	if input.Name != nil {
+		ser.Name = *input.Name
 	}
-	updateField(&ser.Name, input.Name)
-	updateField(&ser.Price, input.Price)
-	updateField(&ser.DurationInMin, input.DurationInMin)
-	updateField(&ser.Available, input.Available)
+	if input.Price != nil {
+		ser.Price = *input.Price
+	}
+	if input.DurationInMin != nil {
+		ser.DurationInMin = *input.DurationInMin
+	}
+	if input.Available != nil {
+		ser.Available = *input.Available
+	}
 
 	_, err = s.serviceRepository.Save(ser)
 	if err != nil {

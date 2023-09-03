@@ -1,11 +1,7 @@
 package product
 
-import (
-	"github.com/google/uuid"
-)
-
 type Product struct {
-	ID        string `json:"id" gorm:"primaryKey"`
+	ID        uint   `json:"id" gorm:"primaryKey"`
 	BarberId  string `json:"barberId"`
 	Name      string `json:"name"`
 	Price     int32  `json:"price"`
@@ -14,7 +10,6 @@ type Product struct {
 
 func NewProduct(input CreateProductInput) *Product {
 	return &Product{
-		ID:        uuid.NewString(),
 		BarberId:  input.BarberId,
 		Name:      input.Name,
 		Price:     input.Price,

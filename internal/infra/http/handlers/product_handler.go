@@ -46,9 +46,9 @@ func (h *ProductHandler) Create(c *fiber.Ctx) error {
 	}
 
 	input := product.CreateProductInput{
-		BarberId:      body.BarberId,
-		Name:          body.Name,
-		Price:         body.Price,
+		BarberId: body.BarberId,
+		Name:     body.Name,
+		Price:    body.Price,
 	}
 
 	err := h.productService.CreateProduct(input)
@@ -62,7 +62,11 @@ func (h *ProductHandler) Create(c *fiber.Ctx) error {
 }
 
 func (h *ProductHandler) Update(c *fiber.Ctx) error {
-	productId := c.Params("productId")
+	param := struct {
+		ProductId uint `params:"productId"`
+	}{}
+	c.ParamsParser(&param)
+
 	body := new(product.UpdateProductInput)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -71,17 +75,17 @@ func (h *ProductHandler) Update(c *fiber.Ctx) error {
 	}
 
 	input := product.UpdateProductInput{
-		Name:          body.Name,
-		Price:         body.Price,
-		Available:     body.Available,
+		Name:      body.Name,
+		Price:     body.Price,
+		Available: body.Available,
 	}
 
-	err := h.productService.UpdateProduct(productId, input)
+	err := h.productService.UpdateProduct(param.ProductId, input)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
 
-	return c.JSON(nil)
+	return c.Send(nil)
 }

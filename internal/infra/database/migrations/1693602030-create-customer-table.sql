@@ -1,8 +1,7 @@
 CREATE TABLE IF NOT EXISTS customers (
-    id VARCHAR NOT NULL,
+    id UUID NOT NULL PRIMARY KEY,
     name VARCHAR(45) NOT NULL,
     phone VARCHAR(14) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP NOT NULL,
-    PRIMARY KEY (id)
+    created_at TIMESTAMP NOT NULL
 )
