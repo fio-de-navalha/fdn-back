@@ -27,13 +27,18 @@ func (s *CustomerService) GetManyCustomers() ([]*customer.Customer, error) {
 	return cus, nil
 }
 
-func (s *CustomerService) GetCustomerById(id string) (*customer.Customer, error) {
+func (s *CustomerService) GetCustomerById(id string) (*customer.CustomerResponse, error) {
 	cus, err := s.customerRepository.FindById(id)
 	if err != nil {
 		// TODO: add better error handling
 		fmt.Println(err)
 	}
-	return cus, nil
+	return &customer.CustomerResponse{
+		ID:        cus.ID,
+		Name:      cus.Name,
+		Phone:     cus.Phone,
+		CreatedAt: cus.CreatedAt,
+	}, nil
 }
 
 func (s *CustomerService) GetCustomerByPhone(phone string) (*customer.Customer, error) {
@@ -45,7 +50,7 @@ func (s *CustomerService) GetCustomerByPhone(phone string) (*customer.Customer, 
 	return cus, nil
 }
 
-func (s *CustomerService) RegisterCustomer(input customer.CustomerInput) error {
+func (s *CustomerService) RegisterCustomer(input customer.RegisterRequest) error {
 	barberExists, err := s.customerRepository.FindByPhone(input.Phone)
 	if err != nil {
 		return err
@@ -59,7 +64,7 @@ func (s *CustomerService) RegisterCustomer(input customer.CustomerInput) error {
 		return err
 	}
 
-	input = customer.CustomerInput{
+	input = customer.RegisterRequest{
 		Name:     input.Name,
 		Phone:    input.Phone,
 		Password: hashedPassword,
@@ -74,7 +79,7 @@ func (s *CustomerService) RegisterCustomer(input customer.CustomerInput) error {
 	return nil
 }
 
-func (s *CustomerService) LoginCustomer(input customer.LoginInput) (*customer.LoginResponse, error) {
+func (s *CustomerService) LoginCustomer(input customer.LoginRequest) (*customer.LoginResponse, error) {
 	cus, err := s.customerRepository.FindByPhone(input.Phone)
 	if err != nil {
 		return nil, err
@@ -95,6 +100,11 @@ func (s *CustomerService) LoginCustomer(input customer.LoginInput) (*customer.Lo
 
 	return &customer.LoginResponse{
 		AccessToken: token,
-		Customer:    cus,
+		Customer: customer.LoginCustomerResponse{
+			ID:        cus.ID,
+			Name:      cus.Name,
+			Phone:     cus.Phone,
+			CreatedAt: cus.CreatedAt,
+		},
 	}, nil
 }

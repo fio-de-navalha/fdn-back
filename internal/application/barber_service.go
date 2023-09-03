@@ -27,13 +27,20 @@ func (s *BarberService) GetManyBarbers() ([]*barber.Barber, error) {
 	return bar, nil
 }
 
-func (s *BarberService) GetBarberById(id string) (*barber.Barber, error) {
+func (s *BarberService) GetBarberById(id string) (*barber.BarberResponse, error) {
 	bar, err := s.barberRepository.FindById(id)
 	if err != nil {
 		// TODO: add better error handling
 		fmt.Println(err)
 	}
-	return bar, nil
+	return &barber.BarberResponse{
+		ID:        bar.ID,
+		Name:      bar.Name,
+		Email:     bar.Email,
+		CreatedAt: bar.CreatedAt,
+		Services:  bar.Services,
+		Products:  bar.Products,
+	}, nil
 }
 
 func (s *BarberService) GetBarberByEmail(email string) (*barber.Barber, error) {
@@ -42,10 +49,11 @@ func (s *BarberService) GetBarberByEmail(email string) (*barber.Barber, error) {
 		// TODO: add better error handling
 		fmt.Println(err)
 	}
+
 	return bar, nil
 }
 
-func (s *BarberService) RegisterBarber(input barber.BarberInput) error {
+func (s *BarberService) RegisterBarber(input barber.RegisterRequest) error {
 	barberExists, err := s.barberRepository.FindByEmail(input.Email)
 	if err != nil {
 		return err
@@ -59,7 +67,7 @@ func (s *BarberService) RegisterBarber(input barber.BarberInput) error {
 		return err
 	}
 
-	input = barber.BarberInput{
+	input = barber.RegisterRequest{
 		Name:     input.Name,
 		Email:    input.Email,
 		Password: hashedPassword,
@@ -74,7 +82,7 @@ func (s *BarberService) RegisterBarber(input barber.BarberInput) error {
 	return nil
 }
 
-func (s *BarberService) LoginBarber(input barber.LoginInput) (*barber.LoginResponse, error) {
+func (s *BarberService) LoginBarber(input barber.LoginRequest) (*barber.LoginResponse, error) {
 	bar, err := s.barberRepository.FindByEmail(input.Email)
 	if err != nil {
 		return nil, err
@@ -93,8 +101,15 @@ func (s *BarberService) LoginBarber(input barber.LoginInput) (*barber.LoginRespo
 		return nil, err
 	}
 
+	barberRes := barber.LoginBarberResponse{
+		ID:        bar.ID,
+		Name:      bar.Name,
+		Email:     bar.Email,
+		CreatedAt: bar.CreatedAt,
+	}
+
 	return &barber.LoginResponse{
 		AccessToken: token,
-		Barber:      bar,
+		Barber:      barberRes,
 	}, nil
 }

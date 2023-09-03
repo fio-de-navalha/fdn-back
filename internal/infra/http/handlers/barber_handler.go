@@ -36,7 +36,7 @@ func (h *BarberHandler) GetById(c *fiber.Ctx) error {
 }
 
 func (h *BarberHandler) Register(c *fiber.Ctx) error {
-	body := new(barber.BarberInput)
+	body := new(barber.RegisterRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid request body",
@@ -49,7 +49,7 @@ func (h *BarberHandler) Register(c *fiber.Ctx) error {
 		})
 	}
 
-	input := barber.BarberInput{
+	input := barber.RegisterRequest{
 		Name:     body.Name,
 		Email:    body.Email,
 		Password: body.Password,
@@ -66,7 +66,7 @@ func (h *BarberHandler) Register(c *fiber.Ctx) error {
 }
 
 func (h *BarberHandler) Login(c *fiber.Ctx) error {
-	body := new(barber.LoginInput)
+	body := new(barber.LoginRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid request body",
@@ -80,7 +80,7 @@ func (h *BarberHandler) Login(c *fiber.Ctx) error {
 		})
 	}
 
-	input := barber.LoginInput{
+	input := barber.LoginRequest{
 		Email:    body.Email,
 		Password: body.Password,
 	}

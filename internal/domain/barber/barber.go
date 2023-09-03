@@ -18,7 +18,7 @@ type Barber struct {
 	Products  []product.Product `json:"products"`
 }
 
-func NewBarber(input BarberInput) *Barber {
+func NewBarber(input RegisterRequest) *Barber {
 	return &Barber{
 		ID:        uuid.NewString(),
 		Name:      input.Name,

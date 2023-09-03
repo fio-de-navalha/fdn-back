@@ -14,7 +14,7 @@ type Customer struct {
 	CreatedAt time.Time `json:"createdAt"`
 }
 
-func NewCustomer(input CustomerInput) *Customer {
+func NewCustomer(input RegisterRequest) *Customer {
 	return &Customer{
 		ID:        uuid.NewString(),
 		Name:      input.Name,

@@ -36,7 +36,7 @@ func (h *CustomerHandler) GetById(c *fiber.Ctx) error {
 }
 
 func (h *CustomerHandler) Register(c *fiber.Ctx) error {
-	body := new(customer.CustomerInput)
+	body := new(customer.RegisterRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid request body",
@@ -50,7 +50,7 @@ func (h *CustomerHandler) Register(c *fiber.Ctx) error {
 		})
 	}
 
-	input := customer.CustomerInput{
+	input := customer.RegisterRequest{
 		Name:     body.Name,
 		Phone:    body.Phone,
 		Password: body.Password,
@@ -67,7 +67,7 @@ func (h *CustomerHandler) Register(c *fiber.Ctx) error {
 }
 
 func (h *CustomerHandler) Login(c *fiber.Ctx) error {
-	body := new(customer.LoginInput)
+	body := new(customer.LoginRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid request body",
@@ -81,7 +81,7 @@ func (h *CustomerHandler) Login(c *fiber.Ctx) error {
 		})
 	}
 
-	input := customer.LoginInput{
+	input := customer.LoginRequest{
 		Phone:    body.Phone,
 		Password: body.Password,
 	}
