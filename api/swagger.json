@@ -77,7 +77,7 @@
         "summary": "Get a barber information",
         "parameters": [
           {
-            "name": "id",
+            "name": "barberId",
             "in": "path",
             "description": "ID of the barber to retrieve",
             "required": true,
