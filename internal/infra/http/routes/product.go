@@ -7,7 +7,7 @@ import (
 )
 
 func setupProductRouter(router fiber.Router) {
-	products := router.Group("/barbers/:barberId")
+	products := router.Group("/barber/:barberId")
 
 	products.Get("/products", container.ProductHandler.GetByBarberId)
 	products.Post("/products", middlewares.EnsureBarberRole(), container.ProductHandler.Create)

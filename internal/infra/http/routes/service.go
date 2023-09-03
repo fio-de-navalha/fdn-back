@@ -7,7 +7,7 @@ import (
 )
 
 func setupServiceRouter(router fiber.Router) {
-	services := router.Group("/barbers/:barberId")
+	services := router.Group("/barber/:barberId")
 
 	services.Get("/services", container.ServiceHandler.GetByBarberId)
 	services.Post("/services", middlewares.EnsureBarberRole(), container.ServiceHandler.Create)
