@@ -31,7 +31,7 @@ func Migrate() error {
 }
 
 func runMigrations(db *gorm.DB) error {
-	basePath := "./internal/infra/database/migrations/"
+	basePath := "./db"
 
 	migrationFiles := getRanMigrations(db)
 	files := getMigrationFiles(basePath)
