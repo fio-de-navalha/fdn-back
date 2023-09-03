@@ -205,6 +205,11 @@
       "post": {
         "tags": ["Service"],
         "summary": "Create a service",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
         "parameters": [
           {
             "name": "barberId",
@@ -248,6 +253,11 @@
       "put": {
         "tags": ["Service"],
         "summary": "Update a service",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
         "parameters": [
           {
             "name": "barberId",
@@ -336,6 +346,11 @@
       "post": {
         "tags": ["Product"],
         "summary": "Create a product",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
         "parameters": [
           {
             "name": "barberId",
@@ -376,6 +391,11 @@
       "put": {
         "tags": ["Product"],
         "summary": "Update a product",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
         "parameters": [
           {
             "name": "barberId",
@@ -415,6 +435,13 @@
           }
         }
       }
+    }
+  },
+  "securityDefinitions": {
+    "APIKeyHeader": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
     }
   }
 }
