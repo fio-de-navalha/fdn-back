@@ -16,6 +16,18 @@ func NewGormProductRepository() *gormProductRepository {
 	}
 }
 
+func (r *gormProductRepository) FindManyByIds(id []uint) ([]*product.Product, error) {
+	var p []*product.Product
+	result := r.db.Find(&p, "id IN ?", id)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
+		return nil, result.Error
+	}
+	return p, nil
+}
+
 func (r *gormProductRepository) FindById(id uint) (*product.Product, error) {
 	var p product.Product
 	result := r.db.First(&p, "id = ?", id)

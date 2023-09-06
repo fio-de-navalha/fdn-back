@@ -2,6 +2,7 @@ package http
 
 import (
 	"os"
+	"strings"
 	"time"
 
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http/routes"
@@ -22,7 +23,7 @@ func Server() {
 	app.Use(idempotency.New())
 	app.Use(limiter.New(limiter.Config{
 		Next: func(c *fiber.Ctx) bool {
-			return c.Path() == "/api/health" || c.Path() == "/metrics"
+			return c.Path() == "/api/health"
 		},
 		Max:               15,
 		Expiration:        30 * time.Second,
@@ -30,7 +31,7 @@ func Server() {
 	}))
 	app.Use(cache.New(cache.Config{
 		Next: func(c *fiber.Ctx) bool {
-			if c.Path() == "/api/health" || c.Path() == "/metrics" {
+			if c.Path() == "/api/health" || strings.Contains(c.Path(), "appointment") {
 				return true
 			}
 			return c.Query("refresh") == "true"

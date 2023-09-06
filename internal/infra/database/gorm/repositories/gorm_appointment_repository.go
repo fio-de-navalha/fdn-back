@@ -16,7 +16,7 @@ func NewGormAppointmentRepository() *gormAppointmentRepository {
 	}
 }
 
-func (r *gormAppointmentRepository) FindById(id string) (*appointment.Appointment, error) {
+func (r *gormAppointmentRepository) FindById(id uint) (*appointment.Appointment, error) {
 	var a appointment.Appointment
 	result := r.db.
 		Preload("Services").

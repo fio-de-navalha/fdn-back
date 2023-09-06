@@ -18,6 +18,18 @@ func NewGormServiceRepository() *gormServiceRepository {
 	}
 }
 
+func (r *gormServiceRepository) FindManyByIds(id []uint) ([]*service.Service, error) {
+	var s []*service.Service
+	result := r.db.Find(&s, "id IN ?", id)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
+		return nil, result.Error
+	}
+	return s, nil
+}
+
 func (r *gormServiceRepository) FindById(id uint) (*service.Service, error) {
 	var s service.Service
 	result := r.db.First(&s, "id = ?", id)
