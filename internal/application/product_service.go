@@ -80,3 +80,12 @@ func (s *ProductService) UpdateProduct(productId uint, input product.UpdateProdu
 	}
 	return nil
 }
+
+func (s *ProductService) getManyProducts(productIds []uint) ([]*product.Product, error) {
+	res, err := s.productRepository.FindManyByIds(productIds)
+	if err != nil {
+		// TODO: add better error handling
+		fmt.Println(err)
+	}
+	return res, nil
+}

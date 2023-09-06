@@ -83,3 +83,12 @@ func (s *ServiceService) UpdateService(serviceId uint, input service.UpdateServi
 	}
 	return nil
 }
+
+func (s *ServiceService) getManyServices(serviceIds []uint) ([]*service.Service, error) {
+	res, err := s.serviceRepository.FindManyByIds(serviceIds)
+	if err != nil {
+		// TODO: add better error handling
+		fmt.Println(err)
+	}
+	return res, nil
+}
