@@ -1,20 +1,11 @@
 package appointment
 
-import (
-	"time"
+import "time"
 
-	"github.com/fio-de-navalha/fdn-back/internal/domain/product"
-	"github.com/fio-de-navalha/fdn-back/internal/domain/service"
-)
-
-type AppointmentResponse struct {
-	ID            uint              `json:"id" gorm:"primaryKey"`
-	BarberId      string            `json:"barberId"`
-	CustomerId    string            `json:"customerId"`
-	DurationInMin int32             `json:"durationInMin"`
-	StartsAt      time.Time         `json:"startsAt"`
-	EndsAt        time.Time         `json:"endsAt"`
-	CreatedAt     time.Time         `json:"createdAt"`
-	Services      []service.Service `json:"services"`
-	Products      []product.Product `json:"products"`
+type CreateAppointmentRequest struct {
+	BarberId   string    `json:"barberId" validate:"required,uuid4"`
+	CustomerId string    `json:"customerId" validate:"required,uuid4"`
+	StartsAt   time.Time `json:"startsAt"`
+	ServiceIds []uint    `json:"serviceIds"`
+	ProductIds []uint    `json:"productIds"`
 }
