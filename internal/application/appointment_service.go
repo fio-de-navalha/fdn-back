@@ -51,7 +51,7 @@ func (s *AppointmentService) GetCustomerAppointments(customerId string) ([]*appo
 	return a, nil
 }
 
-func (s *AppointmentService) GetAppointment(id uint) (*appointment.Appointment, error) {
+func (s *AppointmentService) GetAppointment(id string) (*appointment.Appointment, error) {
 	a, err := s.appointmentRepository.FindById(id)
 	if err != nil {
 		// TODO: add better error handling
@@ -74,8 +74,8 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 	}
 
 	// Check services exists and is availeble
-	var durationInMin int32 // Change durationInMin type to int
-	var servicesToSave []uint
+	var durationInMin int // Change durationInMin type to int
+	var servicesIdsToSave []string
 	services, err := s.serviceService.getManyServices(input.ServiceIds)
 	if err != nil {
 		return err
@@ -83,19 +83,19 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 	for _, v := range services {
 		if v.Available {
 			durationInMin += v.DurationInMin
-			servicesToSave = append(servicesToSave, v.ID)
+			servicesIdsToSave = append(servicesIdsToSave, v.ID)
 		}
 	}
 
 	// Check products exists
-	var productsToSave []uint
+	var productsIdsToSave []string
 	products, err := s.productService.getManyProducts(input.ProductIds)
 	if err != nil {
 		return err
 	}
 	for _, v := range products {
 		if v.Available {
-			productsToSave = append(productsToSave, v.ID)
+			productsIdsToSave = append(productsIdsToSave, v.ID)
 		}
 	}
 
@@ -113,11 +113,24 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 	appo := appointment.NewAppointment(
 		input.BarberId,
 		input.CustomerId,
-		int(durationInMin),
+		durationInMin,
 		input.StartsAt,
 		endsAt,
 	)
-	_, err = s.appointmentRepository.Save(appo)
+
+	var servicesToSave []*appointment.AppointmentService
+	for _, v := range servicesIdsToSave {
+		ser := appointment.NewAppointmentService(appo.ID, v)
+		servicesToSave = append(servicesToSave, ser)
+	}
+
+	var productsToSave []*appointment.AppointmentProduct
+	for _, v := range productsIdsToSave {
+		pro := appointment.NewAppointmentProduct(appo.ID, v)
+		productsToSave = append(productsToSave, pro)
+	}
+
+	_, err = s.appointmentRepository.Save(appo, servicesToSave, productsToSave)
 	if err != nil {
 		return err
 	}

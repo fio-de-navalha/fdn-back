@@ -1,16 +1,19 @@
 package service
 
+import "github.com/google/uuid"
+
 type Service struct {
-	ID            uint   `json:"id" gorm:"primaryKey"`
+	ID            string `json:"id" gorm:"primaryKey"`
 	BarberId      string `json:"barberId"`
 	Name          string `json:"name"`
-	Price         int32  `json:"price"`
-	DurationInMin int32  `json:"durationInMin"`
+	Price         int    `json:"price"`
+	DurationInMin int    `json:"durationInMin"`
 	Available     bool   `json:"available"`
 }
 
 func NewService(input CreateServiceInput) *Service {
 	return &Service{
+		ID:            uuid.NewString(),
 		BarberId:      input.BarberId,
 		Name:          input.Name,
 		Price:         input.Price,

@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"fmt"
-
 	"github.com/fio-de-navalha/fdn-back/internal/application"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/service"
 	"github.com/go-playground/validator"
@@ -65,11 +63,7 @@ func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 }
 
 func (h *ServiceHandler) Update(c *fiber.Ctx) error {
-	param := struct {
-		ServiceId uint `params:"serviceId"`
-	}{}
-	c.ParamsParser(&param)
-	fmt.Println(param)
+	serviceId := c.Params("serviceId")
 	body := new(service.UpdateServiceInput)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -84,7 +78,7 @@ func (h *ServiceHandler) Update(c *fiber.Ctx) error {
 		Available:     body.Available,
 	}
 
-	err := h.serviceService.UpdateService(param.ServiceId, input)
+	err := h.serviceService.UpdateService(serviceId, input)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),

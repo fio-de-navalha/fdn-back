@@ -18,7 +18,7 @@ func NewGormServiceRepository() *gormServiceRepository {
 	}
 }
 
-func (r *gormServiceRepository) FindManyByIds(id []uint) ([]*service.Service, error) {
+func (r *gormServiceRepository) FindManyByIds(id []string) ([]*service.Service, error) {
 	var s []*service.Service
 	result := r.db.Find(&s, "id IN ?", id)
 	if result.Error != nil {
@@ -30,7 +30,7 @@ func (r *gormServiceRepository) FindManyByIds(id []uint) ([]*service.Service, er
 	return s, nil
 }
 
-func (r *gormServiceRepository) FindById(id uint) (*service.Service, error) {
+func (r *gormServiceRepository) FindById(id string) (*service.Service, error) {
 	var s service.Service
 	result := r.db.First(&s, "id = ?", id)
 	if result.Error != nil {

@@ -40,11 +40,8 @@ func (h *AppointmentHandler) GetCustomerAppointments(c *fiber.Ctx) error {
 }
 
 func (h *AppointmentHandler) GetAppointment(c *fiber.Ctx) error {
-	param := struct {
-		Id uint `params:"id"`
-	}{}
-	c.ParamsParser(&param)
-	res, err := h.appointmentService.GetAppointment(param.Id)
+	id := c.Params("id")
+	res, err := h.appointmentService.GetAppointment(id)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),

@@ -54,7 +54,7 @@ func (s *ProductService) CreateProduct(input product.CreateProductInput) error {
 	return nil
 }
 
-func (s *ProductService) UpdateProduct(productId uint, input product.UpdateProductInput) error {
+func (s *ProductService) UpdateProduct(productId string, input product.UpdateProductInput) error {
 	ser, err := s.productRepository.FindById(productId)
 	if err != nil {
 		return err
@@ -81,7 +81,7 @@ func (s *ProductService) UpdateProduct(productId uint, input product.UpdateProdu
 	return nil
 }
 
-func (s *ProductService) getManyProducts(productIds []uint) ([]*product.Product, error) {
+func (s *ProductService) getManyProducts(productIds []string) ([]*product.Product, error) {
 	res, err := s.productRepository.FindManyByIds(productIds)
 	if err != nil {
 		// TODO: add better error handling

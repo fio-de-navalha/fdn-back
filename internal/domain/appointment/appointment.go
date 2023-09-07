@@ -5,10 +5,11 @@ import (
 
 	"github.com/fio-de-navalha/fdn-back/internal/domain/product"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/service"
+	"github.com/google/uuid"
 )
 
 type Appointment struct {
-	ID            uint              `json:"id" gorm:"primaryKey"`
+	ID            string              `json:"id" gorm:"primaryKey"`
 	BarberId      string            `json:"barberId"`
 	CustomerId    string            `json:"customerId"`
 	DurationInMin int               `json:"durationInMin"`
@@ -27,6 +28,7 @@ func NewAppointment(
 	endsAt time.Time,
 ) *Appointment {
 	return &Appointment{
+		ID: 		   uuid.NewString(),
 		BarberId:      barberId,
 		CustomerId:    customerId,
 		DurationInMin: durationInMin,

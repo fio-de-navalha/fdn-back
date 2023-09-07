@@ -30,8 +30,10 @@ func (s *BarberService) GetManyBarbers() ([]*barber.Barber, error) {
 func (s *BarberService) GetBarberById(id string) (*barber.BarberResponse, error) {
 	bar, err := s.barberRepository.FindById(id)
 	if err != nil {
-		// TODO: add better error handling
-		fmt.Println(err)
+		return nil, err
+	}
+	if bar == nil {
+		return nil, errors.New("barber not found")
 	}
 	return &barber.BarberResponse{
 		ID:        bar.ID,

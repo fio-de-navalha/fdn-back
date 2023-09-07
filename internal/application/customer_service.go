@@ -30,8 +30,10 @@ func (s *CustomerService) GetManyCustomers() ([]*customer.Customer, error) {
 func (s *CustomerService) GetCustomerById(id string) (*customer.CustomerResponse, error) {
 	cus, err := s.customerRepository.FindById(id)
 	if err != nil {
-		// TODO: add better error handling
-		fmt.Println(err)
+		return nil, err
+	}
+	if cus == nil {
+		return nil, errors.New("customer not found")
 	}
 	return &customer.CustomerResponse{
 		ID:        cus.ID,

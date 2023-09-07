@@ -54,7 +54,7 @@ func (s *ServiceService) CreateService(input service.CreateServiceInput) error {
 	return nil
 }
 
-func (s *ServiceService) UpdateService(serviceId uint, input service.UpdateServiceInput) error {
+func (s *ServiceService) UpdateService(serviceId string, input service.UpdateServiceInput) error {
 	ser, err := s.serviceRepository.FindById(serviceId)
 	if err != nil {
 		return err
@@ -84,7 +84,7 @@ func (s *ServiceService) UpdateService(serviceId uint, input service.UpdateServi
 	return nil
 }
 
-func (s *ServiceService) getManyServices(serviceIds []uint) ([]*service.Service, error) {
+func (s *ServiceService) getManyServices(serviceIds []string) ([]*service.Service, error) {
 	res, err := s.serviceRepository.FindManyByIds(serviceIds)
 	if err != nil {
 		// TODO: add better error handling

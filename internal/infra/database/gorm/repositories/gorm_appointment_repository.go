@@ -1,6 +1,7 @@
 package gorm_repository
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/fio-de-navalha/fdn-back/internal/domain/appointment"
@@ -18,7 +19,7 @@ func NewGormAppointmentRepository() *gormAppointmentRepository {
 	}
 }
 
-func (r *gormAppointmentRepository) FindById(id uint) (*appointment.Appointment, error) {
+func (r *gormAppointmentRepository) FindById(id string) (*appointment.Appointment, error) {
 	var a appointment.Appointment
 	result := r.db.
 		Preload("Services").
@@ -72,10 +73,25 @@ func (r *gormAppointmentRepository) FindByDates(startsAt time.Time, endsAt time.
 	return a, nil
 }
 
-func (r *gormAppointmentRepository) Save(appo *appointment.Appointment) (*appointment.Appointment, error) {
-	result := r.db.Save(appo)
+func (r *gormAppointmentRepository) Save(
+	appo *appointment.Appointment,
+	services []*appointment.AppointmentService,
+	products []*appointment.AppointmentProduct,
+) (*appointment.Appointment, error) {
+	result := r.db.Save(&appo)
 	if result.Error != nil {
 		return nil, result.Error
 	}
+
+	for _, service := range services {
+		err := r.db.Save(&service).Error
+		fmt.Println(err)
+	}
+
+	for _, product := range products {
+		err := r.db.Save(&product).Error
+		fmt.Println(err)
+	}
+
 	return appo, nil
 }

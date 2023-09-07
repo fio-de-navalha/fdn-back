@@ -1,8 +1,8 @@
 package service
 
 type ServiceRepository interface {
-	FindManyByIds(ids []uint) ([]*Service, error)
-	FindById(id uint) (*Service, error)
+	FindManyByIds(ids []string) ([]*Service, error)
+	FindById(id string) (*Service, error)
 	FindByBarberId(barberId string) ([]*Service, error)
 	Save(service *Service) (*Service, error)
 }
