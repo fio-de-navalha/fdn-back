@@ -3,9 +3,11 @@ package application
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/fio-de-navalha/fdn-back/internal/domain/appointment"
+	"golang.org/x/exp/slices"
 )
 
 type AppointmentService struct {
@@ -36,8 +38,7 @@ func (s *AppointmentService) GetBarberAppointments(barberId string) ([]*appointm
 	fmt.Println(barberId)
 	a, err := s.appointmentRepository.FindByBarberId(barberId)
 	if err != nil {
-		// TODO: add better error handling
-		fmt.Println(err)
+		return nil, err
 	}
 	return a, nil
 }
@@ -45,8 +46,7 @@ func (s *AppointmentService) GetBarberAppointments(barberId string) ([]*appointm
 func (s *AppointmentService) GetCustomerAppointments(customerId string) ([]*appointment.Appointment, error) {
 	a, err := s.appointmentRepository.FindByCustomerId(customerId)
 	if err != nil {
-		// TODO: add better error handling
-		fmt.Println(err)
+		return nil, err
 	}
 	return a, nil
 }
@@ -54,31 +54,30 @@ func (s *AppointmentService) GetCustomerAppointments(customerId string) ([]*appo
 func (s *AppointmentService) GetAppointment(id string) (*appointment.Appointment, error) {
 	a, err := s.appointmentRepository.FindById(id)
 	if err != nil {
-		// TODO: add better error handling
-		fmt.Println(err)
+		return nil, err
 	}
 	return a, nil
 }
 
 func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointmentRequest) error {
-	// Check barber exists
 	_, err := s.barberService.GetBarberById(input.BarberId)
 	if err != nil {
 		return errors.New("barber not found")
 	}
 
-	// Check customer exists
 	_, err = s.customerService.GetCustomerById(input.CustomerId)
 	if err != nil {
 		return errors.New("customer not found")
 	}
 
-	// Check services exists and is availeble
-	var durationInMin int // Change durationInMin type to int
+	var durationInMin int
 	var servicesIdsToSave []string
 	services, err := s.serviceService.getManyServices(input.ServiceIds)
 	if err != nil {
 		return err
+	}
+	if len(services) == 0 {
+		return errors.New("services not found")
 	}
 	for _, v := range services {
 		if v.Available {
@@ -86,8 +85,11 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 			servicesIdsToSave = append(servicesIdsToSave, v.ID)
 		}
 	}
+	err = validateAssociation("services", input.ServiceIds, servicesIdsToSave)
+	if err != nil {
+		return err
+	}
 
-	// Check products exists
 	var productsIdsToSave []string
 	products, err := s.productService.getManyProducts(input.ProductIds)
 	if err != nil {
@@ -98,8 +100,11 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 			productsIdsToSave = append(productsIdsToSave, v.ID)
 		}
 	}
+	err = validateAssociation("products", input.ProductIds, productsIdsToSave)
+	if err != nil {
+		return err
+	}
 
-	// Check if date time is available
 	endsAt := input.StartsAt.Add(time.Minute * time.Duration(durationInMin))
 	appos, err := s.appointmentRepository.FindByDates(input.StartsAt, endsAt)
 	if err != nil {
@@ -109,7 +114,6 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 		return errors.New("time box not available")
 	}
 
-	// Create appointment
 	appo := appointment.NewAppointment(
 		input.BarberId,
 		input.CustomerId,
@@ -117,23 +121,34 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 		input.StartsAt,
 		endsAt,
 	)
-
 	var servicesToSave []*appointment.AppointmentService
 	for _, v := range servicesIdsToSave {
 		ser := appointment.NewAppointmentService(appo.ID, v)
 		servicesToSave = append(servicesToSave, ser)
 	}
-
 	var productsToSave []*appointment.AppointmentProduct
 	for _, v := range productsIdsToSave {
 		pro := appointment.NewAppointmentProduct(appo.ID, v)
 		productsToSave = append(productsToSave, pro)
 	}
-
 	_, err = s.appointmentRepository.Save(appo, servicesToSave, productsToSave)
 	if err != nil {
 		return err
 	}
 
+	return nil
+}
+
+func validateAssociation(context string, input []string, idsToSave []string) error {
+	var itemNotFound []string
+	for _, id := range input {
+		if !slices.Contains(idsToSave, id) {
+			itemNotFound = append(itemNotFound, id)
+			continue
+		}
+	}
+	if len(itemNotFound) > 0 {
+		return errors.New(context + " not found:" + strings.Join(itemNotFound, ", "))
+	}
 	return nil
 }
