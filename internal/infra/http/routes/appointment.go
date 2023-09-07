@@ -8,4 +8,6 @@ import (
 func setupAppointmentRouter(router fiber.Router) {
 	router.Get("/barber/:barberId/appointments", container.AppointmentHandler.GetBarberAppointments)
 	router.Get("/customer/:customerId/appointments", container.AppointmentHandler.GetCustomerAppointments)
+
+	router.Post("/appointment", container.AppointmentHandler.Create)
 }

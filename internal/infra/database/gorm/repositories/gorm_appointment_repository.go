@@ -1,6 +1,8 @@
 package gorm_repository
 
 import (
+	"time"
+
 	"github.com/fio-de-navalha/fdn-back/internal/domain/appointment"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/database"
 	"gorm.io/gorm"
@@ -53,6 +55,16 @@ func (r *gormAppointmentRepository) FindByCustomerId(customerId string) ([]*appo
 		Preload("Products").
 		Where("customer_id = ?", customerId).
 		Find(&a)
+
+	if res.Error != nil {
+		return nil, res.Error
+	}
+	return a, nil
+}
+
+func (r *gormAppointmentRepository) FindByDates(startsAt time.Time, endsAt time.Time) ([]*appointment.Appointment, error) {
+	var a []*appointment.Appointment
+	res := r.db.Where("starts_at <= ? AND ends_at >= ?", endsAt, startsAt).Find(&a)
 
 	if res.Error != nil {
 		return nil, res.Error

@@ -3,6 +3,7 @@ package application
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/fio-de-navalha/fdn-back/internal/domain/appointment"
 )
@@ -73,11 +74,11 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 	}
 
 	// Check services exists and is availeble
-	var durationInMin int32
+	var durationInMin int32 // Change durationInMin type to int
 	var servicesToSave []uint
 	services, err := s.serviceService.getManyServices(input.ServiceIds)
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
 	for _, v := range services {
 		if v.Available {
@@ -90,7 +91,7 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 	var productsToSave []uint
 	products, err := s.productService.getManyProducts(input.ProductIds)
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
 	for _, v := range products {
 		if v.Available {
@@ -98,11 +99,28 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 		}
 	}
 
-	fmt.Println(durationInMin)
-
 	// Check if date time is available
+	endsAt := input.StartsAt.Add(time.Minute * time.Duration(durationInMin))
+	appos, err := s.appointmentRepository.FindByDates(input.StartsAt, endsAt)
+	if err != nil {
+		return err
+	}
+	if len(appos) > 0 {
+		return errors.New("time box not available")
+	}
 
 	// Create appointment
+	appo := appointment.NewAppointment(
+		input.BarberId,
+		input.CustomerId,
+		int(durationInMin),
+		input.StartsAt,
+		endsAt,
+	)
+	_, err = s.appointmentRepository.Save(appo)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

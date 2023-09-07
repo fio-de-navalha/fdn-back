@@ -19,24 +19,19 @@ type Appointment struct {
 	Products      []product.Product `gorm:"many2many:appointment_product;"`
 }
 
-func NewAppointment(inputs CreateAppointmentRequest) *Appointment {
-	durations := []int{0, 2}
-	durationInMin := calculateDuration(durations)
-
+func NewAppointment(
+	barberId string,
+	customerId string,
+	durationInMin int,
+	startsAt time.Time,
+	endsAt time.Time,
+) *Appointment {
 	return &Appointment{
-		BarberId:      inputs.BarberId,
-		CustomerId:    inputs.CustomerId,
+		BarberId:      barberId,
+		CustomerId:    customerId,
 		DurationInMin: durationInMin,
-		StartsAt:      inputs.StartsAt,
-		EndsAt:        time.Now(),
+		StartsAt:      startsAt,
+		EndsAt:        endsAt,
 		CreatedAt:     time.Now(),
 	}
-}
-
-func calculateDuration(durations []int) int {
-	total := 0
-	for i := 0; i < len(durations); i++ {
-		total += int(durations[i])
-	}
-	return total
 }
