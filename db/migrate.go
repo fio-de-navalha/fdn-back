@@ -67,11 +67,13 @@ func executeMigrationFile(db *gorm.DB, basePath string, file fs.DirEntry) {
 		fmt.Print(err)
 	}
 
-	fmt.Println("Running migration for: ", file.Name())
+	fmt.Print("Running migration for: ", file.Name())
 	err = db.Exec(string(c)).Error
 	if err != nil {
 		panic("Could not run migration" + file.Name())
 	} else {
+		fmt.Print(" -")
+		fmt.Println(string("\033[32m"), "[OK]", string("\033[0m"))
 		db.Exec("INSERT INTO migrations (file, created_at) VALUES (?, ?)", file.Name(), time.Now())
 	}
 }
