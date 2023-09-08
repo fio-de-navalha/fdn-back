@@ -48,10 +48,8 @@ func (s *AppointmentService) GetBarberAppointments(barberId string, startsAt tim
 	log.Println("[application.GetBarberAppointments] - Getting appointments from barber:", barberId)
 	a, err := s.appointmentRepository.FindByBarberId(barberId, startsAt, endsAt)
 	if err != nil {
-		log.Println("[application.GetBarberAppointments] - Error when getting appointments from barber:", barberId)
 		return nil, err
 	}
-	log.Println("[application.GetBarberAppointments] - Successfully got appointments from barber:", barberId)
 	return a, nil
 }
 
@@ -59,10 +57,8 @@ func (s *AppointmentService) GetCustomerAppointments(customerId string) ([]*appo
 	log.Println("[application.GetCustomerAppointments] - Getting appointments from customer:", customerId)
 	a, err := s.appointmentRepository.FindByCustomerId(customerId)
 	if err != nil {
-		log.Println("[application.GetCustomerAppointments] - Error when getting appointments from customer:", customerId)
 		return nil, err
 	}
-	log.Println("[application.GetCustomerAppointments] - Successfully got appointments from customer:", customerId)
 	return a, nil
 }
 
@@ -70,10 +66,8 @@ func (s *AppointmentService) GetAppointment(id string) (*appointment.Appointment
 	log.Println("[application.GetAppointment] - Getting appointment:", id)
 	a, err := s.appointmentRepository.FindById(id)
 	if err != nil {
-		log.Println("[application.GetAppointment] - Error when getting appointment:", id)
 		return nil, err
 	}
-	log.Println("[application.GetAppointment] - Successfully got appointment:", id)
 	return a, nil
 }
 
@@ -177,7 +171,6 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 		return err
 	}
 
-	log.Println("[application.CreateApppointment] - Successfully created appointment")
 	return nil
 }
 
@@ -201,7 +194,7 @@ func (s *AppointmentService) validateAppointmentTimeRange(startsAt, endsAt time.
 		return err
 	}
 	if len(appos) > 0 {
-		return errors.New("time box not available")
+		return errors.New("appointment time conflict")
 	}
 	return nil
 }

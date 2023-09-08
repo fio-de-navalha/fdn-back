@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"log"
+	"strings"
 	"time"
 
 	"github.com/fio-de-navalha/fdn-back/internal/application"
@@ -38,6 +39,11 @@ func (h *AppointmentHandler) GetBarberAppointments(c *fiber.Ctx) error {
 
 	res, err := h.appointmentService.GetBarberAppointments(id, startsAt)
 	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})
@@ -50,6 +56,11 @@ func (h *AppointmentHandler) GetCustomerAppointments(c *fiber.Ctx) error {
 	id := c.Params("customerId")
 	res, err := h.appointmentService.GetCustomerAppointments(id)
 	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})
@@ -62,6 +73,11 @@ func (h *AppointmentHandler) GetAppointment(c *fiber.Ctx) error {
 	id := c.Params("id")
 	res, err := h.appointmentService.GetAppointment(id)
 	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})
@@ -93,6 +109,12 @@ func (h *AppointmentHandler) Create(c *fiber.Ctx) error {
 	}
 	err := h.appointmentService.CreateApppointment(input)
 	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})

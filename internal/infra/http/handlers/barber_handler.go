@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"log"
+	"strings"
 
 	"github.com/fio-de-navalha/fdn-back/internal/application"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/barber"
@@ -24,13 +25,14 @@ func (h *BarberHandler) GetById(c *fiber.Ctx) error {
 	id := c.Params("id")
 	res, err := h.barberService.GetBarberById(id)
 	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
-		})
-	}
-	if res == nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": "Barber not found",
 		})
 	}
 
@@ -60,6 +62,12 @@ func (h *BarberHandler) Register(c *fiber.Ctx) error {
 
 	err := h.barberService.RegisterBarber(input)
 	if err != nil {
+		if strings.Contains(err.Error(), "alredy exists") {
+			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})
@@ -91,6 +99,12 @@ func (h *BarberHandler) Login(c *fiber.Ctx) error {
 
 	res, err := h.barberService.LoginBarber(input)
 	if err != nil {
+		if err.Error() == "invalid credentials" {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})

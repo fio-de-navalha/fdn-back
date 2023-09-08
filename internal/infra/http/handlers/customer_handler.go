@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"log"
+	"strings"
 
 	"github.com/fio-de-navalha/fdn-back/internal/application"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/customer"
@@ -24,13 +25,14 @@ func (h *CustomerHandler) GetById(c *fiber.Ctx) error {
 	id := c.Params("id")
 	res, err := h.customerService.GetCustomerById(id)
 	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
-		})
-	}
-	if res == nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": "Customer not found",
 		})
 	}
 
@@ -61,6 +63,12 @@ func (h *CustomerHandler) Register(c *fiber.Ctx) error {
 
 	err := h.customerService.RegisterCustomer(input)
 	if err != nil {
+		if strings.Contains(err.Error(), "alredy exists") {
+			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})
@@ -92,6 +100,12 @@ func (h *CustomerHandler) Login(c *fiber.Ctx) error {
 
 	resp, err := h.customerService.LoginCustomer(input)
 	if err != nil {
+		if err.Error() == "invalid credentials" {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})

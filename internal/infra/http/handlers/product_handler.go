@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"log"
+	"strings"
 
 	"github.com/fio-de-navalha/fdn-back/internal/application"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/product"
@@ -24,6 +25,11 @@ func (h *ProductHandler) GetByBarberId(c *fiber.Ctx) error {
 	barberId := c.Params("barberId")
 	res, err := h.productService.GetProductsByBarberId(barberId)
 	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})
@@ -56,6 +62,11 @@ func (h *ProductHandler) Create(c *fiber.Ctx) error {
 
 	err := h.productService.CreateProduct(input)
 	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})
@@ -82,6 +93,11 @@ func (h *ProductHandler) Update(c *fiber.Ctx) error {
 
 	err := h.productService.UpdateProduct(productId, input)
 	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})

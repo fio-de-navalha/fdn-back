@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"log"
+	"strings"
 
 	"github.com/fio-de-navalha/fdn-back/internal/application"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/service"
@@ -24,6 +25,11 @@ func (h *ServiceHandler) GetByBarberId(c *fiber.Ctx) error {
 	barberId := c.Params("barberId")
 	res, err := h.serviceService.GetServicesByBarberId(barberId)
 	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})
@@ -57,6 +63,11 @@ func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 
 	err := h.serviceService.CreateService(input)
 	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})
@@ -84,6 +95,11 @@ func (h *ServiceHandler) Update(c *fiber.Ctx) error {
 
 	err := h.serviceService.UpdateService(serviceId, input)
 	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})
