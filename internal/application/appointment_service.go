@@ -2,10 +2,10 @@ package application
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 	"time"
 
+	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/appointment"
 	"golang.org/x/exp/slices"
 )
@@ -34,9 +34,16 @@ func NewAppointmentService(
 	}
 }
 
-func (s *AppointmentService) GetBarberAppointments(barberId string) ([]*appointment.Appointment, error) {
-	fmt.Println(barberId)
-	a, err := s.appointmentRepository.FindByBarberId(barberId)
+func (s *AppointmentService) GetBarberAppointments(barberId string, startsAt time.Time) ([]*appointment.Appointment, error) {
+	endsAt := time.Date(
+		startsAt.Year(),
+		startsAt.Month(),
+		startsAt.Day(),
+		constants.EndsAtHour, constants.EndsAtMinute, 0, 0,
+		startsAt.Location(),
+	)
+
+	a, err := s.appointmentRepository.FindByBarberId(barberId, startsAt, endsAt)
 	if err != nil {
 		return nil, err
 	}

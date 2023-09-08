@@ -1,7 +1,10 @@
 package handlers
 
 import (
+	"time"
+
 	"github.com/fio-de-navalha/fdn-back/internal/application"
+	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/appointment"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
@@ -19,7 +22,19 @@ func NewAppointmentHandler(appointmentService application.AppointmentService) *A
 
 func (h *AppointmentHandler) GetBarberAppointments(c *fiber.Ctx) error {
 	id := c.Params("barberId")
-	res, err := h.appointmentService.GetBarberAppointments(id)
+	startsAtQuery := c.Query("startsAt")
+	if startsAtQuery == "" {
+		startsAtQuery = time.Now().Format(constants.DateLayout)
+	}
+
+	startsAt, err := time.Parse(constants.DateLayout, startsAtQuery)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	res, err := h.appointmentService.GetBarberAppointments(id, startsAt)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),

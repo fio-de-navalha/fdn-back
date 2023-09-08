@@ -35,12 +35,12 @@ func (r *gormAppointmentRepository) FindById(id string) (*appointment.Appointmen
 	return &a, nil
 }
 
-func (r *gormAppointmentRepository) FindByBarberId(barberId string) ([]*appointment.Appointment, error) {
+func (r *gormAppointmentRepository) FindByBarberId(barberId string, startsAt time.Time, endsAt time.Time) ([]*appointment.Appointment, error) {
 	var a []*appointment.Appointment
 	res := r.db.
 		Preload("Services").
 		Preload("Products").
-		Where("barber_id = ?", barberId).
+		Where("barber_id = ? AND starts_at > ? AND ends_at < ?", barberId, startsAt, endsAt).
 		Find(&a)
 
 	if res.Error != nil {
