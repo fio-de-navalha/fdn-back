@@ -43,7 +43,7 @@ func Server() {
 		EnableStackTrace: true,
 	}))
 	app.Use(logger.New(logger.Config{
-		Format: "${time} | ${ip}:${port} | ${latency} | ${status} | ${method} ${path}\n",
+		Format: "${time} | ${ip}:${port} | ${latency} | ${status} | ${method} ${path}\n\n",
 	}))
 
 	routes.FiberSetupRouters(app)
