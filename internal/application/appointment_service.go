@@ -90,57 +90,32 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 	}
 
 	log.Println("[application.CreateApppointment] - Validating services:", input.ServiceIds)
-	var durationInMin int
-	var servicesIdsToSave []string
 	services, err := s.serviceService.getManyServices(input.ServiceIds)
 	if err != nil {
-		log.Println("[application.CreateApppointment] - Error getting services:", input.ServiceIds)
 		return err
 	}
 	if len(services) == 0 {
-		log.Println("[application.CreateApppointment] - Services not found:", input.ServiceIds)
 		return errors.New("services not found")
 	}
-	for _, v := range services {
-		if v.Available {
-			durationInMin += v.DurationInMin
-			servicesIdsToSave = append(servicesIdsToSave, v.ID)
-		}
-	}
-	err = validateAssociation("services", input.ServiceIds, servicesIdsToSave)
-	if err != nil {
-		log.Println("[application.CreateApppointment] - One or more services not found")
+	servicesIdsToSave, durationInMin := s.serviceService.ValidateServicesAvailability(services)
+	if err := validateAssociation("services", input.ServiceIds, servicesIdsToSave); err != nil {
 		return err
 	}
 
 	log.Println("[application.CreateApppointment] - Validating products:", input.ProductIds)
-	var productsIdsToSave []string
 	products, err := s.productService.getManyProducts(input.ProductIds)
 	if err != nil {
-		log.Println("[application.CreateApppointment] - Error getting products:", input.ProductIds)
 		return err
 	}
-	for _, v := range products {
-		if v.Available {
-			productsIdsToSave = append(productsIdsToSave, v.ID)
-		}
-	}
-	err = validateAssociation("products", input.ProductIds, productsIdsToSave)
-	if err != nil {
-		log.Println("[application.CreateApppointment] - One or more products not found")
+	productsIdsToSave := s.productService.ValidateProductsAvailability(products)
+	if err := validateAssociation("products", input.ProductIds, productsIdsToSave); err != nil {
 		return err
 	}
 
 	log.Println("[application.CreateApppointment] - Validating appointment time range availability")
 	endsAt := input.StartsAt.Add(time.Minute * time.Duration(durationInMin))
-	appos, err := s.appointmentRepository.FindByDates(input.StartsAt, endsAt)
-	if err != nil {
-		log.Println("[application.CreateApppointment] - Error getting appointment time range")
+	if err := s.validateAppointmentTimeRange(input.StartsAt, endsAt); err != nil {
 		return err
-	}
-	if len(appos) > 0 {
-		log.Println("[application.CreateApppointment] - Appointment time range not available")
-		return errors.New("time box not available")
 	}
 
 	log.Println("[application.CreateApppointment] - Creating appointment")
@@ -152,18 +127,16 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 		endsAt,
 	)
 	var servicesToSave []*appointment.AppointmentService
+	var productsToSave []*appointment.AppointmentProduct
 	for _, v := range servicesIdsToSave {
 		ser := appointment.NewAppointmentService(appo.ID, v)
 		servicesToSave = append(servicesToSave, ser)
 	}
-	var productsToSave []*appointment.AppointmentProduct
 	for _, v := range productsIdsToSave {
 		pro := appointment.NewAppointmentProduct(appo.ID, v)
 		productsToSave = append(productsToSave, pro)
 	}
-	_, err = s.appointmentRepository.Save(appo, servicesToSave, productsToSave)
-	if err != nil {
-		log.Println("[application.CreateApppointment] - Error when creating appointment")
+	if _, err := s.appointmentRepository.Save(appo, servicesToSave, productsToSave); err != nil {
 		return err
 	}
 
@@ -182,6 +155,17 @@ func (s *AppointmentService) validateEntity(
 		return errors.New(context + " not found")
 	}
 
+	return nil
+}
+
+func (s *AppointmentService) validateAppointmentTimeRange(startsAt, endsAt time.Time) error {
+	appos, err := s.appointmentRepository.FindByDates(startsAt, endsAt)
+	if err != nil {
+		return err
+	}
+	if len(appos) > 0 {
+		return errors.New("time box not available")
+	}
 	return nil
 }
 

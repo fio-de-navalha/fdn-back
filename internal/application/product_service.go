@@ -84,3 +84,14 @@ func (s *ProductService) getManyProducts(productIds []string) ([]*product.Produc
 	}
 	return res, nil
 }
+
+func (s *ProductService) ValidateProductsAvailability(products []*product.Product) []string {
+	var productsIdsToSave []string
+	for _, v := range products {
+		if v.Available {
+			productsIdsToSave = append(productsIdsToSave, v.ID)
+		}
+	}
+
+	return productsIdsToSave
+}
