@@ -9,15 +9,15 @@ import (
 )
 
 type Appointment struct {
-	ID            string              `json:"id" gorm:"primaryKey"`
+	ID            string            `json:"id" gorm:"primaryKey"`
 	BarberId      string            `json:"barberId"`
 	CustomerId    string            `json:"customerId"`
 	DurationInMin int               `json:"durationInMin"`
 	StartsAt      time.Time         `json:"startsAt"`
 	EndsAt        time.Time         `json:"endsAt"`
 	CreatedAt     time.Time         `json:"createdAt"`
-	Services      []service.Service `gorm:"many2many:appointment_service;"`
-	Products      []product.Product `gorm:"many2many:appointment_product;"`
+	Services      []service.Service `json:"services" gorm:"many2many:appointment_service;"`
+	Products      []product.Product `json:"products" gorm:"many2many:appointment_product;"`
 }
 
 func NewAppointment(
@@ -28,7 +28,7 @@ func NewAppointment(
 	endsAt time.Time,
 ) *Appointment {
 	return &Appointment{
-		ID: 		   uuid.NewString(),
+		ID:            uuid.NewString(),
 		BarberId:      barberId,
 		CustomerId:    customerId,
 		DurationInMin: durationInMin,

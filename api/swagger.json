@@ -187,6 +187,35 @@
         }
       }
     },
+    "/customer/{customerId}/appointments": {
+      "get": {
+        "tags": ["Customer"],
+        "summary": "Get a customer appointments",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "description": "ID of the customer to retrieve",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Appointments"
+            }
+          },
+          "404": {
+            "description": "Not found response",
+            "schema": {
+              "$ref": "#/definitions/404"
+            }
+          }
+        }
+      }
+    },
     "/barber/{barberId}": {
       "get": {
         "tags": ["Barber"],
@@ -225,6 +254,43 @@
                   "$ref": "#/definitions/ProductList"
                 }
               }
+            }
+          }
+        }
+      }
+    },
+    "/barber/{barberId}/appointments": {
+      "get": {
+        "tags": ["Barber"],
+        "summary": "Get a barber appointments",
+        "parameters": [
+          {
+            "name": "barberId",
+            "in": "path",
+            "description": "ID of the barber to retrieve",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "startsAt",
+            "in": "query",
+            "description": "Date to filter appointments",
+            "required": false,
+            "type": "string",
+            "example": "2023-09-08T15:04:05.999999Z"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Appointments"
+            }
+          },
+          "404": {
+            "description": "Not found response",
+            "schema": {
+              "$ref": "#/definitions/404"
             }
           }
         }
@@ -576,6 +642,41 @@
     }
   },
   "definitions": {
+    "Appointments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "barberId": {
+            "type": "string"
+          },
+          "customerId": {
+            "type": "string"
+          },
+          "durationInMin": {
+            "type": "number"
+          },
+          "startsAt": {
+            "type": "string"
+          },
+          "endsAt": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "services": {
+            "$ref": "#/definitions/ServiceList"
+          },
+          "products": {
+            "$ref": "#/definitions/ProductList"
+          }
+        }
+      }
+    },
     "Barber": {
       "type": "object",
       "properties": {
