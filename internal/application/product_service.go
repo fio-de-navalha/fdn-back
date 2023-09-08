@@ -2,7 +2,6 @@ package application
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/fio-de-navalha/fdn-back/internal/domain/product"
 )
@@ -30,8 +29,7 @@ func (s *ProductService) GetProductsByBarberId(barberId string) ([]*product.Prod
 
 	res, err := s.productRepository.FindByBarberId(barberId)
 	if err != nil {
-		// TODO: add better error handling
-		fmt.Println(err)
+		return nil, err
 	}
 	return res, nil
 }
@@ -48,8 +46,7 @@ func (s *ProductService) CreateProduct(input product.CreateProductInput) error {
 	ser := product.NewProduct(input)
 	_, err = s.productRepository.Save(ser)
 	if err != nil {
-		// TODO: add better error handling
-		fmt.Println(err)
+		return err
 	}
 	return nil
 }
@@ -75,8 +72,7 @@ func (s *ProductService) UpdateProduct(productId string, input product.UpdatePro
 
 	_, err = s.productRepository.Save(ser)
 	if err != nil {
-		// TODO: add better error handling
-		fmt.Println(err)
+		return err
 	}
 	return nil
 }
@@ -84,8 +80,7 @@ func (s *ProductService) UpdateProduct(productId string, input product.UpdatePro
 func (s *ProductService) getManyProducts(productIds []string) ([]*product.Product, error) {
 	res, err := s.productRepository.FindManyByIds(productIds)
 	if err != nil {
-		// TODO: add better error handling
-		fmt.Println(err)
+		return nil, err
 	}
 	return res, nil
 }

@@ -2,7 +2,6 @@ package application
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/fio-de-navalha/fdn-back/internal/domain/barber"
 	"github.com/fio-de-navalha/fdn-back/pkg/cryptography"
@@ -21,8 +20,7 @@ func NewBarberService(barberRepository barber.BarberRepository) *BarberService {
 func (s *BarberService) GetManyBarbers() ([]*barber.Barber, error) {
 	bar, err := s.barberRepository.FindMany()
 	if err != nil {
-		// TODO: add better error handling
-		fmt.Println(err)
+		return nil, err
 	}
 	return bar, nil
 }
@@ -48,8 +46,7 @@ func (s *BarberService) GetBarberById(id string) (*barber.BarberResponse, error)
 func (s *BarberService) GetBarberByEmail(email string) (*barber.Barber, error) {
 	bar, err := s.barberRepository.FindByEmail(email)
 	if err != nil {
-		// TODO: add better error handling
-		fmt.Println(err)
+		return nil, err
 	}
 
 	return bar, nil
@@ -78,8 +75,7 @@ func (s *BarberService) RegisterBarber(input barber.RegisterRequest) error {
 	bar := barber.NewBarber(input)
 	_, err = s.barberRepository.Save(bar)
 	if err != nil {
-		// TODO: add better error handling
-		fmt.Println(err)
+		return err
 	}
 	return nil
 }

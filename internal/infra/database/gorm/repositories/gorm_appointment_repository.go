@@ -1,7 +1,6 @@
 package gorm_repository
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/fio-de-navalha/fdn-back/internal/domain/appointment"
@@ -85,12 +84,12 @@ func (r *gormAppointmentRepository) Save(
 
 	for _, service := range services {
 		err := r.db.Save(&service).Error
-		fmt.Println(err)
+		return nil, err
 	}
 
 	for _, product := range products {
 		err := r.db.Save(&product).Error
-		fmt.Println(err)
+		return nil, err
 	}
 
 	return appo, nil

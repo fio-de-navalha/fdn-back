@@ -2,7 +2,6 @@ package application
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/fio-de-navalha/fdn-back/internal/domain/customer"
 	"github.com/fio-de-navalha/fdn-back/pkg/cryptography"
@@ -21,8 +20,7 @@ func NewCustomerService(customerRepository customer.CustomerRepository) *Custome
 func (s *CustomerService) GetManyCustomers() ([]*customer.Customer, error) {
 	cus, err := s.customerRepository.FindMany()
 	if err != nil {
-		// TODO: add better error handling
-		fmt.Println(err)
+		return nil, err
 	}
 	return cus, nil
 }
@@ -46,8 +44,7 @@ func (s *CustomerService) GetCustomerById(id string) (*customer.CustomerResponse
 func (s *CustomerService) GetCustomerByPhone(phone string) (*customer.Customer, error) {
 	cus, err := s.customerRepository.FindByPhone(phone)
 	if err != nil {
-		// TODO: add better error handling
-		fmt.Println(err)
+		return nil, err
 	}
 	return cus, nil
 }
@@ -75,8 +72,7 @@ func (s *CustomerService) RegisterCustomer(input customer.RegisterRequest) error
 	cus := customer.NewCustomer(input)
 	_, err = s.customerRepository.Save(cus)
 	if err != nil {
-		// TODO: add better error handling
-		fmt.Println(err)
+		return err
 	}
 	return nil
 }

@@ -1,8 +1,6 @@
 package gorm_repository
 
 import (
-	"fmt"
-
 	"github.com/fio-de-navalha/fdn-back/internal/domain/service"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/database"
 	"gorm.io/gorm"
@@ -55,7 +53,6 @@ func (r *gormServiceRepository) FindByBarberId(barberId string) ([]*service.Serv
 }
 
 func (r *gormServiceRepository) Save(s *service.Service) (*service.Service, error) {
-	fmt.Println(s)
 	result := r.db.Save(s)
 	if result.Error != nil {
 		return nil, result.Error

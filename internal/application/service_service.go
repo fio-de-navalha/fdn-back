@@ -2,7 +2,6 @@ package application
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/fio-de-navalha/fdn-back/internal/domain/service"
 )
@@ -30,8 +29,7 @@ func (s *ServiceService) GetServicesByBarberId(barberId string) ([]*service.Serv
 
 	res, err := s.serviceRepository.FindByBarberId(barberId)
 	if err != nil {
-		// TODO: add better error handling
-		fmt.Println(err)
+		return nil, err
 	}
 	return res, nil
 }
@@ -48,8 +46,7 @@ func (s *ServiceService) CreateService(input service.CreateServiceInput) error {
 	ser := service.NewService(input)
 	_, err = s.serviceRepository.Save(ser)
 	if err != nil {
-		// TODO: add better error handling
-		fmt.Println(err)
+		return err
 	}
 	return nil
 }
@@ -78,8 +75,7 @@ func (s *ServiceService) UpdateService(serviceId string, input service.UpdateSer
 
 	_, err = s.serviceRepository.Save(ser)
 	if err != nil {
-		// TODO: add better error handling
-		fmt.Println(err)
+		return err
 	}
 	return nil
 }
@@ -87,8 +83,7 @@ func (s *ServiceService) UpdateService(serviceId string, input service.UpdateSer
 func (s *ServiceService) getManyServices(serviceIds []string) ([]*service.Service, error) {
 	res, err := s.serviceRepository.FindManyByIds(serviceIds)
 	if err != nil {
-		// TODO: add better error handling
-		fmt.Println(err)
+		return nil, err
 	}
 	return res, nil
 }
