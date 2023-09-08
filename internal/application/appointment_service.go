@@ -79,8 +79,18 @@ func (s *AppointmentService) GetAppointment(id string) (*appointment.Appointment
 
 func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointmentRequest) error {
 	var wg sync.WaitGroup
-	errs := make(chan error, 2)
-	wg.Add(2)
+	type chanResultService struct {
+		IDs      []string
+		Duration int
+	}
+	type chanResultProduct struct {
+		IDs []string
+	}
+
+	errs := make(chan error, 7)
+	resultServiceChan := make(chan chanResultService, 1)
+	resultProductChan := make(chan chanResultProduct, 1)
+	wg.Add(4)
 
 	go func() {
 		defer wg.Done()
@@ -100,38 +110,56 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 		}
 	}()
 
+	go func() {
+		defer wg.Done()
+		log.Println("[application.CreateApppointment] - Validating services:", input.ServiceIds)
+		services, err := s.serviceService.getManyServices(input.ServiceIds)
+		if err != nil {
+			errs <- err
+		}
+		if len(services) == 0 {
+			errs <- errors.New("services not found")
+		}
+		idsToSave, duration := s.serviceService.ValidateServicesAvailability(services)
+		if err := validateAssociation("services", input.ServiceIds, idsToSave); err != nil {
+			errs <- err
+		}
+		resultServiceChan <- chanResultService{
+			IDs:      idsToSave,
+			Duration: duration,
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		log.Println("[application.CreateApppointment] - Validating products:", input.ProductIds)
+		products, err := s.productService.getManyProducts(input.ProductIds)
+		if err != nil {
+			errs <- err
+		}
+		idsToSave := s.productService.ValidateProductsAvailability(products)
+		if err := validateAssociation("products", input.ProductIds, idsToSave); err != nil {
+			errs <- err
+		}
+		resultProductChan <- chanResultProduct{
+			IDs: idsToSave,
+		}
+	}()
+
 	wg.Wait()
 	close(errs)
+	close(resultServiceChan)
+	close(resultProductChan)
 
 	for err := range errs {
 		return err
 	}
 
-	log.Println("[application.CreateApppointment] - Validating services:", input.ServiceIds)
-	services, err := s.serviceService.getManyServices(input.ServiceIds)
-	if err != nil {
-		return err
-	}
-	if len(services) == 0 {
-		return errors.New("services not found")
-	}
-	servicesIdsToSave, durationInMin := s.serviceService.ValidateServicesAvailability(services)
-	if err := validateAssociation("services", input.ServiceIds, servicesIdsToSave); err != nil {
-		return err
-	}
-
-	log.Println("[application.CreateApppointment] - Validating products:", input.ProductIds)
-	products, err := s.productService.getManyProducts(input.ProductIds)
-	if err != nil {
-		return err
-	}
-	productsIdsToSave := s.productService.ValidateProductsAvailability(products)
-	if err := validateAssociation("products", input.ProductIds, productsIdsToSave); err != nil {
-		return err
-	}
+	resultService := <-resultServiceChan
+	resultProduct := <-resultProductChan
 
 	log.Println("[application.CreateApppointment] - Validating appointment time range availability")
-	endsAt := input.StartsAt.Add(time.Minute * time.Duration(durationInMin))
+	endsAt := input.StartsAt.Add(time.Minute * time.Duration(resultService.Duration))
 	if err := s.validateAppointmentTimeRange(input.StartsAt, endsAt); err != nil {
 		return err
 	}
@@ -140,20 +168,11 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 	appo := appointment.NewAppointment(
 		input.BarberId,
 		input.CustomerId,
-		durationInMin,
+		resultService.Duration,
 		input.StartsAt,
 		endsAt,
 	)
-	var servicesToSave []*appointment.AppointmentService
-	var productsToSave []*appointment.AppointmentProduct
-	for _, v := range servicesIdsToSave {
-		ser := appointment.NewAppointmentService(appo.ID, v)
-		servicesToSave = append(servicesToSave, ser)
-	}
-	for _, v := range productsIdsToSave {
-		pro := appointment.NewAppointmentProduct(appo.ID, v)
-		productsToSave = append(productsToSave, pro)
-	}
+	servicesToSave, productsToSave := s.newAppointmentItems(appo.ID, resultService.IDs, resultProduct.IDs)
 	if _, err := s.appointmentRepository.Save(appo, servicesToSave, productsToSave); err != nil {
 		return err
 	}
@@ -199,4 +218,27 @@ func validateAssociation(context string, input []string, idsToSave []string) err
 		return errors.New(context + " not found:" + strings.Join(itemNotFound, ", "))
 	}
 	return nil
+}
+
+func (s *AppointmentService) newAppointmentItems(
+	appoId string,
+	servicesIds []string,
+	productsIds []string,
+) (
+	[]*appointment.AppointmentService,
+	[]*appointment.AppointmentProduct,
+) {
+	var servicesToSave []*appointment.AppointmentService
+	var productsToSave []*appointment.AppointmentProduct
+
+	for _, v := range servicesIds {
+		ser := appointment.NewAppointmentService(appoId, v)
+		servicesToSave = append(servicesToSave, ser)
+	}
+	for _, v := range productsIds {
+		pro := appointment.NewAppointmentProduct(appoId, v)
+		productsToSave = append(productsToSave, pro)
+	}
+
+	return servicesToSave, productsToSave
 }
