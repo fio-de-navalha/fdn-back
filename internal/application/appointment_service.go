@@ -77,18 +77,16 @@ func (s *AppointmentService) GetAppointment(id string) (*appointment.Appointment
 }
 
 func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointmentRequest) error {
-	log.Println("[application.CreateApppointment] - Validating barber:", input.BarberId)
-	_, err := s.barberService.GetBarberById(input.BarberId)
-	if err != nil {
-		log.Println("[application.CreateApppointment] - Barber not found:", input.BarberId)
-		return errors.New("barber not found")
+	if err := s.validateEntity("barber", input.BarberId, func(id string) (interface{}, error) {
+		return s.barberService.GetBarberById(id)
+	}); err != nil {
+		return err
 	}
 
-	log.Println("[application.CreateApppointment] - Validating customer:", input.CustomerId)
-	_, err = s.customerService.GetCustomerById(input.CustomerId)
-	if err != nil {
-		log.Println("[application.CreateApppointment] - Customer not found:", input.CustomerId)
-		return errors.New("customer not found")
+	if err := s.validateEntity("customer", input.CustomerId, func(id string) (interface{}, error) {
+		return s.customerService.GetCustomerById(id)
+	}); err != nil {
+		return err
 	}
 
 	log.Println("[application.CreateApppointment] - Validating services:", input.ServiceIds)
@@ -170,6 +168,20 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 	}
 
 	log.Println("[application.CreateApppointment] - Successfully created appointment")
+	return nil
+}
+
+func (s *AppointmentService) validateEntity(
+	context string,
+	param string,
+	fn func(string) (interface{}, error),
+) error {
+	log.Println("[application.CreateApppointment] - Validating", context, ":", param)
+	_, err := fn(param)
+	if err != nil {
+		return errors.New(context + " not found")
+	}
+
 	return nil
 }
 
