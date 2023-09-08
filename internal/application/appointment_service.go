@@ -121,7 +121,7 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 			errs <- errors.New("services not found")
 		}
 		idsToSave, duration := s.serviceService.ValidateServicesAvailability(services)
-		if err := validateAssociation("services", input.ServiceIds, idsToSave); err != nil {
+		if err := s.validateAssociation("services", input.ServiceIds, idsToSave); err != nil {
 			errs <- err
 		}
 		resultServiceChan <- chanResultService{
@@ -138,7 +138,7 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 			errs <- err
 		}
 		idsToSave := s.productService.ValidateProductsAvailability(products)
-		if err := validateAssociation("products", input.ProductIds, idsToSave); err != nil {
+		if err := s.validateAssociation("products", input.ProductIds, idsToSave); err != nil {
 			errs <- err
 		}
 		resultProductChan <- chanResultProduct{
@@ -206,7 +206,7 @@ func (s *AppointmentService) validateAppointmentTimeRange(startsAt, endsAt time.
 	return nil
 }
 
-func validateAssociation(context string, input []string, idsToSave []string) error {
+func (s *AppointmentService) validateAssociation(context string, input []string, idsToSave []string) error {
 	var itemNotFound []string
 	for _, id := range input {
 		if !slices.Contains(idsToSave, id) {
