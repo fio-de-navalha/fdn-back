@@ -82,13 +82,12 @@ func (r *gormAppointmentRepository) Save(
 		return nil, result.Error
 	}
 
-	for _, service := range services {
-		err := r.db.Save(&service).Error
+	err := r.db.Create(&services).Error
+	if err != nil {
 		return nil, err
 	}
-
-	for _, product := range products {
-		err := r.db.Save(&product).Error
+	err = r.db.Create(&products).Error
+	if err != nil {
 		return nil, err
 	}
 
