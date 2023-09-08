@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
@@ -77,15 +78,32 @@ func (s *AppointmentService) GetAppointment(id string) (*appointment.Appointment
 }
 
 func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointmentRequest) error {
-	if err := s.validateEntity("barber", input.BarberId, func(id string) (interface{}, error) {
-		return s.barberService.GetBarberById(id)
-	}); err != nil {
-		return err
-	}
+	var wg sync.WaitGroup
+	errs := make(chan error, 2)
+	wg.Add(2)
 
-	if err := s.validateEntity("customer", input.CustomerId, func(id string) (interface{}, error) {
-		return s.customerService.GetCustomerById(id)
-	}); err != nil {
+	go func() {
+		defer wg.Done()
+		if err := s.validateEntity("barber", input.BarberId, func(id string) (interface{}, error) {
+			return s.barberService.GetBarberById(id)
+		}); err != nil {
+			errs <- err
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		if err := s.validateEntity("customer", input.CustomerId, func(id string) (interface{}, error) {
+			return s.customerService.GetCustomerById(id)
+		}); err != nil {
+			errs <- err
+		}
+	}()
+
+	wg.Wait()
+	close(errs)
+
+	for err := range errs {
 		return err
 	}
 
