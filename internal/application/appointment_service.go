@@ -2,6 +2,7 @@ package application
 
 import (
 	"errors"
+	"log"
 	"strings"
 	"time"
 
@@ -43,47 +44,63 @@ func (s *AppointmentService) GetBarberAppointments(barberId string, startsAt tim
 		startsAt.Location(),
 	)
 
+	log.Println("[application.GetBarberAppointments] - Getting appointments from barber:", barberId)
 	a, err := s.appointmentRepository.FindByBarberId(barberId, startsAt, endsAt)
 	if err != nil {
+		log.Println("[application.GetBarberAppointments] - Error when getting appointments from barber:", barberId)
 		return nil, err
 	}
+	log.Println("[application.GetBarberAppointments] - Successfully got appointments from barber:", barberId)
 	return a, nil
 }
 
 func (s *AppointmentService) GetCustomerAppointments(customerId string) ([]*appointment.Appointment, error) {
+	log.Println("[application.GetCustomerAppointments] - Getting appointments from customer:", customerId)
 	a, err := s.appointmentRepository.FindByCustomerId(customerId)
 	if err != nil {
+		log.Println("[application.GetCustomerAppointments] - Error when getting appointments from customer:", customerId)
 		return nil, err
 	}
+	log.Println("[application.GetCustomerAppointments] - Successfully got appointments from customer:", customerId)
 	return a, nil
 }
 
 func (s *AppointmentService) GetAppointment(id string) (*appointment.Appointment, error) {
+	log.Println("[application.GetAppointment] - Getting appointment:", id)
 	a, err := s.appointmentRepository.FindById(id)
 	if err != nil {
+		log.Println("[application.GetAppointment] - Error when getting appointment:", id)
 		return nil, err
 	}
+	log.Println("[application.GetAppointment] - Successfully got appointment:", id)
 	return a, nil
 }
 
 func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointmentRequest) error {
+	log.Println("[application.CreateApppointment] - Validating barber:", input.BarberId)
 	_, err := s.barberService.GetBarberById(input.BarberId)
 	if err != nil {
+		log.Println("[application.CreateApppointment] - Barber not found:", input.BarberId)
 		return errors.New("barber not found")
 	}
 
+	log.Println("[application.CreateApppointment] - Validating customer:", input.CustomerId)
 	_, err = s.customerService.GetCustomerById(input.CustomerId)
 	if err != nil {
+		log.Println("[application.CreateApppointment] - Customer not found:", input.CustomerId)
 		return errors.New("customer not found")
 	}
 
+	log.Println("[application.CreateApppointment] - Validating services:", input.ServiceIds)
 	var durationInMin int
 	var servicesIdsToSave []string
 	services, err := s.serviceService.getManyServices(input.ServiceIds)
 	if err != nil {
+		log.Println("[application.CreateApppointment] - Error getting services:", input.ServiceIds)
 		return err
 	}
 	if len(services) == 0 {
+		log.Println("[application.CreateApppointment] - Services not found:", input.ServiceIds)
 		return errors.New("services not found")
 	}
 	for _, v := range services {
@@ -94,12 +111,15 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 	}
 	err = validateAssociation("services", input.ServiceIds, servicesIdsToSave)
 	if err != nil {
+		log.Println("[application.CreateApppointment] - One or more services not found")
 		return err
 	}
 
+	log.Println("[application.CreateApppointment] - Validating products:", input.ProductIds)
 	var productsIdsToSave []string
 	products, err := s.productService.getManyProducts(input.ProductIds)
 	if err != nil {
+		log.Println("[application.CreateApppointment] - Error getting products:", input.ProductIds)
 		return err
 	}
 	for _, v := range products {
@@ -109,18 +129,23 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 	}
 	err = validateAssociation("products", input.ProductIds, productsIdsToSave)
 	if err != nil {
+		log.Println("[application.CreateApppointment] - One or more products not found")
 		return err
 	}
 
+	log.Println("[application.CreateApppointment] - Validating appointment time range availability")
 	endsAt := input.StartsAt.Add(time.Minute * time.Duration(durationInMin))
 	appos, err := s.appointmentRepository.FindByDates(input.StartsAt, endsAt)
 	if err != nil {
+		log.Println("[application.CreateApppointment] - Error getting appointment time range")
 		return err
 	}
 	if len(appos) > 0 {
+		log.Println("[application.CreateApppointment] - Appointment time range not available")
 		return errors.New("time box not available")
 	}
 
+	log.Println("[application.CreateApppointment] - Creating appointment")
 	appo := appointment.NewAppointment(
 		input.BarberId,
 		input.CustomerId,
@@ -140,9 +165,11 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 	}
 	_, err = s.appointmentRepository.Save(appo, servicesToSave, productsToSave)
 	if err != nil {
+		log.Println("[application.CreateApppointment] - Error when creating appointment")
 		return err
 	}
 
+	log.Println("[application.CreateApppointment] - Successfully created appointment")
 	return nil
 }
 

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"time"
 
 	"github.com/fio-de-navalha/fdn-back/internal/application"
@@ -21,6 +22,7 @@ func NewAppointmentHandler(appointmentService application.AppointmentService) *A
 }
 
 func (h *AppointmentHandler) GetBarberAppointments(c *fiber.Ctx) error {
+	log.Println("[handlers.GetBarberAppointments] - Validating parameters")
 	id := c.Params("barberId")
 	startsAtQuery := c.Query("startsAt")
 	if startsAtQuery == "" {
@@ -44,6 +46,7 @@ func (h *AppointmentHandler) GetBarberAppointments(c *fiber.Ctx) error {
 }
 
 func (h *AppointmentHandler) GetCustomerAppointments(c *fiber.Ctx) error {
+	log.Println("[handlers.GetBarberAppointments] - Validating parameters")
 	id := c.Params("customerId")
 	res, err := h.appointmentService.GetCustomerAppointments(id)
 	if err != nil {
@@ -55,6 +58,7 @@ func (h *AppointmentHandler) GetCustomerAppointments(c *fiber.Ctx) error {
 }
 
 func (h *AppointmentHandler) GetAppointment(c *fiber.Ctx) error {
+	log.Println("[handlers.GetBarberAppointments] - Validating parameters")
 	id := c.Params("id")
 	res, err := h.appointmentService.GetAppointment(id)
 	if err != nil {
@@ -66,6 +70,7 @@ func (h *AppointmentHandler) GetAppointment(c *fiber.Ctx) error {
 }
 
 func (h *AppointmentHandler) Create(c *fiber.Ctx) error {
+	log.Println("[handlers.GetBarberAppointments] - Validating parameters")
 	body := new(appointment.CreateAppointmentRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{

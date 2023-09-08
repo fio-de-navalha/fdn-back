@@ -64,7 +64,7 @@ func getMigrationFiles(basePath string) []fs.DirEntry {
 func executeMigrationFile(db *gorm.DB, basePath string, file fs.DirEntry) {
 	c, err := os.ReadFile(basePath + file.Name())
 	if err != nil {
-		fmt.Print(err)
+		log.Println(err)
 	}
 
 	fmt.Print("Running migration for: ", file.Name())
