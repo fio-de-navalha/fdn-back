@@ -36,7 +36,7 @@
         ],
         "responses": {
           "201": {
-            "description": ""
+            "description": "Successful response"
           }
         }
       }
@@ -65,8 +65,124 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/BarberLogin"
+            }
+          },
+          "401": {
+            "description": "Unauthorized response",
+            "schema": {
+              "$ref": "#/definitions/401"
+            }
+          }
+        }
+      }
+    },
+    "/auth/register/customer": {
+      "post": {
+        "tags": ["Customer"],
+        "summary": "Register a new Customer",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "description": "Request Body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
           "201": {
-            "description": ""
+            "description": "Successful response"
+          },
+          "422": {
+            "description": "Unprocessable entity",
+            "schema": {
+              "$ref": "#/definitions/422"
+            }
+          }
+        }
+      }
+    },
+    "/auth/login/customer": {
+      "post": {
+        "tags": ["Customer"],
+        "summary": "Login as a Customer",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "description": "Request Body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "phone": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/CustomerLogin"
+            }
+          },
+          "401": {
+            "description": "Unauthorized response",
+            "schema": {
+              "$ref": "#/definitions/401"
+            }
+          }
+        }
+      }
+    },
+    "/customer/{customerId}": {
+      "get": {
+        "tags": ["Customer"],
+        "summary": "Get a customer information",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "description": "ID of the customer to retrieve",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Customer"
+            }
+          },
+          "404": {
+            "description": "Not found response",
+            "schema": {
+              "$ref": "#/definitions/404"
+            }
           }
         }
       }
@@ -178,7 +294,7 @@
         ],
         "responses": {
           "201": {
-            "description": ""
+            "description": "Successful response"
           },
           "400": {
             "schema": {
@@ -240,7 +356,7 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Successful response"
           },
           "400": {
             "schema": {
@@ -316,7 +432,7 @@
         ],
         "responses": {
           "201": {
-            "description": ""
+            "description": "Successful response"
           },
           "400": {
             "schema": {
@@ -375,11 +491,71 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Successful response"
           },
           "400": {
             "schema": {
               "$ref": "#/definitions/BadRequest"
+            }
+          },
+          "401": {
+            "schema": {
+              "$ref": "#/definitions/401"
+            }
+          }
+        }
+      }
+    },
+    "/appointment": {
+      "post": {
+        "tags": ["Appointment"],
+        "summary": "Create an appointment",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "description": "Request Body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "barberId": {
+                  "type": "string"
+                },
+                "customerId": {
+                  "type": "string"
+                },
+                "startsAt": {
+                  "type": "string"
+                },
+                "serviceIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "productIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response"
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/400"
             }
           },
           "401": {
@@ -400,6 +576,90 @@
     }
   },
   "definitions": {
+    "Barber": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      }
+    },
+    "BarberLogin": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        },
+        "barber": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "createdAt": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "Customer": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      }
+    },
+    "CustomerLogin": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        },
+        "customer": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "phone": {
+              "type": "string"
+            },
+            "createdAt": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "Service": {
       "type": "object",
       "properties": {
@@ -470,6 +730,24 @@
         "error": {
           "type": "string",
           "example": "unauthorized"
+        }
+      }
+    },
+    "404": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string",
+          "example": "* not fonud"
+        }
+      }
+    },
+    "422": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string",
+          "example": "Conflict with existing resource"
         }
       }
     }
