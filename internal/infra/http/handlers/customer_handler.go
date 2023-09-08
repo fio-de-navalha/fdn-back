@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"log"
+
 	"github.com/fio-de-navalha/fdn-back/internal/application"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/customer"
 	"github.com/go-playground/validator"
@@ -18,8 +20,8 @@ func NewCustomerHandler(customerService application.CustomerService) *CustomerHa
 }
 
 func (h *CustomerHandler) GetById(c *fiber.Ctx) error {
+	log.Println("[handlers.GetById] - Validating parameters")
 	id := c.Params("id")
-
 	res, err := h.customerService.GetCustomerById(id)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -36,6 +38,7 @@ func (h *CustomerHandler) GetById(c *fiber.Ctx) error {
 }
 
 func (h *CustomerHandler) Register(c *fiber.Ctx) error {
+	log.Println("[handlers.Register] - Validating parameters")
 	body := new(customer.RegisterRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -67,6 +70,7 @@ func (h *CustomerHandler) Register(c *fiber.Ctx) error {
 }
 
 func (h *CustomerHandler) Login(c *fiber.Ctx) error {
+	log.Println("[handlers.Login] - Validating parameters")
 	body := new(customer.LoginRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{

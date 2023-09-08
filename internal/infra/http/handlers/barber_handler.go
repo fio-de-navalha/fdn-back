@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"log"
+
 	"github.com/fio-de-navalha/fdn-back/internal/application"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/barber"
 	"github.com/go-playground/validator"
@@ -18,8 +20,8 @@ func NewBarberHandler(barberService application.BarberService) *BarberHandler {
 }
 
 func (h *BarberHandler) GetById(c *fiber.Ctx) error {
+	log.Println("[handlers.GetById] - Validating parameters")
 	id := c.Params("id")
-
 	res, err := h.barberService.GetBarberById(id)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -36,6 +38,7 @@ func (h *BarberHandler) GetById(c *fiber.Ctx) error {
 }
 
 func (h *BarberHandler) Register(c *fiber.Ctx) error {
+	log.Println("[handlers.Register] - Validating parameters")
 	body := new(barber.RegisterRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -66,6 +69,7 @@ func (h *BarberHandler) Register(c *fiber.Ctx) error {
 }
 
 func (h *BarberHandler) Login(c *fiber.Ctx) error {
+	log.Println("[handlers.Login] - Validating parameters")
 	body := new(barber.LoginRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{

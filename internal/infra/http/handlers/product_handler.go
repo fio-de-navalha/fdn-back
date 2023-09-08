@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"log"
+
 	"github.com/fio-de-navalha/fdn-back/internal/application"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/product"
 	"github.com/go-playground/validator"
@@ -18,8 +20,8 @@ func NewProductHandler(productService application.ProductService) *ProductHandle
 }
 
 func (h *ProductHandler) GetByBarberId(c *fiber.Ctx) error {
+	log.Println("[handlers.GetByBarberId] - Validating parameters")
 	barberId := c.Params("barberId")
-
 	res, err := h.productService.GetProductsByBarberId(barberId)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -31,6 +33,7 @@ func (h *ProductHandler) GetByBarberId(c *fiber.Ctx) error {
 }
 
 func (h *ProductHandler) Create(c *fiber.Ctx) error {
+	log.Println("[handlers.Create] - Validating parameters")
 	body := new(product.CreateProductInput)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -62,6 +65,7 @@ func (h *ProductHandler) Create(c *fiber.Ctx) error {
 }
 
 func (h *ProductHandler) Update(c *fiber.Ctx) error {
+	log.Println("[handlers.Update] - Validating parameters")
 	productId := c.Params("productId")
 	body := new(product.UpdateProductInput)
 	if err := c.BodyParser(&body); err != nil {

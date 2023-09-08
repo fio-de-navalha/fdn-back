@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"log"
+
 	"github.com/fio-de-navalha/fdn-back/internal/application"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/service"
 	"github.com/go-playground/validator"
@@ -18,8 +20,8 @@ func NewServiceHandler(serviceService application.ServiceService) *ServiceHandle
 }
 
 func (h *ServiceHandler) GetByBarberId(c *fiber.Ctx) error {
+	log.Println("[handlers.GetByBarberId] - Validating parameters")
 	barberId := c.Params("barberId")
-
 	res, err := h.serviceService.GetServicesByBarberId(barberId)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -31,6 +33,7 @@ func (h *ServiceHandler) GetByBarberId(c *fiber.Ctx) error {
 }
 
 func (h *ServiceHandler) Create(c *fiber.Ctx) error {
+	log.Println("[handlers.Create] - Validating parameters")
 	body := new(service.CreateServiceInput)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -63,6 +66,7 @@ func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 }
 
 func (h *ServiceHandler) Update(c *fiber.Ctx) error {
+	log.Println("[handlers.Update] - Validating parameters")
 	serviceId := c.Params("serviceId")
 	body := new(service.UpdateServiceInput)
 	if err := c.BodyParser(&body); err != nil {
