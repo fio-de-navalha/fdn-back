@@ -5,7 +5,9 @@ import (
 	"strings"
 
 	"github.com/fio-de-navalha/fdn-back/internal/application"
+	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/product"
+	"github.com/fio-de-navalha/fdn-back/internal/infra/http/middlewares"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
@@ -54,6 +56,18 @@ func (h *ProductHandler) Create(c *fiber.Ctx) error {
 		})
 	}
 
+	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
+	if !ok {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error": "Permission denied",
+		})
+	}
+	if user.ID != body.BarberId {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error": "Permission denied",
+		})
+	}
+
 	input := product.CreateProductInput{
 		BarberId: body.BarberId,
 		Name:     body.Name,
@@ -77,11 +91,24 @@ func (h *ProductHandler) Create(c *fiber.Ctx) error {
 
 func (h *ProductHandler) Update(c *fiber.Ctx) error {
 	log.Println("[handlers.Update] - Validating parameters")
+	barberId := c.Params("barberId")
 	productId := c.Params("productId")
 	body := new(product.UpdateProductInput)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid request body",
+		})
+	}
+
+	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
+	if !ok {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error": "Permission denied",
+		})
+	}
+	if user.ID != barberId {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error": "Permission denied",
 		})
 	}
 

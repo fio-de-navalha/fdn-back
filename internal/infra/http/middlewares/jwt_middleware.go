@@ -9,6 +9,10 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+type RquestUser struct {
+	ID string
+}
+
 func extractAndValidateToken(c *fiber.Ctx) (jwt.MapClaims, error) {
 	authorization := c.Get("Authorization")
 	if authorization == "" {
@@ -40,9 +44,7 @@ func extractAndSetUser(c *fiber.Ctx, token jwt.MapClaims) error {
 		})
 	}
 
-	user := struct {
-		ID string
-	}{
+	user := RquestUser{
 		ID: str,
 	}
 	c.Locals(constants.UserContextKey, user)
