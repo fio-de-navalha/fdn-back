@@ -13,6 +13,7 @@ type Appointment struct {
 	BarberId      string            `json:"barberId"`
 	CustomerId    string            `json:"customerId"`
 	DurationInMin int               `json:"durationInMin"`
+	TotalAmount   int               `json:"totalAmount"`
 	StartsAt      time.Time         `json:"startsAt"`
 	EndsAt        time.Time         `json:"endsAt"`
 	CreatedAt     time.Time         `json:"createdAt"`
@@ -24,6 +25,7 @@ func NewAppointment(
 	barberId string,
 	customerId string,
 	durationInMin int,
+	totalAmount int,
 	startsAt time.Time,
 	endsAt time.Time,
 ) *Appointment {
@@ -32,6 +34,7 @@ func NewAppointment(
 		BarberId:      barberId,
 		CustomerId:    customerId,
 		DurationInMin: durationInMin,
+		TotalAmount:   totalAmount,
 		StartsAt:      startsAt,
 		EndsAt:        endsAt,
 		CreatedAt:     time.Now(),

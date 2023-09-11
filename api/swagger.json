@@ -701,6 +701,9 @@
           "durationInMin": {
             "type": "number"
           },
+          "totalAmount": {
+            "type": "number"
+          },
           "startsAt": {
             "type": "string"
           },

@@ -88,15 +88,17 @@ func (s *ServiceService) getManyServices(serviceIds []string) ([]*service.Servic
 	return res, nil
 }
 
-func (s *ServiceService) ValidateServicesAvailability(services []*service.Service) ([]string, int) {
+func (s *ServiceService) ValidateServicesAvailability(services []*service.Service) ([]string, int, int) {
 	var durationInMin int
+	var totalAmount int
 	var servicesIdsToSave []string
 	for _, v := range services {
 		if v.Available {
+			totalAmount += v.Price
 			durationInMin += v.DurationInMin
 			servicesIdsToSave = append(servicesIdsToSave, v.ID)
 		}
 	}
 
-	return servicesIdsToSave, durationInMin
+	return servicesIdsToSave, durationInMin, totalAmount
 }

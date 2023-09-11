@@ -74,8 +74,9 @@ func (s *AppointmentService) GetAppointment(id string) (*appointment.Appointment
 func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointmentRequest) error {
 	var wg sync.WaitGroup
 	type chanResultService struct {
-		IDs      []string
-		Duration int
+		IDs         []string
+		Duration    int
+		TotalAmount int
 	}
 	type chanResultProduct struct {
 		IDs []string
@@ -114,13 +115,14 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 		if len(services) == 0 {
 			errs <- errors.New("services not found")
 		}
-		idsToSave, duration := s.serviceService.ValidateServicesAvailability(services)
+		idsToSave, duration, totalAmount := s.serviceService.ValidateServicesAvailability(services)
 		if err := s.validateAssociation("services", input.ServiceIds, idsToSave); err != nil {
 			errs <- err
 		}
 		resultServiceChan <- chanResultService{
-			IDs:      idsToSave,
-			Duration: duration,
+			IDs:         idsToSave,
+			Duration:    duration,
+			TotalAmount: totalAmount,
 		}
 	}()
 
@@ -163,6 +165,7 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 		input.BarberId,
 		input.CustomerId,
 		resultService.Duration,
+		resultService.TotalAmount,
 		input.StartsAt,
 		endsAt,
 	)
