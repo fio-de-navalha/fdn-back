@@ -5,6 +5,7 @@ go 1.21.0
 require (
 	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/gofiber/contrib/swagger v1.0.9
+	github.com/golang-jwt/jwt/v5 v5.0.0
 	github.com/google/uuid v1.3.1
 	github.com/joho/godotenv v1.5.1
 	gorm.io/driver/postgres v1.5.2
@@ -12,7 +13,6 @@ require (
 )
 
 require (
-	github.com/MicahParks/keyfunc/v2 v2.1.0 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/felixge/httpsnoop v1.0.1 // indirect
 	github.com/go-openapi/analysis v0.21.4 // indirect
@@ -27,7 +27,6 @@ require (
 	github.com/go-openapi/validate v0.22.1 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/golang-jwt/jwt/v5 v5.0.0 // indirect
 	github.com/gorilla/handlers v1.5.1 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
@@ -44,9 +43,7 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
-	github.com/gofiber/contrib/jwt v1.0.5
 	github.com/gofiber/fiber/v2 v2.49.0
-	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgx/v5 v5.3.1 // indirect

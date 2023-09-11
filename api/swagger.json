@@ -80,6 +80,37 @@
         }
       }
     },
+    "/auth/me/barber": {
+      "get": {
+        "tags": ["Barber"],
+        "summary": "Check barber authentication",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/BarberInfo"
+            }
+          },
+          "401": {
+            "description": "Unauthorized response",
+            "schema": {
+              "$ref": "#/definitions/401"
+            }
+          },
+          "403": {
+            "description": "Forbidden response",
+            "schema": {
+              "$ref": "#/definitions/403"
+            }
+          }
+        }
+      }
+    },
     "/auth/register/customer": {
       "post": {
         "tags": ["Customer"],
@@ -153,6 +184,37 @@
             "description": "Unauthorized response",
             "schema": {
               "$ref": "#/definitions/401"
+            }
+          }
+        }
+      }
+    },
+    "/auth/me/customer": {
+      "get": {
+        "tags": ["Customer"],
+        "summary": "Check customer authentication",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Customer"
+            }
+          },
+          "401": {
+            "description": "Unauthorized response",
+            "schema": {
+              "$ref": "#/definitions/401"
+            }
+          },
+          "403": {
+            "description": "Forbidden response",
+            "schema": {
+              "$ref": "#/definitions/403"
             }
           }
         }
@@ -233,27 +295,7 @@
           "200": {
             "description": "Successful response",
             "schema": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "email": {
-                  "type": "string"
-                },
-                "createdAt": {
-                  "type": "string"
-                },
-                "services": {
-                  "$ref": "#/definitions/ServiceList"
-                },
-                "products": {
-                  "$ref": "#/definitions/ProductList"
-                }
-              }
+              "$ref": "#/definitions/BarberInfo"
             }
           }
         }
@@ -691,6 +733,29 @@
         },
         "createdAt": {
           "type": "string"
+        }
+      }
+    },
+    "BarberInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "services": {
+          "$ref": "#/definitions/ServiceList"
+        },
+        "products": {
+          "$ref": "#/definitions/ProductList"
         }
       }
     },
