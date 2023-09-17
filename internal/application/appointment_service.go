@@ -188,6 +188,9 @@ func (s *AppointmentService) CancelApppointment(requesterId string, appointmentI
 	if requesterId != appo.BarberId && requesterId != appo.CustomerId {
 		return errors.New("permisison denied")
 	}
+	if appo.StartsAt.Before(time.Now()) {
+		return errors.New("cannot cancel past appointment")
+	}
 
 	if _, err := s.appointmentRepository.Cancel(appo); err != nil {
 		return err

@@ -113,6 +113,12 @@ func (h *AppointmentHandler) Create(c *fiber.Ctx) error {
 		})
 	}
 
+	if body.StartsAt.Before(time.Now()) {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Cannot create appointment in the past",
+		})
+	}
+
 	input := appointment.CreateAppointmentRequest{
 		BarberId:   body.BarberId,
 		CustomerId: body.CustomerId,
