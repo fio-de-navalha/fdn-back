@@ -27,14 +27,14 @@ type LoginRequest struct {
 	Password string `json:"password" validate:"required,min=6"`
 }
 
-type LoginBarberResponse struct {
+type AuthBarberResponse struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`
 	Email     string    `json:"email"`
 	CreatedAt time.Time `json:"createdAt"`
 }
 
-type LoginResponse struct {
-	AccessToken string              `json:"access_token"`
-	Barber      LoginBarberResponse `json:"barber"`
+type AuthResponse struct {
+	AccessToken string             `json:"access_token"`
+	Barber      AuthBarberResponse `json:"barber"`
 }

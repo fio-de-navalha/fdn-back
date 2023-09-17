@@ -36,7 +36,10 @@
         ],
         "responses": {
           "201": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/BarberAuth"
+            }
           }
         }
       }
@@ -68,7 +71,7 @@
           "200": {
             "description": "Successful response",
             "schema": {
-              "$ref": "#/definitions/BarberLogin"
+              "$ref": "#/definitions/BarberAuth"
             }
           },
           "401": {
@@ -139,7 +142,10 @@
         ],
         "responses": {
           "201": {
-            "description": "Successful response"
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/CustomerAuth"
+            }
           },
           "422": {
             "description": "Unprocessable entity",
@@ -177,7 +183,7 @@
           "200": {
             "description": "Successful response",
             "schema": {
-              "$ref": "#/definitions/CustomerLogin"
+              "$ref": "#/definitions/CustomerAuth"
             }
           },
           "401": {
@@ -762,7 +768,7 @@
         }
       }
     },
-    "BarberLogin": {
+    "BarberAuth": {
       "type": "object",
       "properties": {
         "accessToken": {
@@ -804,7 +810,7 @@
         }
       }
     },
-    "CustomerLogin": {
+    "CustomerAuth": {
       "type": "object",
       "properties": {
         "accessToken": {
@@ -899,6 +905,15 @@
         "error": {
           "type": "string",
           "example": "unauthorized"
+        }
+      }
+    },
+    "403": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string",
+          "example": "permission denied"
         }
       }
     },

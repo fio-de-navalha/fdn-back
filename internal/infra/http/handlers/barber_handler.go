@@ -62,7 +62,7 @@ func (h *BarberHandler) Register(c *fiber.Ctx) error {
 		Password: body.Password,
 	}
 
-	err := h.barberService.RegisterBarber(input)
+	resp, err := h.barberService.RegisterBarber(input)
 	if err != nil {
 		if strings.Contains(err.Error(), "alredy exists") {
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
@@ -75,7 +75,7 @@ func (h *BarberHandler) Register(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusCreated).Send(nil)
+	return c.Status(fiber.StatusCreated).JSON(resp)
 }
 
 func (h *BarberHandler) Login(c *fiber.Ctx) error {

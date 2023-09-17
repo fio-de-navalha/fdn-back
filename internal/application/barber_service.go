@@ -55,19 +55,19 @@ func (s *BarberService) GetBarberByEmail(email string) (*barber.Barber, error) {
 	return bar, nil
 }
 
-func (s *BarberService) RegisterBarber(input barber.RegisterRequest) error {
+func (s *BarberService) RegisterBarber(input barber.RegisterRequest) (*barber.AuthResponse, error) {
 	log.Println("[application.RegisterBarber] - Validating barber:", input.Email)
 	barberExists, err := s.barberRepository.FindByEmail(input.Email)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if barberExists != nil {
-		return errors.New("barber alredy exists")
+		return nil, errors.New("barber alredy exists")
 	}
 
 	hashedPassword, err := cryptography.HashPassword(input.Password)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	input = barber.RegisterRequest{
@@ -80,12 +80,27 @@ func (s *BarberService) RegisterBarber(input barber.RegisterRequest) error {
 	bar := barber.NewBarber(input)
 	_, err = s.barberRepository.Save(bar)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+
+	log.Println("[application.RegisterBarber] - Generating token")
+	token, err := cryptography.GenerateToken(bar.ID, "barber")
+	if err != nil {
+		return nil, err
+	}
+
+	return &barber.AuthResponse{
+		AccessToken: token,
+		Barber: barber.AuthBarberResponse{
+			ID:        bar.ID,
+			Name:      bar.Name,
+			Email:     bar.Email,
+			CreatedAt: bar.CreatedAt,
+		},
+	}, nil
 }
 
-func (s *BarberService) LoginBarber(input barber.LoginRequest) (*barber.LoginResponse, error) {
+func (s *BarberService) LoginBarber(input barber.LoginRequest) (*barber.AuthResponse, error) {
 	log.Println("[application.LoginBarber] - Validating barber:", input.Email)
 	bar, err := s.barberRepository.FindByEmail(input.Email)
 	if err != nil {
@@ -106,14 +121,14 @@ func (s *BarberService) LoginBarber(input barber.LoginRequest) (*barber.LoginRes
 		return nil, err
 	}
 
-	barberRes := barber.LoginBarberResponse{
+	barberRes := barber.AuthBarberResponse{
 		ID:        bar.ID,
 		Name:      bar.Name,
 		Email:     bar.Email,
 		CreatedAt: bar.CreatedAt,
 	}
 
-	return &barber.LoginResponse{
+	return &barber.AuthResponse{
 		AccessToken: token,
 		Barber:      barberRes,
 	}, nil

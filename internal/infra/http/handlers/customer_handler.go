@@ -63,7 +63,7 @@ func (h *CustomerHandler) Register(c *fiber.Ctx) error {
 		Password: body.Password,
 	}
 
-	err := h.customerService.RegisterCustomer(input)
+	resp, err := h.customerService.RegisterCustomer(input)
 	if err != nil {
 		if strings.Contains(err.Error(), "alredy exists") {
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
@@ -76,7 +76,7 @@ func (h *CustomerHandler) Register(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusCreated).Send(nil)
+	return c.Status(fiber.StatusCreated).JSON(resp)
 }
 
 func (h *CustomerHandler) Login(c *fiber.Ctx) error {

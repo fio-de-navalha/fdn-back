@@ -20,14 +20,14 @@ type LoginRequest struct {
 	Password string `json:"password" validate:"required,min=6"`
 }
 
-type LoginCustomerResponse struct {
+type AuthCustomerResponse struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`
 	Phone     string    `json:"phone"`
 	CreatedAt time.Time `json:"createdAt"`
 }
 
-type LoginResponse struct {
-	AccessToken string                `json:"access_token"`
-	Customer    LoginCustomerResponse `json:"customer"`
+type AuthResponse struct {
+	AccessToken string               `json:"access_token"`
+	Customer    AuthCustomerResponse `json:"customer"`
 }
