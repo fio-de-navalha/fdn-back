@@ -8,10 +8,10 @@ import (
 
 func setupBarberRouter(router fiber.Router) {
 	barbers := router.Group("/barber")
-	barbers.Get("/:id", container.BarberHandler.GetById)
+	barbers.Get("/:id", container.BarberHandler.GetBarberById)
 
 	auth := router.Group("/auth")
-	auth.Post("/register/barber", container.BarberHandler.Register)
-	auth.Post("/login/barber", container.BarberHandler.Login)
-	auth.Get("/me/barber", middlewares.EnsureBarberRole(), container.BarberHandler.Me)
+	auth.Post("/register/barber", container.BarberHandler.RegisterBarber)
+	auth.Post("/login/barber", container.BarberHandler.LoginBarber)
+	auth.Get("/me/barber", middlewares.EnsureBarberRole(), container.BarberHandler.MeBarber)
 }

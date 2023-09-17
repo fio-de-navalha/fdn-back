@@ -8,10 +8,10 @@ import (
 
 func setupCustomerRouter(router fiber.Router) {
 	customers := router.Group("/customer")
-	customers.Get("/:id", middlewares.EnsureAuth(), container.CustomerHandler.GetById)
+	customers.Get("/:id", middlewares.EnsureAuth(), container.CustomerHandler.GetCustomerById)
 
 	auth := router.Group("/auth")
-	auth.Post("/register/customer", container.CustomerHandler.Register)
-	auth.Post("/login/customer", container.CustomerHandler.Login)
-	auth.Get("/me/customer", middlewares.EnsureAuth(), container.CustomerHandler.Me)
+	auth.Post("/register/customer", container.CustomerHandler.RegisterCustomer)
+	auth.Post("/login/customer", container.CustomerHandler.LoginCustomer)
+	auth.Get("/me/customer", middlewares.EnsureAuth(), container.CustomerHandler.MeCustomer)
 }

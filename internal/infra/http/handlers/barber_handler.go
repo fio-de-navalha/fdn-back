@@ -22,8 +22,8 @@ func NewBarberHandler(barberService application.BarberService) *BarberHandler {
 	}
 }
 
-func (h *BarberHandler) GetById(c *fiber.Ctx) error {
-	log.Println("[handlers.GetById] - Validating parameters")
+func (h *BarberHandler) GetBarberById(c *fiber.Ctx) error {
+	log.Println("[handlers.GetBarberById] - Validating parameters")
 	id := c.Params("id")
 	res, err := h.barberService.GetBarberById(id)
 	if err != nil {
@@ -41,8 +41,8 @@ func (h *BarberHandler) GetById(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func (h *BarberHandler) Register(c *fiber.Ctx) error {
-	log.Println("[handlers.Register] - Validating parameters")
+func (h *BarberHandler) RegisterBarber(c *fiber.Ctx) error {
+	log.Println("[handlers.RegisterBarber] - Validating parameters")
 	body := new(barber.RegisterRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -78,8 +78,8 @@ func (h *BarberHandler) Register(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(resp)
 }
 
-func (h *BarberHandler) Login(c *fiber.Ctx) error {
-	log.Println("[handlers.Login] - Validating parameters")
+func (h *BarberHandler) LoginBarber(c *fiber.Ctx) error {
+	log.Println("[handlers.LoginBarber] - Validating parameters")
 	body := new(barber.LoginRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -115,7 +115,8 @@ func (h *BarberHandler) Login(c *fiber.Ctx) error {
 	return c.JSON(res)
 }
 
-func (h *BarberHandler) Me(c *fiber.Ctx) error {
+func (h *BarberHandler) MeBarber(c *fiber.Ctx) error {
+	log.Println("[handlers.MeBarber] - Validating barber")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{

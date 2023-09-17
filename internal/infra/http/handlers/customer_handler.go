@@ -22,8 +22,8 @@ func NewCustomerHandler(customerService application.CustomerService) *CustomerHa
 	}
 }
 
-func (h *CustomerHandler) GetById(c *fiber.Ctx) error {
-	log.Println("[handlers.GetById] - Validating parameters")
+func (h *CustomerHandler) GetCustomerById(c *fiber.Ctx) error {
+	log.Println("[handlers.GetCustomerById] - Validating parameters")
 	id := c.Params("id")
 	res, err := h.customerService.GetCustomerById(id)
 	if err != nil {
@@ -41,8 +41,8 @@ func (h *CustomerHandler) GetById(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func (h *CustomerHandler) Register(c *fiber.Ctx) error {
-	log.Println("[handlers.Register] - Validating parameters")
+func (h *CustomerHandler) RegisterCustomer(c *fiber.Ctx) error {
+	log.Println("[handlers.RegisterCustomer] - Validating parameters")
 	body := new(customer.RegisterRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -79,8 +79,8 @@ func (h *CustomerHandler) Register(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(resp)
 }
 
-func (h *CustomerHandler) Login(c *fiber.Ctx) error {
-	log.Println("[handlers.Login] - Validating parameters")
+func (h *CustomerHandler) LoginCustomer(c *fiber.Ctx) error {
+	log.Println("[handlers.LoginCustomer] - Validating parameters")
 	body := new(customer.LoginRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -115,7 +115,8 @@ func (h *CustomerHandler) Login(c *fiber.Ctx) error {
 	return c.JSON(resp)
 }
 
-func (h *CustomerHandler) Me(c *fiber.Ctx) error {
+func (h *CustomerHandler) MeCustomer(c *fiber.Ctx) error {
+	log.Println("[handlers.MeCustomer] - Validating token")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
