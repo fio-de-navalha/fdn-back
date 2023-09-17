@@ -17,6 +17,7 @@ type Appointment struct {
 	StartsAt      time.Time         `json:"startsAt"`
 	EndsAt        time.Time         `json:"endsAt"`
 	CreatedAt     time.Time         `json:"createdAt"`
+	CanceledAt    *time.Time        `json:"canceleddAt"`
 	Services      []service.Service `json:"services" gorm:"many2many:appointment_service;"`
 	Products      []product.Product `json:"products" gorm:"many2many:appointment_product;"`
 }
@@ -38,5 +39,6 @@ func NewAppointment(
 		StartsAt:      startsAt,
 		EndsAt:        endsAt,
 		CreatedAt:     time.Now(),
+		CanceledAt:    nil,
 	}
 }

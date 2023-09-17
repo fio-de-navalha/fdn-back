@@ -676,6 +676,46 @@
             "schema": {
               "$ref": "#/definitions/401"
             }
+          },
+          "403": {
+            "schema": {
+              "$ref": "#/definitions/403"
+            }
+          }
+        }
+      }
+    },
+    "/appointment/{appointmentId}": {
+      "delete": {
+        "tags": ["Appointment"],
+        "summary": "Cancel an appointment",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "appointmentId",
+            "in": "path",
+            "description": "ID of the appointment to cancel",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          },
+          "401": {
+            "schema": {
+              "$ref": "#/definitions/401"
+            }
+          },
+          "403": {
+            "schema": {
+              "$ref": "#/definitions/403"
+            }
           }
         }
       }

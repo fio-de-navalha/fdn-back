@@ -177,6 +177,25 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 	return nil
 }
 
+func (s *AppointmentService) CancelApppointment(requesterId string, appointmentId string) error {
+	appo, err := s.appointmentRepository.FindById(appointmentId)
+	if err != nil {
+		return err
+	}
+	if appo == nil {
+		return errors.New("appointment not found")
+	}
+	if requesterId != appo.BarberId && requesterId != appo.CustomerId {
+		return errors.New("permisison denied")
+	}
+
+	if _, err := s.appointmentRepository.Cancel(appo); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s *AppointmentService) validateEntity(
 	context string,
 	param string,

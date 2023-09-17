@@ -6,5 +6,6 @@ CREATE TABLE IF NOT EXISTS appointment (
 	total_amount INTEGER NOT NULL, 
 	starts_at TIMESTAMP NOT NULL, 
 	ends_at TIMESTAMP NOT NULL, 
-	created_at TIMESTAMP NOT NULL
+	created_at TIMESTAMP NOT NULL,
+	canceled_at TIMESTAMP
 );

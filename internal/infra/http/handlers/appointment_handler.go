@@ -8,6 +8,7 @@ import (
 	"github.com/fio-de-navalha/fdn-back/internal/application"
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/appointment"
+	"github.com/fio-de-navalha/fdn-back/internal/infra/http/middlewares"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
@@ -52,7 +53,7 @@ func (h *AppointmentHandler) GetBarberAppointments(c *fiber.Ctx) error {
 }
 
 func (h *AppointmentHandler) GetCustomerAppointments(c *fiber.Ctx) error {
-	log.Println("[handlers.GetBarberAppointments] - Validating parameters")
+	log.Println("[handlers.GetCustomerAppointments] - Validating parameters")
 	id := c.Params("customerId")
 	res, err := h.appointmentService.GetCustomerAppointments(id)
 	if err != nil {
@@ -86,7 +87,7 @@ func (h *AppointmentHandler) GetAppointment(c *fiber.Ctx) error {
 }
 
 func (h *AppointmentHandler) Create(c *fiber.Ctx) error {
-	log.Println("[handlers.GetBarberAppointments] - Validating parameters")
+	log.Println("[handlers.Create] - Validating parameters")
 	body := new(appointment.CreateAppointmentRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -97,6 +98,18 @@ func (h *AppointmentHandler) Create(c *fiber.Ctx) error {
 	if err := validate.Struct(body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
+		})
+	}
+
+	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
+	if !ok {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error": "Permission denied",
+		})
+	}
+	if user.ID != body.BarberId && user.ID != body.CustomerId {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error": "Permission denied",
 		})
 	}
 
@@ -120,4 +133,36 @@ func (h *AppointmentHandler) Create(c *fiber.Ctx) error {
 		})
 	}
 	return c.Status(fiber.StatusCreated).Send(nil)
+}
+
+func (h *AppointmentHandler) Cancel(c *fiber.Ctx) error {
+	log.Println("[handlers.Cancel] - Validating parameters")
+	appointmentId := c.Params("appointmentId")
+
+	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
+	if !ok {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error": "Permission denied",
+		})
+	}
+
+	err := h.appointmentService.CancelApppointment(user.ID, appointmentId)
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
+		if strings.Contains(err.Error(), "permission denied") {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusOK).Send(nil)
 }

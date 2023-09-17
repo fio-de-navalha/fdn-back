@@ -1,6 +1,7 @@
 package gorm_repository
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/fio-de-navalha/fdn-back/internal/domain/appointment"
@@ -23,7 +24,8 @@ func (r *gormAppointmentRepository) FindById(id string) (*appointment.Appointmen
 	result := r.db.
 		Preload("Services").
 		Preload("Products").
-		First(&a, id)
+		Where("id = ?", id).
+		First(&a)
 
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
@@ -91,5 +93,15 @@ func (r *gormAppointmentRepository) Save(
 		return nil, err
 	}
 
+	return appo, nil
+}
+
+func (r *gormAppointmentRepository) Cancel(appo *appointment.Appointment) (*appointment.Appointment, error) {
+	// result := r.db.Save(&appo)
+	result := r.db.Model(&appo).Update("canceled_at", time.Now())
+	fmt.Println(result.Error)
+	if result.Error != nil {
+		return nil, result.Error
+	}
 	return appo, nil
 }
