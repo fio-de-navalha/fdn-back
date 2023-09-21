@@ -17,7 +17,7 @@ type Appointment struct {
 	StartsAt      time.Time         `json:"startsAt"`
 	EndsAt        time.Time         `json:"endsAt"`
 	CreatedAt     time.Time         `json:"createdAt"`
-	CanceledAt    *time.Time        `json:"canceleddAt"`
+	CanceledAt    *time.Time        `json:"canceledAt"`
 	Services      []service.Service `json:"services" gorm:"many2many:appointment_service;"`
 	Products      []product.Product `json:"products" gorm:"many2many:appointment_product;"`
 }

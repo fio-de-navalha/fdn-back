@@ -63,6 +63,9 @@ func (s *ServiceService) UpdateService(serviceId string, input service.UpdateSer
 	if input.Name != nil {
 		ser.Name = *input.Name
 	}
+	if input.Description != nil {
+		ser.Description = *input.Description
+	}
 	if input.Price != nil {
 		ser.Price = *input.Price
 	}
