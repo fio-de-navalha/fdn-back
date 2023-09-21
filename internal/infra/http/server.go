@@ -31,7 +31,10 @@ func Server() {
 	}))
 	app.Use(cache.New(cache.Config{
 		Next: func(c *fiber.Ctx) bool {
-			if c.Path() == "/api/health" || strings.Contains(c.Path(), "/appointment") || strings.Contains(c.Path(), "/me") {
+			if c.Path() == "/api/health" ||
+				strings.Contains(c.Path(), "/appointment") ||
+				strings.Contains(c.Path(), "/me") ||
+				strings.Contains(c.Path(), "/services") {
 				return true
 			}
 			return c.Query("refresh") == "true"

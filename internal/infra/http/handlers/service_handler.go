@@ -71,6 +71,7 @@ func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 	input := service.CreateServiceInput{
 		BarberId:      body.BarberId,
 		Name:          body.Name,
+		Description:   body.Description,
 		Price:         body.Price,
 		DurationInMin: body.DurationInMin,
 	}
@@ -115,6 +116,7 @@ func (h *ServiceHandler) Update(c *fiber.Ctx) error {
 
 	input := service.UpdateServiceInput{
 		Name:          body.Name,
+		Description:   body.Description,
 		Price:         body.Price,
 		DurationInMin: body.DurationInMin,
 		Available:     body.Available,
