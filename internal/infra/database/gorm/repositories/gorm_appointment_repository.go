@@ -22,6 +22,7 @@ func NewGormAppointmentRepository() *gormAppointmentRepository {
 func (r *gormAppointmentRepository) FindById(id string) (*appointment.Appointment, error) {
 	var a appointment.Appointment
 	result := r.db.
+		Select("id", "barber_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at", "canceled_at").
 		Preload("Services").
 		Preload("Products").
 		Where("id = ?", id).
@@ -39,6 +40,7 @@ func (r *gormAppointmentRepository) FindById(id string) (*appointment.Appointmen
 func (r *gormAppointmentRepository) FindByBarberId(barberId string, startsAt time.Time, endsAt time.Time) ([]*appointment.Appointment, error) {
 	var a []*appointment.Appointment
 	res := r.db.
+		Select("id", "barber_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at", "canceled_at").
 		Preload("Services").
 		Preload("Products").
 		Where("barber_id = ? AND starts_at > ? AND ends_at < ?", barberId, startsAt, endsAt).
@@ -53,6 +55,7 @@ func (r *gormAppointmentRepository) FindByBarberId(barberId string, startsAt tim
 func (r *gormAppointmentRepository) FindByCustomerId(customerId string) ([]*appointment.Appointment, error) {
 	var a []*appointment.Appointment
 	res := r.db.
+		Select("id", "barber_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at", "canceled_at").
 		Preload("Services").
 		Preload("Products").
 		Where("customer_id = ?", customerId).
@@ -66,7 +69,10 @@ func (r *gormAppointmentRepository) FindByCustomerId(customerId string) ([]*appo
 
 func (r *gormAppointmentRepository) FindByDates(startsAt time.Time, endsAt time.Time) ([]*appointment.Appointment, error) {
 	var a []*appointment.Appointment
-	res := r.db.Where("starts_at <= ? AND ends_at >= ?", endsAt, startsAt).Find(&a)
+	res := r.db.
+		Select("id", "barber_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at", "canceled_at").
+		Where("starts_at <= ? AND ends_at >= ?", endsAt, startsAt).
+		Find(&a)
 
 	if res.Error != nil {
 		return nil, res.Error
@@ -97,7 +103,6 @@ func (r *gormAppointmentRepository) Save(
 }
 
 func (r *gormAppointmentRepository) Cancel(appo *appointment.Appointment) (*appointment.Appointment, error) {
-	// result := r.db.Save(&appo)
 	result := r.db.Model(&appo).Update("canceled_at", time.Now())
 	fmt.Println(result.Error)
 	if result.Error != nil {
