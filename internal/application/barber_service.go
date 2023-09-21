@@ -133,3 +133,27 @@ func (s *BarberService) LoginBarber(input barber.LoginRequest) (*barber.AuthResp
 		Barber:      barberRes,
 	}, nil
 }
+
+func (s *BarberService) AddBarberDetils(barberId string, address string, contact string) (*barber.AuthResponse, error) {
+	log.Println("[application.UpdateBarberDetils] - Validating barber:", barberId)
+	bar, err := s.barberRepository.FindById(barberId)
+	if err != nil {
+		return nil, err
+	}
+	if bar == nil {
+		return nil, errors.New("barber not found")
+	}
+	return nil, nil
+}
+
+// func (s *BarberService) UpdateBarberDetils(barberId string, address string, contact string) (*barber.AuthResponse, error) {
+// 	log.Println("[application.UpdateBarberDetils] - Validating barber:", barberId)
+// 	bar, err := s.barberRepository.FindById(barberId)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	if bar == nil {
+// 		return nil, errors.New("barber not found")
+// 	}
+
+// }
