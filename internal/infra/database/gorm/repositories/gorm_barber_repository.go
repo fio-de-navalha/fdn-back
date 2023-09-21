@@ -30,6 +30,8 @@ func (r *gormBarberRepository) FindById(id string) (*barber.Barber, error) {
 	result := r.db.Model(&barber.Barber{}).
 		Preload("Services").
 		Preload("Products").
+		Preload("Addresses").
+		Preload("Contacts").
 		First(&bar, "id = ?", id)
 
 	if result.Error != nil {

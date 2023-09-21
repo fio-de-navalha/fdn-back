@@ -9,12 +9,20 @@ import (
 )
 
 type BarberService struct {
-	barberRepository barber.BarberRepository
+	barberRepository  barber.BarberRepository
+	addressRepository barber.AddressRepository
+	contactRepository barber.ContactRepository
 }
 
-func NewBarberService(barberRepository barber.BarberRepository) *BarberService {
+func NewBarberService(
+	barberRepository barber.BarberRepository,
+	addressRepository barber.AddressRepository,
+	contactRepository barber.ContactRepository,
+) *BarberService {
 	return &BarberService{
-		barberRepository: barberRepository,
+		barberRepository:  barberRepository,
+		addressRepository: addressRepository,
+		contactRepository: contactRepository,
 	}
 }
 
@@ -134,7 +142,7 @@ func (s *BarberService) LoginBarber(input barber.LoginRequest) (*barber.AuthResp
 	}, nil
 }
 
-func (s *BarberService) AddBarberDetils(barberId string, address string, contact string) (*barber.AuthResponse, error) {
+func (s *BarberService) AddBarberDetils(barberId string, address string, contact string) (*barber.Barber, error) {
 	log.Println("[application.UpdateBarberDetils] - Validating barber:", barberId)
 	bar, err := s.barberRepository.FindById(barberId)
 	if err != nil {
@@ -143,17 +151,16 @@ func (s *BarberService) AddBarberDetils(barberId string, address string, contact
 	if bar == nil {
 		return nil, errors.New("barber not found")
 	}
-	return nil, nil
+
+	addr := barber.NewAddress(bar.ID, address)
+	cntt := barber.NewContact(bar.ID, contact)
+
+	if _, err := s.addressRepository.Save(addr); err != nil {
+		return nil, err
+	}
+	if _, err := s.contactRepository.Save(cntt); err != nil {
+		return nil, err
+	}
+
+	return bar, nil
 }
-
-// func (s *BarberService) UpdateBarberDetils(barberId string, address string, contact string) (*barber.AuthResponse, error) {
-// 	log.Println("[application.UpdateBarberDetils] - Validating barber:", barberId)
-// 	bar, err := s.barberRepository.FindById(barberId)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	if bar == nil {
-// 		return nil, errors.New("barber not found")
-// 	}
-
-// }

@@ -9,6 +9,7 @@ import (
 func setupBarberRouter(router fiber.Router) {
 	barbers := router.Group("/barber")
 	barbers.Get("/:id", container.BarberHandler.GetBarberById)
+	barbers.Post("/:id/details", middlewares.EnsureBarberRole(), container.BarberHandler.AddBarberDetils)
 
 	auth := router.Group("/auth")
 	auth.Post("/register/barber", container.BarberHandler.RegisterBarber)

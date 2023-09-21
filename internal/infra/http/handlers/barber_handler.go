@@ -137,3 +137,40 @@ func (h *BarberHandler) MeBarber(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(res)
 }
+
+func (h *BarberHandler) AddBarberDetils(c *fiber.Ctx) error {
+	log.Println("[handlers.AddBarberDetils] - Validating parameters")
+	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
+	if !ok {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error": "Permission denied",
+		})
+	}
+
+	body := new(barber.AddBarberDetailsRequest)
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
+	}
+	validate := validator.New()
+	if err := validate.Struct(body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	res, err := h.barberService.AddBarberDetils(user.ID, body.Address, body.Contact)
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(res)
+}

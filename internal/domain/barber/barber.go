@@ -16,6 +16,8 @@ type Barber struct {
 	CreatedAt time.Time         `json:"createdAt"`
 	Services  []service.Service `json:"services"`
 	Products  []product.Product `json:"products"`
+	Addresses []Address         `json:"addresses"`
+	Contacts  []Contact         `json:"contacts"`
 }
 
 func NewBarber(input RegisterRequest) *Barber {
