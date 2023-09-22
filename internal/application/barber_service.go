@@ -144,23 +144,21 @@ func (s *BarberService) LoginBarber(input barber.LoginRequest) (*barber.AuthResp
 	}, nil
 }
 
-func (s *BarberService) AddBarberAddress(barberId string, address string) (*barber.Barber, error) {
+func (s *BarberService) AddBarberAddress(barberId string, address string) error {
 	log.Println("[application.AddBarberAddress] - Validating barber:", barberId)
 	bar, err := s.barberRepository.FindById(barberId)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if bar == nil {
-		return nil, errors.New("barber not found")
+		return errors.New("barber not found")
 	}
 
 	addr := barber.NewAddress(bar.ID, address)
-
 	if _, err := s.addressRepository.Save(addr); err != nil {
-		return nil, err
+		return err
 	}
-
-	return bar, nil
+	return nil
 }
 
 func (s *BarberService) UpdateBarberAddress(addressId string, address string) (*barber.Address, error) {
@@ -180,39 +178,38 @@ func (s *BarberService) UpdateBarberAddress(addressId string, address string) (*
 	return addr, nil
 }
 
-func (s *BarberService) RemoveBarberAddress(addressId string) (*barber.Address, error) {
+func (s *BarberService) RemoveBarberAddress(addressId string) error {
 	log.Println("[application.RemoveBarberAddress] - Validating address:", addressId)
 	addr, err := s.addressRepository.FindById(addressId)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if addr == nil {
-		return nil, errors.New("address not found")
+		return errors.New("address not found")
 	}
 
 	if err := s.addressRepository.Delete(addr.ID); err != nil {
-		return nil, err
+		return err
 	}
-	return addr, nil
+	return nil
 }
 
-func (s *BarberService) AddBarberContact(barberId string, contact string) (*barber.Barber, error) {
+func (s *BarberService) AddBarberContact(barberId string, contact string) error {
 	log.Println("[application.AddBarberContact] - Validating barber:", barberId)
 	bar, err := s.barberRepository.FindById(barberId)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if bar == nil {
-		return nil, errors.New("barber not found")
+		return errors.New("barber not found")
 	}
 
 	cntt := barber.NewContact(bar.ID, contact)
-
 	if _, err := s.contactRepository.Save(cntt); err != nil {
-		return nil, err
+		return err
 	}
 
-	return bar, nil
+	return nil
 }
 
 func (s *BarberService) UpdateBarberContact(contactId string, contact string) (*barber.Contact, error) {
@@ -232,18 +229,18 @@ func (s *BarberService) UpdateBarberContact(contactId string, contact string) (*
 	return cntt, nil
 }
 
-func (s *BarberService) RemoveBarberContact(contactId string) (*barber.Contact, error) {
+func (s *BarberService) RemoveBarberContact(contactId string) error {
 	log.Println("[application.RemoveBarberContact] - Validating contact:", contactId)
 	cntt, err := s.contactRepository.FindById(contactId)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if cntt == nil {
-		return nil, errors.New("contact not found")
+		return errors.New("contact not found")
 	}
 
 	if err := s.contactRepository.Delete(cntt.ID); err != nil {
-		return nil, err
+		return err
 	}
-	return cntt, nil
+	return nil
 }

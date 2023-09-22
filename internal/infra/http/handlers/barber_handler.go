@@ -160,8 +160,7 @@ func (h *BarberHandler) AddBarberAddress(c *fiber.Ctx) error {
 		})
 	}
 
-	res, err := h.barberService.AddBarberAddress(user.ID, body.Address)
-	if err != nil {
+	if err := h.barberService.AddBarberAddress(user.ID, body.Address); err != nil {
 		if strings.Contains(err.Error(), "not found") {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"error": err.Error(),
@@ -172,7 +171,7 @@ func (h *BarberHandler) AddBarberAddress(c *fiber.Ctx) error {
 			"error": err.Error(),
 		})
 	}
-	return c.Status(fiber.StatusOK).JSON(res)
+	return c.Status(fiber.StatusCreated).Send(nil)
 }
 
 func (h *BarberHandler) AddBarberContact(c *fiber.Ctx) error {
@@ -197,8 +196,7 @@ func (h *BarberHandler) AddBarberContact(c *fiber.Ctx) error {
 		})
 	}
 
-	res, err := h.barberService.AddBarberContact(user.ID, body.Contact)
-	if err != nil {
+	if err := h.barberService.AddBarberContact(user.ID, body.Contact); err != nil {
 		if strings.Contains(err.Error(), "not found") {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"error": err.Error(),
@@ -209,7 +207,7 @@ func (h *BarberHandler) AddBarberContact(c *fiber.Ctx) error {
 			"error": err.Error(),
 		})
 	}
-	return c.Status(fiber.StatusOK).JSON(res)
+	return c.Status(fiber.StatusCreated).Send(nil)
 }
 
 func (h *BarberHandler) UpdateBarberAddress(c *fiber.Ctx) error {
@@ -295,7 +293,7 @@ func (h *BarberHandler) RemoveBarberAddress(c *fiber.Ctx) error {
 	}
 
 	addressId := c.Params("addressId")
-	if _, err := h.barberService.RemoveBarberAddress(addressId); err != nil {
+	if err := h.barberService.RemoveBarberAddress(addressId); err != nil {
 		if strings.Contains(err.Error(), "not found") {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"error": err.Error(),
@@ -318,7 +316,7 @@ func (h *BarberHandler) RemoveBarberContact(c *fiber.Ctx) error {
 	}
 
 	contactId := c.Params("contactId")
-	if _, err := h.barberService.RemoveBarberContact(contactId); err != nil {
+	if err := h.barberService.RemoveBarberContact(contactId); err != nil {
 		if strings.Contains(err.Error(), "not found") {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"error": err.Error(),
