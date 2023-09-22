@@ -1,6 +1,9 @@
 package barber
 
-type AddBarberDetailsRequest struct {
+type AddBarberAddressRequest struct {
 	Address string `json:"address"`
+}
+
+type AddBarberContactRequest struct {
 	Contact string `json:"contact"`
 }

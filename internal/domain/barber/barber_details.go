@@ -1,12 +1,13 @@
 package barber
 
 type Address struct {
+	ID       string `json:"id"`
 	BarberId string `json:"barber_id"`
 	Address  string `json:"address"`
 }
 
 type Contact struct {
-	ID       uint   `json:"id"`
+	ID       string `json:"id"`
 	BarberId string `json:"barber_id"`
 	Contact  string `json:"contact"`
 }
