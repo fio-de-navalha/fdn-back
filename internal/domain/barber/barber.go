@@ -14,10 +14,10 @@ type Barber struct {
 	Email     string            `json:"email"`
 	Password  string            `json:"password"`
 	CreatedAt time.Time         `json:"createdAt"`
-	Services  []service.Service `json:"services"`
-	Products  []product.Product `json:"products"`
 	Addresses []Address         `json:"addresses"`
 	Contacts  []Contact         `json:"contacts"`
+	Services  []service.Service `json:"services"`
+	Products  []product.Product `json:"products"`
 }
 
 func NewBarber(input RegisterRequest) *Barber {

@@ -12,6 +12,8 @@ type BarberResponse struct {
 	Name      string            `json:"name"`
 	Email     string            `json:"email"`
 	CreatedAt time.Time         `json:"createdAt"`
+	Addresses []Address         `json:"address"`
+	Contacts  []Contact         `json:"contact"`
 	Services  []service.Service `json:"services"`
 	Products  []product.Product `json:"products"`
 }

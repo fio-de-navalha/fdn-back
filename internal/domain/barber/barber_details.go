@@ -1,5 +1,7 @@
 package barber
 
+import "github.com/google/uuid"
+
 type Address struct {
 	ID       string `json:"id"`
 	BarberId string `json:"barber_id"`
@@ -14,6 +16,7 @@ type Contact struct {
 
 func NewAddress(barberId string, address string) *Address {
 	return &Address{
+		ID:       uuid.NewString(),
 		BarberId: barberId,
 		Address:  address,
 	}
@@ -21,6 +24,7 @@ func NewAddress(barberId string, address string) *Address {
 
 func NewContact(barberId string, contact string) *Contact {
 	return &Contact{
+		ID:       uuid.NewString(),
 		BarberId: barberId,
 		Contact:  contact,
 	}

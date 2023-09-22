@@ -49,6 +49,8 @@ func (s *BarberService) GetBarberById(id string) (*barber.BarberResponse, error)
 		Name:      bar.Name,
 		Email:     bar.Email,
 		CreatedAt: bar.CreatedAt,
+		Addresses: bar.Addresses,
+		Contacts:  bar.Contacts,
 		Services:  bar.Services,
 		Products:  bar.Products,
 	}, nil
