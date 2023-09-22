@@ -9,12 +9,20 @@ import (
 )
 
 type BarberService struct {
-	barberRepository barber.BarberRepository
+	barberRepository  barber.BarberRepository
+	addressRepository barber.AddressRepository
+	contactRepository barber.ContactRepository
 }
 
-func NewBarberService(barberRepository barber.BarberRepository) *BarberService {
+func NewBarberService(
+	barberRepository barber.BarberRepository,
+	addressRepository barber.AddressRepository,
+	contactRepository barber.ContactRepository,
+) *BarberService {
 	return &BarberService{
-		barberRepository: barberRepository,
+		barberRepository:  barberRepository,
+		addressRepository: addressRepository,
+		contactRepository: contactRepository,
 	}
 }
 
@@ -41,6 +49,8 @@ func (s *BarberService) GetBarberById(id string) (*barber.BarberResponse, error)
 		Name:      bar.Name,
 		Email:     bar.Email,
 		CreatedAt: bar.CreatedAt,
+		Addresses: bar.Addresses,
+		Contacts:  bar.Contacts,
 		Services:  bar.Services,
 		Products:  bar.Products,
 	}, nil
@@ -132,4 +142,105 @@ func (s *BarberService) LoginBarber(input barber.LoginRequest) (*barber.AuthResp
 		AccessToken: token,
 		Barber:      barberRes,
 	}, nil
+}
+
+func (s *BarberService) AddBarberAddress(barberId string, address string) error {
+	log.Println("[application.AddBarberAddress] - Validating barber:", barberId)
+	bar, err := s.barberRepository.FindById(barberId)
+	if err != nil {
+		return err
+	}
+	if bar == nil {
+		return errors.New("barber not found")
+	}
+
+	addr := barber.NewAddress(bar.ID, address)
+	if _, err := s.addressRepository.Save(addr); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *BarberService) UpdateBarberAddress(addressId string, address string) (*barber.Address, error) {
+	log.Println("[application.UpdateBarberAddress] - Validating address:", addressId)
+	addr, err := s.addressRepository.FindById(addressId)
+	if err != nil {
+		return nil, err
+	}
+	if addr == nil {
+		return nil, errors.New("address not found")
+	}
+
+	addr.Address = address
+	if _, err := s.addressRepository.Save(addr); err != nil {
+		return nil, err
+	}
+	return addr, nil
+}
+
+func (s *BarberService) RemoveBarberAddress(addressId string) error {
+	log.Println("[application.RemoveBarberAddress] - Validating address:", addressId)
+	addr, err := s.addressRepository.FindById(addressId)
+	if err != nil {
+		return err
+	}
+	if addr == nil {
+		return errors.New("address not found")
+	}
+
+	if err := s.addressRepository.Delete(addr.ID); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *BarberService) AddBarberContact(barberId string, contact string) error {
+	log.Println("[application.AddBarberContact] - Validating barber:", barberId)
+	bar, err := s.barberRepository.FindById(barberId)
+	if err != nil {
+		return err
+	}
+	if bar == nil {
+		return errors.New("barber not found")
+	}
+
+	cntt := barber.NewContact(bar.ID, contact)
+	if _, err := s.contactRepository.Save(cntt); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *BarberService) UpdateBarberContact(contactId string, contact string) (*barber.Contact, error) {
+	log.Println("[application.UpdateBarberContact] - Validating contact:", contactId)
+	cntt, err := s.contactRepository.FindById(contactId)
+	if err != nil {
+		return nil, err
+	}
+	if cntt == nil {
+		return nil, errors.New("contact not found")
+	}
+
+	cntt.Contact = contact
+	if _, err := s.contactRepository.Save(cntt); err != nil {
+		return nil, err
+	}
+	return cntt, nil
+}
+
+func (s *BarberService) RemoveBarberContact(contactId string) error {
+	log.Println("[application.RemoveBarberContact] - Validating contact:", contactId)
+	cntt, err := s.contactRepository.FindById(contactId)
+	if err != nil {
+		return err
+	}
+	if cntt == nil {
+		return errors.New("contact not found")
+	}
+
+	if err := s.contactRepository.Delete(cntt.ID); err != nil {
+		return err
+	}
+	return nil
 }

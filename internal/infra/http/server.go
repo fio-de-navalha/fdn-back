@@ -2,13 +2,11 @@ package http
 
 import (
 	"os"
-	"strings"
 	"time"
 
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http/routes"
 	"github.com/gofiber/contrib/swagger"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cache"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/idempotency"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
@@ -28,20 +26,6 @@ func Server() {
 		Max:               15,
 		Expiration:        30 * time.Second,
 		LimiterMiddleware: limiter.SlidingWindow{},
-	}))
-	app.Use(cache.New(cache.Config{
-		Next: func(c *fiber.Ctx) bool {
-			if c.Path() == "/api/health" ||
-				strings.Contains(c.Path(), "/appointment") ||
-				strings.Contains(c.Path(), "/me") ||
-				strings.Contains(c.Path(), "/services") ||
-				strings.Contains(c.Path(), "/products") {
-				return true
-			}
-			return c.Query("refresh") == "true"
-		},
-		Expiration:   120 * time.Second,
-		CacheControl: true,
 	}))
 	app.Use(recover.New(recover.Config{
 		EnableStackTrace: true,

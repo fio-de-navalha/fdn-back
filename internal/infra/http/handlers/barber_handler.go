@@ -137,3 +137,195 @@ func (h *BarberHandler) MeBarber(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(res)
 }
+
+func (h *BarberHandler) AddBarberAddress(c *fiber.Ctx) error {
+	log.Println("[handlers.AddBarberAddress] - Validating parameters")
+	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
+	if !ok {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error": "Permission denied",
+		})
+	}
+
+	body := new(barber.AddBarberAddressRequest)
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
+	}
+	validate := validator.New()
+	if err := validate.Struct(body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	if err := h.barberService.AddBarberAddress(user.ID, body.Address); err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusCreated).Send(nil)
+}
+
+func (h *BarberHandler) AddBarberContact(c *fiber.Ctx) error {
+	log.Println("[handlers.AddBarberContact] - Validating parameters")
+	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
+	if !ok {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error": "Permission denied",
+		})
+	}
+
+	body := new(barber.AddBarberContactRequest)
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
+	}
+	validate := validator.New()
+	if err := validate.Struct(body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	if err := h.barberService.AddBarberContact(user.ID, body.Contact); err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusCreated).Send(nil)
+}
+
+func (h *BarberHandler) UpdateBarberAddress(c *fiber.Ctx) error {
+	log.Println("[handlers.UpdateBarberAddress] - Validating parameters")
+	if _, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser); !ok {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error": "Permission denied",
+		})
+	}
+
+	addressId := c.Params("addressId")
+	body := new(barber.AddBarberAddressRequest)
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
+	}
+	validate := validator.New()
+	if err := validate.Struct(body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	res, err := h.barberService.UpdateBarberAddress(addressId, body.Address)
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(res)
+}
+
+func (h *BarberHandler) UpdateBarberContact(c *fiber.Ctx) error {
+	log.Println("[handlers.UpdateBarberContact] - Validating parameters")
+	if _, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser); !ok {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error": "Permission denied",
+		})
+	}
+
+	contactId := c.Params("contactId")
+	body := new(barber.AddBarberContactRequest)
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
+	}
+	validate := validator.New()
+	if err := validate.Struct(body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	res, err := h.barberService.UpdateBarberContact(contactId, body.Contact)
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(res)
+}
+
+func (h *BarberHandler) RemoveBarberAddress(c *fiber.Ctx) error {
+	log.Println("[handlers.RemoveBarberAddress] - Validating parameters")
+	if _, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser); !ok {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error": "Permission denied",
+		})
+	}
+
+	addressId := c.Params("addressId")
+	if err := h.barberService.RemoveBarberAddress(addressId); err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusNoContent).Send(nil)
+}
+
+func (h *BarberHandler) RemoveBarberContact(c *fiber.Ctx) error {
+	log.Println("[handlers.RemoveBarberContact] - Validating parameters")
+	if _, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser); !ok {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error": "Permission denied",
+		})
+	}
+
+	contactId := c.Params("contactId")
+	if err := h.barberService.RemoveBarberContact(contactId); err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusNoContent).Send(nil)
+}

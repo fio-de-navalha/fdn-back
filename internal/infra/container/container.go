@@ -28,8 +28,10 @@ func LoadContainers() {
 	CustomerService = application.NewCustomerService(customerRepo)
 	CustomerHandler = handlers.NewCustomerHandler(*CustomerService)
 
+	addressRepo := gorm_repository.NewGormAddressRepository()
+	contactRepo := gorm_repository.NewGormContactRepository()
 	barberRepo := gorm_repository.NewGormBarberRepository()
-	BarberService = application.NewBarberService(barberRepo)
+	BarberService = application.NewBarberService(barberRepo, addressRepo, contactRepo)
 	BarberHandler = handlers.NewBarberHandler(*BarberService)
 
 	serviceRepo := gorm_repository.NewGormServiceRepository()
