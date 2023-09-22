@@ -295,8 +295,7 @@ func (h *BarberHandler) RemoveBarberAddress(c *fiber.Ctx) error {
 	}
 
 	addressId := c.Params("addressId")
-	res, err := h.barberService.RemoveBarberAddress(addressId)
-	if err != nil {
+	if _, err := h.barberService.RemoveBarberAddress(addressId); err != nil {
 		if strings.Contains(err.Error(), "not found") {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"error": err.Error(),
@@ -307,7 +306,7 @@ func (h *BarberHandler) RemoveBarberAddress(c *fiber.Ctx) error {
 			"error": err.Error(),
 		})
 	}
-	return c.Status(fiber.StatusOK).JSON(res)
+	return c.Status(fiber.StatusNoContent).Send(nil)
 }
 
 func (h *BarberHandler) RemoveBarberContact(c *fiber.Ctx) error {
@@ -319,8 +318,7 @@ func (h *BarberHandler) RemoveBarberContact(c *fiber.Ctx) error {
 	}
 
 	contactId := c.Params("contactId")
-	res, err := h.barberService.RemoveBarberContact(contactId)
-	if err != nil {
+	if _, err := h.barberService.RemoveBarberContact(contactId); err != nil {
 		if strings.Contains(err.Error(), "not found") {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"error": err.Error(),
@@ -331,5 +329,5 @@ func (h *BarberHandler) RemoveBarberContact(c *fiber.Ctx) error {
 			"error": err.Error(),
 		})
 	}
-	return c.Status(fiber.StatusOK).JSON(res)
+	return c.Status(fiber.StatusNoContent).Send(nil)
 }
