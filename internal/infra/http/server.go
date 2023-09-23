@@ -14,9 +14,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
-func Server() {
-	app := fiber.New()
-
+func setupMiddlewares(app *fiber.App) {
 	app.Use(cors.New())
 	app.Use(idempotency.New())
 	app.Use(limiter.New(limiter.Config{
@@ -33,7 +31,12 @@ func Server() {
 	app.Use(logger.New(logger.Config{
 		Format: "${time} | ${ip}:${port} | ${latency} | ${status} | ${method} ${path}\n\n",
 	}))
+}
 
+func StartServer() {
+	app := fiber.New()
+
+	setupMiddlewares(app)
 	routes.FiberSetupRouters(app)
 
 	app.Use(swagger.New(swagger.Config{
@@ -41,8 +44,7 @@ func Server() {
 		FilePath: "./api/swagger.json",
 	}))
 
-	err := app.Listen(":" + os.Getenv("PORT"))
-	if err != nil {
+	if err := app.Listen(":" + os.Getenv("PORT")); err != nil {
 		panic(err)
 	}
 }

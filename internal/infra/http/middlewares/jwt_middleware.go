@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
-	"github.com/fio-de-navalha/fdn-back/pkg/cryptography"
+	"github.com/fio-de-navalha/fdn-back/internal/infra/cryptography"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 )

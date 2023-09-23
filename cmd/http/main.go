@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/fio-de-navalha/fdn-back/internal/infra/config"
+	"github.com/fio-de-navalha/fdn-back/internal/config"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http"
 )
 
@@ -10,5 +10,5 @@ func init() {
 }
 
 func main() {
-	http.Server()
+	http.StartServer()
 }

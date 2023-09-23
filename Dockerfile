@@ -12,7 +12,7 @@ RUN echo "JWT_SECRET=${PORT}" >> .env
 
 COPY go.mod go.sum ./
 COPY . . 
-RUN go build -o main ./cmd/
+RUN go build -o main ./cmd/http
 
 FROM alpine:3.18 as binary
 COPY --from=base /app/main .

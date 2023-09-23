@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/fio-de-navalha/fdn-back/internal/domain/customer"
-	"github.com/fio-de-navalha/fdn-back/pkg/cryptography"
+	"github.com/fio-de-navalha/fdn-back/internal/infra/cryptography"
 )
 
 type CustomerService struct {
