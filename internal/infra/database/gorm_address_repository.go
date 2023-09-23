@@ -1,8 +1,7 @@
-package gorm_repository
+package database
 
 import (
 	"github.com/fio-de-navalha/fdn-back/internal/domain/barber"
-	"github.com/fio-de-navalha/fdn-back/internal/infra/database"
 	"gorm.io/gorm"
 )
 
@@ -12,7 +11,7 @@ type gormAddressRepository struct {
 
 func NewGormAddressRepository() *gormAddressRepository {
 	return &gormAddressRepository{
-		db: database.DB,
+		db: DB,
 	}
 }
 

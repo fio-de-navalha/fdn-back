@@ -2,7 +2,7 @@ package container
 
 import (
 	"github.com/fio-de-navalha/fdn-back/internal/application"
-	gorm_repository "github.com/fio-de-navalha/fdn-back/internal/infra/database/gorm/repositories"
+	"github.com/fio-de-navalha/fdn-back/internal/infra/database"
 )
 
 var (
@@ -14,21 +14,18 @@ var (
 )
 
 func LoadContainers() {
-	customerRepo := gorm_repository.NewGormCustomerRepository()
+	customerRepo := database.NewGormCustomerRepository()
+	addressRepo := database.NewGormAddressRepository()
+	contactRepo := database.NewGormContactRepository()
+	barberRepo := database.NewGormBarberRepository()
+	serviceRepo := database.NewGormServiceRepository()
+	productRepo := database.NewGormProductRepository()
+	appointmentRepo := database.NewGormAppointmentRepository()
+
 	CustomerService = application.NewCustomerService(customerRepo)
-
-	addressRepo := gorm_repository.NewGormAddressRepository()
-	contactRepo := gorm_repository.NewGormContactRepository()
-	barberRepo := gorm_repository.NewGormBarberRepository()
 	BarberService = application.NewBarberService(barberRepo, addressRepo, contactRepo)
-
-	serviceRepo := gorm_repository.NewGormServiceRepository()
 	ServiceService = application.NewServiceService(serviceRepo, *BarberService)
-
-	productRepo := gorm_repository.NewGormProductRepository()
 	ProductService = application.NewProductService(productRepo, *BarberService)
-
-	appointmentRepo := gorm_repository.NewGormAppointmentRepository()
 	AppointmentService = application.NewAppointmentService(
 		appointmentRepo,
 		*BarberService,
@@ -36,5 +33,4 @@ func LoadContainers() {
 		*ServiceService,
 		*ProductService,
 	)
-
 }

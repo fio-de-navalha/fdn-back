@@ -1,11 +1,10 @@
-package gorm_repository
+package database
 
 import (
 	"fmt"
 	"time"
 
 	"github.com/fio-de-navalha/fdn-back/internal/domain/appointment"
-	"github.com/fio-de-navalha/fdn-back/internal/infra/database"
 	"gorm.io/gorm"
 )
 
@@ -15,7 +14,7 @@ type gormAppointmentRepository struct {
 
 func NewGormAppointmentRepository() *gormAppointmentRepository {
 	return &gormAppointmentRepository{
-		db: database.DB,
+		db: DB,
 	}
 }
 

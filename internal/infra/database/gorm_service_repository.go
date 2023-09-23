@@ -1,8 +1,7 @@
-package gorm_repository
+package database
 
 import (
 	"github.com/fio-de-navalha/fdn-back/internal/domain/service"
-	"github.com/fio-de-navalha/fdn-back/internal/infra/database"
 	"gorm.io/gorm"
 )
 
@@ -12,7 +11,7 @@ type gormServiceRepository struct {
 
 func NewGormServiceRepository() *gormServiceRepository {
 	return &gormServiceRepository{
-		db: database.DB,
+		db: DB,
 	}
 }
 
