@@ -6,9 +6,9 @@ ARG DATABASE_URL
 RUN apk update 
 WORKDIR /app
 
-RUN echo "DATABASE_URL=${DATABASE_URL}" > .env
+RUN echo "PORT=${PORT}" > .env
 RUN echo "JWT_SECRET=${JWT_SECRET}" >> .env
-RUN echo "JWT_SECRET=${PORT}" >> .env
+RUN echo "DATABASE_URL=${DATABASE_URL}" >> .env
 
 COPY go.mod go.sum ./
 COPY . . 
