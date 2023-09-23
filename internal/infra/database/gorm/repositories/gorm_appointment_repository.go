@@ -94,9 +94,12 @@ func (r *gormAppointmentRepository) Save(
 	if err != nil {
 		return nil, err
 	}
-	err = r.db.Create(&products).Error
-	if err != nil {
-		return nil, err
+
+	if len(products) > 0 {
+		err = r.db.Create(&products).Error
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return appo, nil
