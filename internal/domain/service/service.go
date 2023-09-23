@@ -12,7 +12,7 @@ type Service struct {
 	Available     bool   `json:"available"`
 }
 
-func NewService(input CreateServiceInput) *Service {
+func NewService(input CreateServiceRequest) *Service {
 	return &Service{
 		ID:            uuid.NewString(),
 		BarberId:      input.BarberId,

@@ -42,7 +42,7 @@ func (h *ProductHandler) GetByBarberId(c *fiber.Ctx) error {
 
 func (h *ProductHandler) Create(c *fiber.Ctx) error {
 	log.Println("[handlers.Create] - Validating parameters")
-	body := new(product.CreateProductInput)
+	body := new(product.CreateProductRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid request body",
@@ -68,7 +68,7 @@ func (h *ProductHandler) Create(c *fiber.Ctx) error {
 		})
 	}
 
-	input := product.CreateProductInput{
+	input := product.CreateProductRequest{
 		BarberId: body.BarberId,
 		Name:     body.Name,
 		Price:    body.Price,
@@ -93,7 +93,7 @@ func (h *ProductHandler) Update(c *fiber.Ctx) error {
 	log.Println("[handlers.Update] - Validating parameters")
 	barberId := c.Params("barberId")
 	productId := c.Params("productId")
-	body := new(product.UpdateProductInput)
+	body := new(product.UpdateProductRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid request body",
@@ -112,7 +112,7 @@ func (h *ProductHandler) Update(c *fiber.Ctx) error {
 		})
 	}
 
-	input := product.UpdateProductInput{
+	input := product.UpdateProductRequest{
 		Name:      body.Name,
 		Price:     body.Price,
 		Available: body.Available,

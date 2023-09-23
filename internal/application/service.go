@@ -34,7 +34,7 @@ func (s *ServiceService) GetServicesByBarberId(barberId string) ([]*service.Serv
 	return res, nil
 }
 
-func (s *ServiceService) CreateService(input service.CreateServiceInput) error {
+func (s *ServiceService) CreateService(input service.CreateServiceRequest) error {
 	barberExists, err := s.barberService.GetBarberById(input.BarberId)
 	if err != nil {
 		return err
@@ -51,7 +51,7 @@ func (s *ServiceService) CreateService(input service.CreateServiceInput) error {
 	return nil
 }
 
-func (s *ServiceService) UpdateService(serviceId string, input service.UpdateServiceInput) error {
+func (s *ServiceService) UpdateService(serviceId string, input service.UpdateServiceRequest) error {
 	ser, err := s.serviceRepository.FindById(serviceId)
 	if err != nil {
 		return err

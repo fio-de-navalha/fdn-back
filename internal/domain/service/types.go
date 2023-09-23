@@ -1,6 +1,6 @@
 package service
 
-type CreateServiceInput struct {
+type CreateServiceRequest struct {
 	BarberId      string `json:"barberId" validate:"required,uuid4,min=1"`
 	Name          string `json:"name" validate:"required,min=1"`
 	Description   string `json:"description"`
@@ -9,7 +9,7 @@ type CreateServiceInput struct {
 	Available     bool   `json:"available"`
 }
 
-type UpdateServiceInput struct {
+type UpdateServiceRequest struct {
 	Name          *string `json:"name"`
 	Description   *string `json:"description"`
 	Price         *int    `json:"price"`

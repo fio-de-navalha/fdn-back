@@ -10,7 +10,7 @@ type Product struct {
 	Available bool   `json:"available"`
 }
 
-func NewProduct(input CreateProductInput) *Product {
+func NewProduct(input CreateProductRequest) *Product {
 	return &Product{
 		ID:        uuid.NewString(),
 		BarberId:  input.BarberId,

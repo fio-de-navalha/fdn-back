@@ -42,7 +42,7 @@ func (h *ServiceHandler) GetByBarberId(c *fiber.Ctx) error {
 
 func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 	log.Println("[handlers.Create] - Validating parameters")
-	body := new(service.CreateServiceInput)
+	body := new(service.CreateServiceRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid request body",
@@ -68,7 +68,7 @@ func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 		})
 	}
 
-	input := service.CreateServiceInput{
+	input := service.CreateServiceRequest{
 		BarberId:      body.BarberId,
 		Name:          body.Name,
 		Description:   body.Description,
@@ -95,7 +95,7 @@ func (h *ServiceHandler) Update(c *fiber.Ctx) error {
 	log.Println("[handlers.Update] - Validating parameters")
 	barberId := c.Params("barberId")
 	serviceId := c.Params("serviceId")
-	body := new(service.UpdateServiceInput)
+	body := new(service.UpdateServiceRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid request body",
@@ -114,7 +114,7 @@ func (h *ServiceHandler) Update(c *fiber.Ctx) error {
 		})
 	}
 
-	input := service.UpdateServiceInput{
+	input := service.UpdateServiceRequest{
 		Name:          body.Name,
 		Description:   body.Description,
 		Price:         body.Price,

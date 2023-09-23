@@ -34,7 +34,7 @@ func (s *ProductService) GetProductsByBarberId(barberId string) ([]*product.Prod
 	return res, nil
 }
 
-func (s *ProductService) CreateProduct(input product.CreateProductInput) error {
+func (s *ProductService) CreateProduct(input product.CreateProductRequest) error {
 	barberExists, err := s.barberService.GetBarberById(input.BarberId)
 	if err != nil {
 		return err
@@ -51,7 +51,7 @@ func (s *ProductService) CreateProduct(input product.CreateProductInput) error {
 	return nil
 }
 
-func (s *ProductService) UpdateProduct(productId string, input product.UpdateProductInput) error {
+func (s *ProductService) UpdateProduct(productId string, input product.UpdateProductRequest) error {
 	ser, err := s.productRepository.FindById(productId)
 	if err != nil {
 		return err
