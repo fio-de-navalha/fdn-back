@@ -1,7 +1,7 @@
 package http
 
 import (
-	"os"
+	"fmt"
 	"time"
 
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http/routes"
@@ -12,6 +12,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/spf13/viper"
 )
 
 func setupMiddlewares(app *fiber.App) {
@@ -44,7 +45,8 @@ func StartServer() {
 		FilePath: "./api/swagger.json",
 	}))
 
-	if err := app.Listen(":" + os.Getenv("PORT")); err != nil {
+	fmt.Println("Http Server running... 😎👍")
+	if err := app.Listen(":" + viper.GetString("PORT")); err != nil {
 		panic(err)
 	}
 }

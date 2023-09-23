@@ -1,14 +1,12 @@
 package config
 
 import (
-	"log"
-
-	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
 )
 
 func loadEnvVariables() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Failed to load environment variables")
+	viper.SetConfigFile(".env")
+	if err := viper.ReadInConfig(); err != nil {
+		panic("Failed to load environment variables")
 	}
 }

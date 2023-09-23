@@ -1,10 +1,10 @@
 package cryptography
 
 import (
-	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/spf13/viper"
 )
 
 type TokenMetada struct {
@@ -13,7 +13,7 @@ type TokenMetada struct {
 	Exp  int    `json:"exp"`
 }
 
-var JwtSecret = []byte(os.Getenv("JWT_SECRET"))
+var JwtSecret = viper.GetString("JWT_SECRET")
 
 func GenerateToken(userId string, role string) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
@@ -33,7 +33,7 @@ func GenerateToken(userId string, role string) (string, error) {
 
 func ParseToken(tokenString string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return JwtSecret, nil
+		return []byte(JwtSecret), nil
 	})
 	if err != nil {
 		return nil, err
