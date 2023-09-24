@@ -673,27 +673,28 @@
             "type": "string"
           },
           {
-            "name": "Body",
-            "in": "body",
-            "description": "Request Body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "barberId": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "price": {
-                  "type": "number"
-                },
-                "durationInMin": {
-                  "type": "number"
-                }
-              }
-            }
+            "in": "formData",
+            "name": "name",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "price",
+            "type": "number",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "durationInMin",
+            "type": "number",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "file",
+            "type": "file",
+            "required": false
           }
         ],
         "responses": {
@@ -738,24 +739,34 @@
             "type": "string"
           },
           {
-            "name": "Body",
-            "in": "body",
-            "description": "Request Body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "type": "string"
-                },
-                "price": {
-                  "type": "number"
-                },
-                "durationInMin": {
-                  "type": "number"
-                }
-              }
-            }
+            "in": "formData",
+            "name": "name",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "price",
+            "type": "number",
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "durationInMin",
+            "type": "number",
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "available",
+            "type": "boolean",
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "file",
+            "type": "file",
+            "required": false
           }
         ],
         "responses": {
@@ -814,24 +825,22 @@
             "type": "string"
           },
           {
-            "name": "Body",
-            "in": "body",
-            "description": "Request Body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "barberId": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "price": {
-                  "type": "number"
-                }
-              }
-            }
+            "in": "formData",
+            "name": "name",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "price",
+            "type": "number",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "file",
+            "type": "file",
+            "required": false
           }
         ],
         "responses": {
@@ -876,21 +885,28 @@
             "type": "string"
           },
           {
-            "name": "Body",
-            "in": "body",
-            "description": "Request Body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "type": "string"
-                },
-                "price": {
-                  "type": "number"
-                }
-              }
-            }
+            "in": "formData",
+            "name": "name",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "price",
+            "type": "number",
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "available",
+            "type": "boolean",
+            "required": false
+          },
+          {
+            "in": "formData",
+            "name": "file",
+            "type": "file",
+            "required": false
           }
         ],
         "responses": {
@@ -1213,6 +1229,12 @@
         },
         "available": {
           "type": "boolean"
+        },
+        "imageId": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
         }
       }
     },
@@ -1239,6 +1261,12 @@
         },
         "available": {
           "type": "boolean"
+        },
+        "imageId": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
         }
       }
     },
