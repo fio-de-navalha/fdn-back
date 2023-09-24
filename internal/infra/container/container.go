@@ -36,8 +36,8 @@ func LoadContainers() {
 	SalonService = application.NewSalonService(salonRepo, addressRepo, contactRepo, professionalRepo)
 	CustomerService = application.NewCustomerService(customerRepo)
 	ProfessionalService = application.NewProfessionalService(professionalRepo)
-	ServiceService = application.NewServiceService(serviceRepo, *SalonService, cloudFlareService)
-	ProductService = application.NewProductService(productRepo, *SalonService, cloudFlareService)
+	ServiceService = application.NewServiceService(serviceRepo, *SalonService, *ProfessionalService, cloudFlareService)
+	ProductService = application.NewProductService(productRepo, *SalonService, *ProfessionalService, cloudFlareService)
 	AppointmentService = application.NewAppointmentService(
 		appointmentRepo,
 		*ProfessionalService,

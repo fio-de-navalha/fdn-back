@@ -22,6 +22,25 @@ func NewSalonHandler(salonService application.SalonService) *SalonHandler {
 	}
 }
 
+func (h *SalonHandler) GetSalonById(c *fiber.Ctx) error {
+	log.Println("[handlers.GetSalonById] - Validating parameters")
+	id := c.Params("id")
+	res, err := h.salonService.GetSalonById(id)
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(res)
+}
+
 func (h *SalonHandler) AddSalonAddress(c *fiber.Ctx) error {
 	log.Println("[handlers.AddSalonAddress] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)

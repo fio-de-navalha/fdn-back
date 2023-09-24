@@ -23,9 +23,9 @@ func NewAppointmentHandler(appointmentService application.AppointmentService) *A
 	}
 }
 
-func (h *AppointmentHandler) GetBarberAppointments(c *fiber.Ctx) error {
-	log.Println("[handlers.GetBarberAppointments] - Validating parameters")
-	id := c.Params("barberId")
+func (h *AppointmentHandler) GetProfessionalAppointments(c *fiber.Ctx) error {
+	log.Println("[handlers.GetProfessionalAppointments] - Validating parameters")
+	professionalId := c.Params("professionalId")
 	startsAtQuery := c.Query("startsAt")
 	if startsAtQuery == "" {
 		startsAtQuery = time.Now().Format(constants.DateLayout)
@@ -38,7 +38,7 @@ func (h *AppointmentHandler) GetBarberAppointments(c *fiber.Ctx) error {
 		})
 	}
 
-	res, err := h.appointmentService.GetBarberAppointments(id, startsAt)
+	res, err := h.appointmentService.GetProfessionalAppointments(professionalId, startsAt)
 	if err != nil {
 		if strings.Contains(err.Error(), "not found") {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
@@ -70,7 +70,7 @@ func (h *AppointmentHandler) GetCustomerAppointments(c *fiber.Ctx) error {
 }
 
 func (h *AppointmentHandler) GetAppointment(c *fiber.Ctx) error {
-	log.Println("[handlers.GetBarberAppointments] - Validating parameters")
+	log.Println("[handlers.GetAppointment] - Validating parameters")
 	id := c.Params("id")
 	res, err := h.appointmentService.GetAppointment(id)
 	if err != nil {
@@ -107,7 +107,7 @@ func (h *AppointmentHandler) Create(c *fiber.Ctx) error {
 			"error": "Permission denied",
 		})
 	}
-	if user.ID != body.BarberId && user.ID != body.CustomerId {
+	if user.ID != body.ProfessionalId && user.ID != body.CustomerId {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"error": "Permission denied",
 		})
@@ -120,11 +120,11 @@ func (h *AppointmentHandler) Create(c *fiber.Ctx) error {
 	}
 
 	input := appointment.CreateAppointmentRequest{
-		BarberId:   body.BarberId,
-		CustomerId: body.CustomerId,
-		StartsAt:   body.StartsAt,
-		ServiceIds: body.ServiceIds,
-		ProductIds: body.ProductIds,
+		ProfessionalId: body.ProfessionalId,
+		CustomerId:     body.CustomerId,
+		StartsAt:       body.StartsAt,
+		ServiceIds:     body.ServiceIds,
+		ProductIds:     body.ProductIds,
 	}
 	err := h.appointmentService.CreateApppointment(input)
 	if err != nil {

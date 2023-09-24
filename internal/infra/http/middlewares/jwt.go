@@ -65,14 +65,14 @@ func EnsureAuth() func(c *fiber.Ctx) error {
 	}
 }
 
-func EnsureBarberRole() func(c *fiber.Ctx) error {
+func EnsureProfessionalRole() func(c *fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 		var jwtToken jwt.MapClaims
 		var err error
 		if jwtToken, err = extractAndValidateToken(c); err != nil {
 			return err
 		}
-		if jwtToken["role"] != "barber" {
+		if jwtToken["role"] != "professional" {
 			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 				"error": "Permission denied",
 			})
