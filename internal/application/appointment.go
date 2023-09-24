@@ -14,7 +14,7 @@ import (
 
 type AppointmentService struct {
 	appointmentRepository appointment.AppointmentRepository
-	barberService         BarberService
+	professionalService   ProfessionalService
 	customerService       CustomerService
 	serviceService        ServiceService
 	productService        ProductService
@@ -22,21 +22,22 @@ type AppointmentService struct {
 
 func NewAppointmentService(
 	appointmentRepository appointment.AppointmentRepository,
-	barberService BarberService,
+	professionalService ProfessionalService,
 	customerService CustomerService,
 	serviceService ServiceService,
 	productService ProductService,
 ) *AppointmentService {
 	return &AppointmentService{
 		appointmentRepository: appointmentRepository,
-		barberService:         barberService,
+		professionalService:   professionalService,
 		customerService:       customerService,
 		serviceService:        serviceService,
 		productService:        productService,
 	}
 }
 
-func (s *AppointmentService) GetBarberAppointments(barberId string, startsAt time.Time) ([]*appointment.Appointment, error) {
+func (s *AppointmentService) GetProfessionalAppointments(professionalId string, startsAt time.Time) ([]*appointment.Appointment, error) {
+	log.Println("[application.GetProfessionalAppointments] - Getting appointments from professional:", professionalId)
 	endsAt := time.Date(
 		startsAt.Year(),
 		startsAt.Month(),
@@ -44,9 +45,7 @@ func (s *AppointmentService) GetBarberAppointments(barberId string, startsAt tim
 		constants.EndsAtHour, constants.EndsAtMinute, 0, 0,
 		startsAt.Location(),
 	)
-
-	log.Println("[application.GetBarberAppointments] - Getting appointments from barber:", barberId)
-	a, err := s.appointmentRepository.FindByBarberId(barberId, startsAt, endsAt)
+	a, err := s.appointmentRepository.FindByProfessionalId(professionalId, startsAt, endsAt)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +71,6 @@ func (s *AppointmentService) GetAppointment(id string) (*appointment.Appointment
 }
 
 func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointmentRequest) error {
-	var wg sync.WaitGroup
 	type chanResultService struct {
 		IDs         []string
 		Duration    int
@@ -82,15 +80,18 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 		IDs []string
 	}
 
-	errs := make(chan error, 7)
 	resultServiceChan := make(chan chanResultService, 1)
 	resultProductChan := make(chan chanResultProduct, 1)
+	errs := make(chan error, 7)
+
+	var wg sync.WaitGroup
 	wg.Add(4)
 
 	go func() {
 		defer wg.Done()
-		if err := s.validateEntity("barber", input.BarberId, func(id string) (interface{}, error) {
-			return s.barberService.GetBarberById(id)
+		log.Println("[application.CreateApppointment] - Validating professional:", input.ProfessionalId)
+		if err := s.validateEntity("professional", input.ProfessionalId, func(id string) (interface{}, error) {
+			return s.professionalService.GetProfessionalById(id)
 		}); err != nil {
 			errs <- err
 		}
@@ -98,6 +99,7 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 
 	go func() {
 		defer wg.Done()
+		log.Println("[application.CreateApppointment] - Validating customer:", input.CustomerId)
 		if err := s.validateEntity("customer", input.CustomerId, func(id string) (interface{}, error) {
 			return s.customerService.GetCustomerById(id)
 		}); err != nil {
@@ -146,13 +148,14 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 	close(errs)
 	close(resultServiceChan)
 	close(resultProductChan)
-
 	for err := range errs {
 		return err
 	}
 
 	resultService := <-resultServiceChan
 	resultProduct := <-resultProductChan
+
+	// TODO: Validate if salon is open or not
 
 	log.Println("[application.CreateApppointment] - Validating appointment time range availability")
 	endsAt := input.StartsAt.Add(time.Minute * time.Duration(resultService.Duration))
@@ -162,7 +165,7 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 
 	log.Println("[application.CreateApppointment] - Creating appointment")
 	appo := appointment.NewAppointment(
-		input.BarberId,
+		input.ProfessionalId,
 		input.CustomerId,
 		resultService.Duration,
 		resultService.TotalAmount,
@@ -178,6 +181,7 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 }
 
 func (s *AppointmentService) CancelApppointment(requesterId string, appointmentId string) error {
+	log.Println("[application.CancelApppointment] - Validating appointment:", appointmentId)
 	appo, err := s.appointmentRepository.FindById(appointmentId)
 	if err != nil {
 		return err
@@ -185,13 +189,15 @@ func (s *AppointmentService) CancelApppointment(requesterId string, appointmentI
 	if appo == nil {
 		return errors.New("appointment not found")
 	}
-	if requesterId != appo.BarberId && requesterId != appo.CustomerId {
+
+	if requesterId != appo.ProfessionalId && requesterId != appo.CustomerId {
 		return errors.New("permisison denied")
 	}
 	if appo.StartsAt.Before(time.Now()) {
 		return errors.New("cannot cancel past appointment")
 	}
 
+	log.Println("[application.CancelApppointment] - Canceling appointment:", appointmentId)
 	if _, err := s.appointmentRepository.Cancel(appo); err != nil {
 		return err
 	}

@@ -8,7 +8,7 @@ import (
 )
 
 func setupBarberRouter(router fiber.Router) {
-	barberHandler := handlers.NewBarberHandler(*container.BarberService)
+	barberHandler := handlers.NewBarberHandler(*container.ProfessionalService)
 
 	barbers := router.Group("/barber")
 	barbers.Get("/:id", barberHandler.GetBarberById)

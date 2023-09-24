@@ -39,9 +39,9 @@ func (r *gormServiceRepository) FindById(id string) (*service.Service, error) {
 	return &s, nil
 }
 
-func (r *gormServiceRepository) FindByBarberId(barberId string) ([]*service.Service, error) {
+func (r *gormServiceRepository) FindBySalonId(salonId string) ([]*service.Service, error) {
 	var s []*service.Service
-	result := r.db.Find(&s, "barber_id = ?", barberId)
+	result := r.db.Find(&s, "salon_id = ?", salonId)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			return nil, nil

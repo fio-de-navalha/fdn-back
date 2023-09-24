@@ -23,10 +23,10 @@ func NewProductHandler(productService application.ProductService) *ProductHandle
 	}
 }
 
-func (h *ProductHandler) GetByBarberId(c *fiber.Ctx) error {
-	log.Println("[handlers.GetByBarberId] - Validating parameters")
-	barberId := c.Params("barberId")
-	res, err := h.productService.GetProductsByBarberId(barberId)
+func (h *ProductHandler) GetBySalonId(c *fiber.Ctx) error {
+	log.Println("[handlers.GetBySalonId] - Validating parameters")
+	salonId := c.Params("salonId")
+	res, err := h.productService.GetProductsBySalonId(salonId)
 	if err != nil {
 		if strings.Contains(err.Error(), "not found") {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
@@ -50,11 +50,13 @@ func (h *ProductHandler) Create(c *fiber.Ctx) error {
 		})
 	}
 
+	salonId := c.Params("salonId")
 	price, _ := strconv.Atoi(c.FormValue("price"))
 	input := product.CreateProductRequest{
-		BarberId: user.ID,
-		Name:     c.FormValue("name"),
-		Price:    price,
+		SalonId:        salonId,
+		ProfessionalId: user.ID,
+		Name:           c.FormValue("name"),
+		Price:          price,
 	}
 
 	validate := validator.New()
@@ -82,20 +84,20 @@ func (h *ProductHandler) Create(c *fiber.Ctx) error {
 
 func (h *ProductHandler) Update(c *fiber.Ctx) error {
 	log.Println("[handlers.Update] - Validating parameters")
-	productId := c.Params("productId")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"error": "Permission denied",
 		})
 	}
-	if user.ID != c.Params("barberId") {
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"error": "Permission denied",
-		})
-	}
 
-	input := product.UpdateProductRequest{}
+	salonId := c.Params("salonId")
+	productId := c.Params("productId")
+
+	input := product.UpdateProductRequest{
+		SalonId:        salonId,
+		ProfessionalId: user.ID,
+	}
 	if name := c.FormValue("name"); name != "" {
 		input.Name = &name
 	}

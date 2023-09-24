@@ -2,41 +2,49 @@ package application
 
 import (
 	"errors"
+	"log"
 	"mime/multipart"
 
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/image"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/product"
+	"github.com/fio-de-navalha/fdn-back/internal/domain/professional"
+	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
 )
 
 type ProductService struct {
 	productRepository   product.ProductRepository
-	barberService       BarberService
+	salonService        SalonService
+	professionalService ProfessionalService
 	imageStorageService image.ImageStorageService
 }
 
 func NewProductService(
 	productRepository product.ProductRepository,
-	barberService BarberService,
+	salonService SalonService,
+	professionalService ProfessionalService,
 	imageStorageService image.ImageStorageService,
 ) *ProductService {
 	return &ProductService{
 		productRepository:   productRepository,
-		barberService:       barberService,
+		salonService:        salonService,
+		professionalService: professionalService,
 		imageStorageService: imageStorageService,
 	}
 }
 
-func (s *ProductService) GetProductsByBarberId(barberId string) ([]*product.Product, error) {
-	barberExists, err := s.barberService.GetBarberById(barberId)
+func (s *ProductService) GetProductsBySalonId(salonId string) ([]*product.Product, error) {
+	log.Println("[application.GetProductsBySalonId] - Validating salon:", salonId)
+	sal, err := s.salonService.GetSalonById(salonId)
 	if err != nil {
 		return nil, err
 	}
-	if barberExists == nil {
-		return nil, errors.New("barber not found")
+	if sal == nil {
+		return nil, errors.New("salon not found")
 	}
 
-	res, err := s.productRepository.FindByBarberId(barberId)
+	log.Println("[application.GetProductsBySalonId] - Getting products from salon:", salonId)
+	res, err := s.productRepository.FindBySalonId(salonId)
 	if err != nil {
 		return nil, err
 	}
@@ -44,12 +52,21 @@ func (s *ProductService) GetProductsByBarberId(barberId string) ([]*product.Prod
 }
 
 func (s *ProductService) CreateProduct(input product.CreateProductRequest, file *multipart.FileHeader) error {
-	barberExists, err := s.barberService.GetBarberById(input.BarberId)
+	log.Println("[application.CreateProduct] - Validating salon:", input.SalonId)
+	sal, err := s.validateSalon(input.SalonId)
 	if err != nil {
 		return err
 	}
-	if barberExists == nil {
-		return errors.New("barber not found")
+
+	log.Println("[application.CreateProduct] - Validating professional:", input.ProfessionalId)
+	prof, err := s.validateProfessional(input.ProfessionalId)
+	if err != nil {
+		return err
+	}
+
+	// TODO: validate this
+	if err := s.validateProfessionalPermission(sal, prof); err != nil {
+		return err
 	}
 
 	if file != nil {
@@ -63,8 +80,9 @@ func (s *ProductService) CreateProduct(input product.CreateProductRequest, file 
 		input.ImageUrl = res.Urls[0]
 	}
 
-	ser := product.NewProduct(input)
-	_, err = s.productRepository.Save(ser)
+	log.Println("[application.CreateProduct] - Creating product")
+	newProduct := product.NewProduct(input)
+	_, err = s.productRepository.Save(newProduct)
 	if err != nil {
 		return err
 	}
@@ -72,6 +90,24 @@ func (s *ProductService) CreateProduct(input product.CreateProductRequest, file 
 }
 
 func (s *ProductService) UpdateProduct(productId string, input product.UpdateProductRequest, file *multipart.FileHeader) error {
+	log.Println("[application.UpdateProduct] - Validating salon:", input.SalonId)
+	sal, err := s.validateSalon(input.SalonId)
+	if err != nil {
+		return err
+	}
+
+	log.Println("[application.UpdateProduct] - Validating professional:", input.ProfessionalId)
+	prof, err := s.validateProfessional(input.ProfessionalId)
+	if err != nil {
+		return err
+	}
+
+	// TODO: validate this
+	if err := s.validateProfessionalPermission(sal, prof); err != nil {
+		return err
+	}
+
+	log.Println("[application.UpdateProduct] - Validating product:", productId)
 	pro, err := s.productRepository.FindById(productId)
 	if err != nil {
 		return err
@@ -81,6 +117,7 @@ func (s *ProductService) UpdateProduct(productId string, input product.UpdatePro
 	}
 
 	if file != nil {
+		log.Println("[application.UpdateProduct] - Updating image")
 		res, err := s.imageStorageService.UpdateImage(pro.ImageId, file)
 		if err != nil {
 			return err
@@ -100,6 +137,7 @@ func (s *ProductService) UpdateProduct(productId string, input product.UpdatePro
 		pro.Available = *input.Available
 	}
 
+	log.Println("[application.UpdateProduct] - Updating product")
 	_, err = s.productRepository.Save(pro)
 	if err != nil {
 		return err
@@ -124,4 +162,42 @@ func (s *ProductService) ValidateProductsAvailability(products []*product.Produc
 	}
 
 	return productsIdsToSave
+}
+
+func (s *ProductService) validateSalon(salonId string) (*salon.Salon, error) {
+	sal, err := s.salonService.GetSalonById(salonId)
+	if err != nil {
+		return nil, err
+	}
+	if sal == nil {
+		return nil, errors.New("salon not found")
+	}
+	return sal, nil
+}
+
+func (s *ProductService) validateProfessional(professionalId string) (*professional.ProfessionalResponse, error) {
+	prof, err := s.professionalService.GetProfessionalById(professionalId)
+	if err != nil {
+		return nil, err
+	}
+	if prof == nil {
+		return nil, errors.New("professional not found")
+	}
+	return prof, nil
+}
+
+func (s *ProductService) validateProfessionalPermission(sal *salon.Salon, pro *professional.ProfessionalResponse) error {
+	isProfessionalMember := false
+	for _, v := range sal.Professionals {
+		if isProfessionalMember {
+			break
+		}
+		if v.ID == pro.ID {
+			isProfessionalMember = true
+		}
+	}
+	if !isProfessionalMember {
+		return errors.New("permission denied")
+	}
+	return nil
 }

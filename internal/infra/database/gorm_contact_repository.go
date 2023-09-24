@@ -1,7 +1,7 @@
 package database
 
 import (
-	"github.com/fio-de-navalha/fdn-back/internal/domain/barber"
+	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
 	"gorm.io/gorm"
 )
 
@@ -15,18 +15,18 @@ func NewGormContactRepository() *gormContactRepository {
 	}
 }
 
-func (r *gormContactRepository) FindByBarberId(barberId string) ([]*barber.Contact, error) {
-	var cntt []*barber.Contact
-	res := r.db.Find(&cntt, "barber_id = ?", barberId)
+func (r *gormContactRepository) FindBySalonId(salonId string) ([]*salon.Contact, error) {
+	var cntt []*salon.Contact
+	res := r.db.Find(&cntt, "salon_id = ?", salonId)
 	if res.Error != nil {
 		return nil, res.Error
 	}
 	return cntt, nil
 }
 
-func (r *gormContactRepository) FindById(id string) (*barber.Contact, error) {
-	var cntt barber.Contact
-	result := r.db.First(&cntt, "id = ?", id)
+func (r *gormContactRepository) FindById(id string, salonId string) (*salon.Contact, error) {
+	var cntt salon.Contact
+	result := r.db.First(&cntt, "id = ? AND salon_id = ?", id, salonId)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			return nil, nil
@@ -36,7 +36,7 @@ func (r *gormContactRepository) FindById(id string) (*barber.Contact, error) {
 	return &cntt, nil
 }
 
-func (r *gormContactRepository) Save(cntt *barber.Contact) (*barber.Contact, error) {
+func (r *gormContactRepository) Save(cntt *salon.Contact) (*salon.Contact, error) {
 	result := r.db.Save(cntt)
 	if result.Error != nil {
 		return nil, result.Error
@@ -45,7 +45,7 @@ func (r *gormContactRepository) Save(cntt *barber.Contact) (*barber.Contact, err
 }
 
 func (r *gormContactRepository) Delete(cnttId string) error {
-	var cntt []*barber.Contact
+	var cntt []*salon.Contact
 	res := r.db.Delete(&cntt, "id = ?", cnttId)
 	if res.Error != nil {
 		return res.Error
