@@ -71,26 +71,36 @@ func (s *ProductService) CreateProduct(input product.CreateProductRequest, file 
 	return nil
 }
 
-func (s *ProductService) UpdateProduct(productId string, input product.UpdateProductRequest) error {
-	ser, err := s.productRepository.FindById(productId)
+func (s *ProductService) UpdateProduct(productId string, input product.UpdateProductRequest, file *multipart.FileHeader) error {
+	pro, err := s.productRepository.FindById(productId)
 	if err != nil {
 		return err
 	}
-	if ser == nil {
+	if pro == nil {
 		return errors.New("product not found")
 	}
 
-	if input.Name != nil {
-		ser.Name = *input.Name
-	}
-	if input.Price != nil {
-		ser.Price = *input.Price
-	}
-	if input.Available != nil {
-		ser.Available = *input.Available
+	if file != nil {
+		res, err := s.imageStorageService.UpdateImage(pro.ImageId, file)
+		if err != nil {
+			return err
+		}
+
+		pro.ImageId = res.ID
+		pro.ImageUrl = res.Urls[0]
 	}
 
-	_, err = s.productRepository.Save(ser)
+	if input.Name != nil {
+		pro.Name = *input.Name
+	}
+	if input.Price != nil {
+		pro.Price = *input.Price
+	}
+	if input.Available != nil {
+		pro.Available = *input.Available
+	}
+
+	_, err = s.productRepository.Save(pro)
 	if err != nil {
 		return err
 	}

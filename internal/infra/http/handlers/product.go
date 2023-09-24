@@ -82,34 +82,38 @@ func (h *ProductHandler) Create(c *fiber.Ctx) error {
 
 func (h *ProductHandler) Update(c *fiber.Ctx) error {
 	log.Println("[handlers.Update] - Validating parameters")
-	barberId := c.Params("barberId")
 	productId := c.Params("productId")
-	body := new(product.UpdateProductRequest)
-	if err := c.BodyParser(&body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid request body",
-		})
-	}
-
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"error": "Permission denied",
 		})
 	}
-	if user.ID != barberId {
+	if user.ID != c.Params("barberId") {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"error": "Permission denied",
 		})
 	}
 
-	input := product.UpdateProductRequest{
-		Name:      body.Name,
-		Price:     body.Price,
-		Available: body.Available,
+	input := product.UpdateProductRequest{}
+	if name := c.FormValue("name"); name != "" {
+		input.Name = &name
+	}
+	if priceStr := c.FormValue("price"); priceStr != "" {
+		price, err := strconv.Atoi(priceStr)
+		if err == nil {
+			input.Price = &price
+		}
+	}
+	if availableStr := c.FormValue("available"); availableStr != "" {
+		available, err := strconv.ParseBool(availableStr)
+		if err == nil {
+			input.Available = &available
+		}
 	}
 
-	err := h.productService.UpdateProduct(productId, input)
+	file, _ := c.FormFile("file")
+	err := h.productService.UpdateProduct(productId, input, file)
 	if err != nil {
 		if strings.Contains(err.Error(), "not found") {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{

@@ -13,4 +13,6 @@ type UpdateProductRequest struct {
 	Name      *string `json:"name"`
 	Price     *int    `json:"price"`
 	Available *bool   `json:"available"`
+	ImageId   *string `json:"imageId"`
+	ImageUrl  *string `json:"imageUrl"`
 }

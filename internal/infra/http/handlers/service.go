@@ -116,6 +116,12 @@ func (h *ServiceHandler) Update(c *fiber.Ctx) error {
 			input.DurationInMin = &durationInMin
 		}
 	}
+	if availableStr := c.FormValue("available"); availableStr != "" {
+		available, err := strconv.ParseBool(availableStr)
+		if err == nil {
+			input.Available = &available
+		}
+	}
 
 	validate := validator.New()
 	if err := validate.Struct(input); err != nil {
