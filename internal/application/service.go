@@ -71,13 +71,23 @@ func (s *ServiceService) CreateService(input service.CreateServiceRequest, file 
 	return nil
 }
 
-func (s *ServiceService) UpdateService(serviceId string, input service.UpdateServiceRequest) error {
+func (s *ServiceService) UpdateService(serviceId string, input service.UpdateServiceRequest, file *multipart.FileHeader) error {
 	ser, err := s.serviceRepository.FindById(serviceId)
 	if err != nil {
 		return err
 	}
 	if ser == nil {
 		return errors.New("service not found")
+	}
+
+	if file != nil {
+		res, err := s.imageStorageService.UpdateImage(ser.ImageId, file)
+		if err != nil {
+			return err
+		}
+
+		ser.ImageId = res.ID
+		ser.ImageUrl = res.Urls[0]
 	}
 
 	if input.Name != nil {

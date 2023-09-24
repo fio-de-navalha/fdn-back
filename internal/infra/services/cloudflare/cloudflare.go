@@ -9,6 +9,7 @@ import (
 	"mime/multipart"
 	"net/http"
 
+	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/image"
 )
 
@@ -130,4 +131,61 @@ func (s *CloudFlareService) UploadImage(file *multipart.FileHeader) (*image.Imag
 		FileName: response.Result.FileName,
 		Urls:     response.Result.Variants,
 	}, nil
+}
+
+func (s *CloudFlareService) UpdateImage(imageId string, file *multipart.FileHeader) (*image.ImageResponse, error) {
+	if file == nil {
+		return nil, nil
+	}
+
+	deleteErrorCh := make(chan error)
+	uploadErrorCh := make(chan error)
+	uploadResultCh := make(chan *image.ImageResponse)
+
+	go func() {
+		err := s.DeleteImage(imageId)
+		deleteErrorCh <- err
+	}()
+	go func() {
+		file.Filename = constants.FilePrefix + file.Filename
+		res, err := s.UploadImage(file)
+		uploadErrorCh <- err
+		uploadResultCh <- res
+	}()
+
+	deleteErr := <-deleteErrorCh
+	uploadErr := <-uploadErrorCh
+	if deleteErr != nil {
+		return nil, deleteErr
+	}
+	if uploadErr != nil {
+		return nil, uploadErr
+	}
+
+	uploaded := <-uploadResultCh
+
+	return uploaded, nil
+}
+
+func (s *CloudFlareService) DeleteImage(imageId string) error {
+	log.Println("[cloudflare.GetImageById] - Getting image:", imageId)
+	url := s.baseUrl + "/" + imageId
+	req, err := http.NewRequest("DELETE", url, nil)
+	if err != nil {
+		fmt.Println("Error creating request:", err)
+		return err
+	}
+
+	token := "Bearer " + s.editToken
+	req.Header.Add("Authorization", token)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error sending request:", err)
+		return err
+	}
+	defer resp.Body.Close()
+
+	return nil
 }

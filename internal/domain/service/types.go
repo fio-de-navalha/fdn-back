@@ -17,4 +17,6 @@ type UpdateServiceRequest struct {
 	Price         *int    `json:"price"`
 	DurationInMin *int    `json:"durationInMin"`
 	Available     *bool   `json:"available"`
+	ImageId       *string `json:"imageId"`
+	ImageUrl      *string `json:"imageUrl"`
 }

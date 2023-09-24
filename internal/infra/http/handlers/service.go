@@ -84,36 +84,48 @@ func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 
 func (h *ServiceHandler) Update(c *fiber.Ctx) error {
 	log.Println("[handlers.Update] - Validating parameters")
-	barberId := c.Params("barberId")
 	serviceId := c.Params("serviceId")
-	body := new(service.UpdateServiceRequest)
-	if err := c.BodyParser(&body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid request body",
-		})
-	}
-
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"error": "Permission denied",
 		})
 	}
-	if user.ID != barberId {
+	if user.ID != c.Params("barberId") {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"error": "Permission denied",
 		})
 	}
 
-	input := service.UpdateServiceRequest{
-		Name:          body.Name,
-		Description:   body.Description,
-		Price:         body.Price,
-		DurationInMin: body.DurationInMin,
-		Available:     body.Available,
+	input := service.UpdateServiceRequest{}
+	if name := c.FormValue("name"); name != "" {
+		input.Name = &name
+	}
+	if description := c.FormValue("description"); description != "" {
+		input.Description = &description
+	}
+	if priceStr := c.FormValue("price"); priceStr != "" {
+		price, err := strconv.Atoi(priceStr)
+		if err == nil {
+			input.Price = &price
+		}
+	}
+	if durationInMinStr := c.FormValue("durationInMin"); durationInMinStr != "" {
+		durationInMin, err := strconv.Atoi(durationInMinStr)
+		if err == nil {
+			input.DurationInMin = &durationInMin
+		}
 	}
 
-	err := h.serviceService.UpdateService(serviceId, input)
+	validate := validator.New()
+	if err := validate.Struct(input); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	file, _ := c.FormFile("file")
+	err := h.serviceService.UpdateService(serviceId, input, file)
 	if err != nil {
 		if strings.Contains(err.Error(), "not found") {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
