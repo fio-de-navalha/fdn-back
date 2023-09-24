@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"log"
+	"strconv"
 	"strings"
 
 	"github.com/fio-de-navalha/fdn-back/internal/application"
@@ -42,39 +43,29 @@ func (h *ProductHandler) GetByBarberId(c *fiber.Ctx) error {
 
 func (h *ProductHandler) Create(c *fiber.Ctx) error {
 	log.Println("[handlers.Create] - Validating parameters")
-	body := new(product.CreateProductRequest)
-	if err := c.BodyParser(&body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid request body",
-		})
-	}
-
-	validate := validator.New()
-	if err := validate.Struct(body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
-	}
-
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"error": "Permission denied",
 		})
 	}
-	if user.ID != body.BarberId {
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"error": "Permission denied",
+
+	price, _ := strconv.Atoi(c.FormValue("price"))
+	input := product.CreateProductRequest{
+		BarberId: user.ID,
+		Name:     c.FormValue("name"),
+		Price:    price,
+	}
+
+	validate := validator.New()
+	if err := validate.Struct(input); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
 		})
 	}
 
-	input := product.CreateProductRequest{
-		BarberId: body.BarberId,
-		Name:     body.Name,
-		Price:    body.Price,
-	}
-
-	err := h.productService.CreateProduct(input)
+	file, _ := c.FormFile("file")
+	err := h.productService.CreateProduct(input, file)
 	if err != nil {
 		if strings.Contains(err.Error(), "not found") {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{

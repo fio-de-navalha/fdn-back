@@ -3,5 +3,7 @@ CREATE TABLE IF NOT EXISTS product (
     barber_id UUID REFERENCES barber(id),
     name VARCHAR(45) NOT NULL,
     price INTEGER NOT NULL,
-    available BOOLEAN  NOT NULL
+    available BOOLEAN  NOT NULL,
+    image_id VARCHAR,
+    image_url VARCHAR
 );

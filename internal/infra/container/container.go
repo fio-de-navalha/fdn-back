@@ -13,8 +13,6 @@ var (
 	ServiceService     *application.ServiceService
 	ProductService     *application.ProductService
 	AppointmentService *application.AppointmentService
-
-	CloudFlareService *cloudflare.CloudFlareService
 )
 
 func LoadContainers() {
@@ -36,7 +34,7 @@ func LoadContainers() {
 	CustomerService = application.NewCustomerService(customerRepo)
 	BarberService = application.NewBarberService(barberRepo, addressRepo, contactRepo)
 	ServiceService = application.NewServiceService(serviceRepo, *BarberService, cloudFlareService)
-	ProductService = application.NewProductService(productRepo, *BarberService)
+	ProductService = application.NewProductService(productRepo, *BarberService, cloudFlareService)
 	AppointmentService = application.NewAppointmentService(
 		appointmentRepo,
 		*BarberService,

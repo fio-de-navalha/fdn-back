@@ -5,6 +5,8 @@ type CreateProductRequest struct {
 	Name      string `json:"name" validate:"required,min=1"`
 	Price     int    `json:"price" validate:"required,min=1"`
 	Available bool   `json:"available"`
+	ImageId   string `json:"imageId"`
+	ImageUrl  string `json:"imageUrl"`
 }
 
 type UpdateProductRequest struct {

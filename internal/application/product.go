@@ -2,19 +2,28 @@ package application
 
 import (
 	"errors"
+	"mime/multipart"
 
+	"github.com/fio-de-navalha/fdn-back/internal/constants"
+	"github.com/fio-de-navalha/fdn-back/internal/domain/image"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/product"
 )
 
 type ProductService struct {
-	productRepository product.ProductRepository
-	barberService     BarberService
+	productRepository   product.ProductRepository
+	barberService       BarberService
+	imageStorageService image.ImageStorageService
 }
 
-func NewProductService(productRepository product.ProductRepository, barberService BarberService) *ProductService {
+func NewProductService(
+	productRepository product.ProductRepository,
+	barberService BarberService,
+	imageStorageService image.ImageStorageService,
+) *ProductService {
 	return &ProductService{
-		productRepository: productRepository,
-		barberService:     barberService,
+		productRepository:   productRepository,
+		barberService:       barberService,
+		imageStorageService: imageStorageService,
 	}
 }
 
@@ -34,13 +43,24 @@ func (s *ProductService) GetProductsByBarberId(barberId string) ([]*product.Prod
 	return res, nil
 }
 
-func (s *ProductService) CreateProduct(input product.CreateProductRequest) error {
+func (s *ProductService) CreateProduct(input product.CreateProductRequest, file *multipart.FileHeader) error {
 	barberExists, err := s.barberService.GetBarberById(input.BarberId)
 	if err != nil {
 		return err
 	}
 	if barberExists == nil {
 		return errors.New("barber not found")
+	}
+
+	if file != nil {
+		file.Filename = constants.FilePrefix + file.Filename
+		res, err := s.imageStorageService.UploadImage(file)
+		if err != nil {
+			return err
+		}
+
+		input.ImageId = res.ID
+		input.ImageUrl = res.Urls[0]
 	}
 
 	ser := product.NewProduct(input)
