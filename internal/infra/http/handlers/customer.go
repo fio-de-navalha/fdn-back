@@ -3,6 +3,7 @@ package handlers
 import (
 	"log"
 	"strings"
+	"time"
 
 	"github.com/fio-de-navalha/fdn-back/internal/application"
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
@@ -63,7 +64,7 @@ func (h *CustomerHandler) RegisterCustomer(c *fiber.Ctx) error {
 		Password: body.Password,
 	}
 
-	resp, err := h.customerService.RegisterCustomer(input)
+	res, err := h.customerService.RegisterCustomer(input)
 	if err != nil {
 		if strings.Contains(err.Error(), "alredy exists") {
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
@@ -76,7 +77,15 @@ func (h *CustomerHandler) RegisterCustomer(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(resp)
+	c.Cookie(&fiber.Cookie{
+		Name:     "access_token",
+		Value:    res.AccessToken,
+		Expires:  time.Now().Add(time.Hour * 24),
+		HTTPOnly: true,
+		Secure:   true,
+	})
+
+	return c.Status(fiber.StatusCreated).JSON(res)
 }
 
 func (h *CustomerHandler) LoginCustomer(c *fiber.Ctx) error {
@@ -100,7 +109,7 @@ func (h *CustomerHandler) LoginCustomer(c *fiber.Ctx) error {
 		Password: body.Password,
 	}
 
-	resp, err := h.customerService.LoginCustomer(input)
+	res, err := h.customerService.LoginCustomer(input)
 	if err != nil {
 		if err.Error() == "invalid credentials" {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -112,7 +121,16 @@ func (h *CustomerHandler) LoginCustomer(c *fiber.Ctx) error {
 			"error": err.Error(),
 		})
 	}
-	return c.JSON(resp)
+
+	c.Cookie(&fiber.Cookie{
+		Name:     "access_token",
+		Value:    res.AccessToken,
+		Expires:  time.Now().Add(time.Hour * 24),
+		HTTPOnly: true,
+		Secure:   true,
+	})
+
+	return c.JSON(res)
 }
 
 func (h *CustomerHandler) MeCustomer(c *fiber.Ctx) error {

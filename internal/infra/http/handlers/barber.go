@@ -3,6 +3,7 @@ package handlers
 import (
 	"log"
 	"strings"
+	"time"
 
 	"github.com/fio-de-navalha/fdn-back/internal/application"
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
@@ -62,7 +63,7 @@ func (h *BarberHandler) RegisterBarber(c *fiber.Ctx) error {
 		Password: body.Password,
 	}
 
-	resp, err := h.barberService.RegisterBarber(input)
+	res, err := h.barberService.RegisterBarber(input)
 	if err != nil {
 		if strings.Contains(err.Error(), "alredy exists") {
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
@@ -75,7 +76,15 @@ func (h *BarberHandler) RegisterBarber(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(resp)
+	c.Cookie(&fiber.Cookie{
+		Name:     "access_token",
+		Value:    res.AccessToken,
+		Expires:  time.Now().Add(time.Hour * 24),
+		HTTPOnly: true,
+		Secure:   true,
+	})
+
+	return c.Status(fiber.StatusCreated).JSON(res)
 }
 
 func (h *BarberHandler) LoginBarber(c *fiber.Ctx) error {
@@ -111,6 +120,14 @@ func (h *BarberHandler) LoginBarber(c *fiber.Ctx) error {
 			"error": err.Error(),
 		})
 	}
+
+	c.Cookie(&fiber.Cookie{
+		Name:     "access_token",
+		Value:    res.AccessToken,
+		Expires:  time.Now().Add(time.Hour * 24),
+		HTTPOnly: true,
+		Secure:   true,
+	})
 
 	return c.JSON(res)
 }
