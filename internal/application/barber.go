@@ -36,7 +36,7 @@ func (s *BarberService) GetManyBarbers() ([]*barber.Barber, error) {
 }
 
 func (s *BarberService) GetBarberById(id string) (*barber.BarberResponse, error) {
-	log.Println("[application.GetManyBarbers] - Getting barber:", id)
+	log.Println("[application.GetBarberById] - Getting barber:", id)
 	bar, err := s.barberRepository.FindById(id)
 	if err != nil {
 		return nil, err

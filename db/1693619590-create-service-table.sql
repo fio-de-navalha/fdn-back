@@ -5,5 +5,7 @@ CREATE TABLE IF NOT EXISTS service (
     description VARCHAR,
     price INTEGER NOT NULL,
     duration_in_min INTEGER NOT NULL,
-    available BOOLEAN  NOT NULL
+    available BOOLEAN NOT NULL,
+    image_id VARCHAR,
+    image_url VARCHAR
 );

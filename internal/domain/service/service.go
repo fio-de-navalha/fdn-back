@@ -10,6 +10,8 @@ type Service struct {
 	Price         int    `json:"price"`
 	DurationInMin int    `json:"durationInMin"`
 	Available     bool   `json:"available"`
+	ImageId       string `json:"imageId"`
+	ImageUrl      string `json:"imageUrl"`
 }
 
 func NewService(input CreateServiceRequest) *Service {
@@ -21,5 +23,7 @@ func NewService(input CreateServiceRequest) *Service {
 		Price:         input.Price,
 		DurationInMin: input.DurationInMin,
 		Available:     true,
+		ImageId:       input.ImageId,
+		ImageUrl:      input.ImageUrl,
 	}
 }

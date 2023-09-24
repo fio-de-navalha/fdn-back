@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"log"
+	"strconv"
 	"strings"
 
 	"github.com/fio-de-navalha/fdn-back/internal/application"
@@ -42,42 +43,32 @@ func (h *ServiceHandler) GetByBarberId(c *fiber.Ctx) error {
 
 func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 	log.Println("[handlers.Create] - Validating parameters")
-	body := new(service.CreateServiceRequest)
-	if err := c.BodyParser(&body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid request body",
-		})
-	}
-
-	validate := validator.New()
-	if err := validate.Struct(body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
-	}
-
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"error": "Permission denied",
 		})
 	}
-	if user.ID != body.BarberId {
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"error": "Permission denied",
+
+	price, _ := strconv.Atoi(c.FormValue("price"))
+	durationInMin, _ := strconv.Atoi(c.FormValue("durationInMin"))
+	input := service.CreateServiceRequest{
+		BarberId:      user.ID,
+		Name:          c.FormValue("name"),
+		Description:   c.FormValue("description"),
+		Price:         price,
+		DurationInMin: durationInMin,
+	}
+
+	validate := validator.New()
+	if err := validate.Struct(input); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
 		})
 	}
 
-	input := service.CreateServiceRequest{
-		BarberId:      body.BarberId,
-		Name:          body.Name,
-		Description:   body.Description,
-		Price:         body.Price,
-		DurationInMin: body.DurationInMin,
-	}
-
-	err := h.serviceService.CreateService(input)
-	if err != nil {
+	file, _ := c.FormFile("file")
+	if err := h.serviceService.CreateService(input, file); err != nil {
 		if strings.Contains(err.Error(), "not found") {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 				"error": err.Error(),

@@ -2,19 +2,28 @@ package application
 
 import (
 	"errors"
+	"mime/multipart"
 
+	"github.com/fio-de-navalha/fdn-back/internal/constants"
+	"github.com/fio-de-navalha/fdn-back/internal/domain/image"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/service"
 )
 
 type ServiceService struct {
-	serviceRepository service.ServiceRepository
-	barberService     BarberService
+	serviceRepository   service.ServiceRepository
+	barberService       BarberService
+	imageStorageService image.ImageStorageService
 }
 
-func NewServiceService(serviceRepository service.ServiceRepository, barberService BarberService) *ServiceService {
+func NewServiceService(
+	serviceRepository service.ServiceRepository,
+	barberService BarberService,
+	imageStorageService image.ImageStorageService,
+) *ServiceService {
 	return &ServiceService{
-		serviceRepository: serviceRepository,
-		barberService:     barberService,
+		serviceRepository:   serviceRepository,
+		barberService:       barberService,
+		imageStorageService: imageStorageService,
 	}
 }
 
@@ -34,13 +43,24 @@ func (s *ServiceService) GetServicesByBarberId(barberId string) ([]*service.Serv
 	return res, nil
 }
 
-func (s *ServiceService) CreateService(input service.CreateServiceRequest) error {
+func (s *ServiceService) CreateService(input service.CreateServiceRequest, file *multipart.FileHeader) error {
 	barberExists, err := s.barberService.GetBarberById(input.BarberId)
 	if err != nil {
 		return err
 	}
 	if barberExists == nil {
 		return errors.New("barber not found")
+	}
+
+	if file != nil {
+		file.Filename = constants.FilePrefix + file.Filename
+		res, err := s.imageStorageService.UploadImage(file)
+		if err != nil {
+			return err
+		}
+
+		input.ImageId = res.ID
+		input.ImageUrl = res.Urls[0]
 	}
 
 	ser := service.NewService(input)
