@@ -12,6 +12,7 @@ func setupSalonRouter(router fiber.Router) {
 
 	salons := router.Group("/salon")
 	salons.Get("/:id", salonHandler.GetSalonById)
+	salons.Post("/", middlewares.EnsureProfessionalRole(), salonHandler.CraeteSalon)
 
 	salons.Post("/:id/address", middlewares.EnsureProfessionalRole(), salonHandler.AddSalonAddress)
 	salons.Put("/:id/address/:addressId", middlewares.EnsureProfessionalRole(), salonHandler.UpdateSalonAddress)

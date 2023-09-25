@@ -41,6 +41,44 @@ func (h *SalonHandler) GetSalonById(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
+func (h *SalonHandler) CraeteSalon(c *fiber.Ctx) error {
+	log.Println("[handlers.CraeteSalon] - Validating parameters")
+	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
+	if !ok {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error": "Permission denied",
+		})
+	}
+
+	body := new(salon.CreateSalonRequest)
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
+	}
+	validate := validator.New()
+	if err := validate.Struct(body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	res, err := h.salonService.CreateSalon(body.Name, user.ID)
+	if err != nil {
+		if strings.Contains(err.Error(), "alredy exists") {
+			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(res)
+}
+
 func (h *SalonHandler) AddSalonAddress(c *fiber.Ctx) error {
 	log.Println("[handlers.AddSalonAddress] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)

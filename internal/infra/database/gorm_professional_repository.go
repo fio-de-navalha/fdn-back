@@ -27,7 +27,6 @@ func (r *gormProfessionalRepository) FindMany() ([]*professional.Professional, e
 func (r *gormProfessionalRepository) FindById(id string) (*professional.Professional, error) {
 	var prof professional.Professional
 	result := r.db.Model(&professional.Professional{}).
-		Preload("Services").
 		First(&prof, "id = ?", id)
 
 	if result.Error != nil {

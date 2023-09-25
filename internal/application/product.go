@@ -53,21 +53,21 @@ func (s *ProductService) GetProductsBySalonId(salonId string) ([]*product.Produc
 
 func (s *ProductService) CreateProduct(input product.CreateProductRequest, file *multipart.FileHeader) error {
 	log.Println("[application.CreateProduct] - Validating salon:", input.SalonId)
-	sal, err := s.validateSalon(input.SalonId)
-	if err != nil {
-		return err
-	}
+	// sal, err := s.validateSalon(input.SalonId)
+	// if err != nil {
+	// 	return err
+	// }
 
-	log.Println("[application.CreateProduct] - Validating professional:", input.ProfessionalId)
-	prof, err := s.validateProfessional(input.ProfessionalId)
-	if err != nil {
-		return err
-	}
+	// log.Println("[application.CreateProduct] - Validating professional:", input.ProfessionalId)
+	// prof, err := s.validateProfessional(input.ProfessionalId)
+	// if err != nil {
+	// 	return err
+	// }
 
-	// TODO: validate this
-	if err := s.validateProfessionalPermission(sal, prof); err != nil {
-		return err
-	}
+	// // TODO: validate this
+	// if err := s.validateProfessionalPermission(sal, prof); err != nil {
+	// 	return err
+	// }
 
 	if file != nil {
 		file.Filename = constants.FilePrefix + file.Filename
@@ -82,7 +82,7 @@ func (s *ProductService) CreateProduct(input product.CreateProductRequest, file 
 
 	log.Println("[application.CreateProduct] - Creating product")
 	newProduct := product.NewProduct(input)
-	_, err = s.productRepository.Save(newProduct)
+	_, err := s.productRepository.Save(newProduct)
 	if err != nil {
 		return err
 	}
@@ -91,21 +91,21 @@ func (s *ProductService) CreateProduct(input product.CreateProductRequest, file 
 
 func (s *ProductService) UpdateProduct(productId string, input product.UpdateProductRequest, file *multipart.FileHeader) error {
 	log.Println("[application.UpdateProduct] - Validating salon:", input.SalonId)
-	sal, err := s.validateSalon(input.SalonId)
-	if err != nil {
-		return err
-	}
+	// sal, err := s.validateSalon(input.SalonId)
+	// if err != nil {
+	// 	return err
+	// }
 
-	log.Println("[application.UpdateProduct] - Validating professional:", input.ProfessionalId)
-	prof, err := s.validateProfessional(input.ProfessionalId)
-	if err != nil {
-		return err
-	}
+	// log.Println("[application.UpdateProduct] - Validating professional:", input.ProfessionalId)
+	// prof, err := s.validateProfessional(input.ProfessionalId)
+	// if err != nil {
+	// 	return err
+	// }
 
-	// TODO: validate this
-	if err := s.validateProfessionalPermission(sal, prof); err != nil {
-		return err
-	}
+	// // TODO: validate this
+	// if err := s.validateProfessionalPermission(sal, prof); err != nil {
+	// 	return err
+	// }
 
 	log.Println("[application.UpdateProduct] - Validating product:", productId)
 	pro, err := s.productRepository.FindById(productId)
@@ -186,18 +186,18 @@ func (s *ProductService) validateProfessional(professionalId string) (*professio
 	return prof, nil
 }
 
-func (s *ProductService) validateProfessionalPermission(sal *salon.Salon, pro *professional.ProfessionalResponse) error {
-	isProfessionalMember := false
-	for _, v := range sal.Professionals {
-		if isProfessionalMember {
-			break
-		}
-		if v.ID == pro.ID {
-			isProfessionalMember = true
-		}
-	}
-	if !isProfessionalMember {
-		return errors.New("permission denied")
-	}
-	return nil
-}
+// func (s *ProductService) validateProfessionalPermission(sal *salon.Salon, pro *professional.ProfessionalResponse) error {
+// 	isProfessionalMember := false
+// 	for _, v := range sal.SalonMembers {
+// 		if isProfessionalMember {
+// 			break
+// 		}
+// 		if v.ID == pro.ID {
+// 			isProfessionalMember = true
+// 		}
+// 	}
+// 	if !isProfessionalMember {
+// 		return errors.New("permission denied")
+// 	}
+// 	return nil
+// }

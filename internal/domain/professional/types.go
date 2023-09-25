@@ -2,16 +2,13 @@ package professional
 
 import (
 	"time"
-
-	"github.com/fio-de-navalha/fdn-back/internal/domain/service"
 )
 
 type ProfessionalResponse struct {
-	ID        string            `json:"id"`
-	Name      string            `json:"name"`
-	Email     string            `json:"email"`
-	CreatedAt time.Time         `json:"createdAt"`
-	Services  []service.Service `json:"services"`
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"createdAt"`
 }
 
 type RegisterProfessionalRequest struct {

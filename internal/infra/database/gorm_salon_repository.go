@@ -1,6 +1,9 @@
 package database
 
 import (
+	"fmt"
+	"log"
+
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
 	"gorm.io/gorm"
 )
@@ -27,7 +30,7 @@ func (r *gormSalonRepository) FindMany() ([]*salon.Salon, error) {
 func (r *gormSalonRepository) FindById(id string) (*salon.Salon, error) {
 	var sal salon.Salon
 	result := r.db.Model(&salon.Salon{}).
-		Preload("Professionals").
+		Preload("SalonMembers").
 		Preload("Addresses").
 		Preload("Contacts").
 		Preload("Services").
@@ -35,6 +38,7 @@ func (r *gormSalonRepository) FindById(id string) (*salon.Salon, error) {
 		First(&sal, "id = ?", id)
 
 	if result.Error != nil {
+		fmt.Println(result.Error)
 		if result.Error == gorm.ErrRecordNotFound {
 			return nil, nil
 		}
@@ -46,6 +50,7 @@ func (r *gormSalonRepository) FindById(id string) (*salon.Salon, error) {
 func (r *gormSalonRepository) Save(sal *salon.Salon) (*salon.Salon, error) {
 	result := r.db.Save(sal)
 	if result.Error != nil {
+		log.Panicln(result.Error)
 		return nil, result.Error
 	}
 	return sal, nil

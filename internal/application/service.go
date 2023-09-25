@@ -53,21 +53,21 @@ func (s *ServiceService) GetServicesBySalonId(salonId string) ([]*service.Servic
 
 func (s *ServiceService) CreateService(input service.CreateServiceRequest, file *multipart.FileHeader) error {
 	log.Println("[application.CreateService] - Validating salon:", input.SalonId)
-	sal, err := s.validateSalon(input.SalonId)
-	if err != nil {
-		return err
-	}
+	// sal, err := s.validateSalon(input.SalonId)
+	// if err != nil {
+	// 	return err
+	// }
 
-	log.Println("[application.CreateService] - Validating professional:", input.ProfessionalId)
-	prof, err := s.validateProfessional(input.ProfessionalId)
-	if err != nil {
-		return err
-	}
+	// log.Println("[application.CreateService] - Validating professional:", input.ProfessionalId)
+	// prof, err := s.validateProfessional(input.ProfessionalId)
+	// if err != nil {
+	// 	return err
+	// }
 
-	// TODO: validate this
-	if err := s.validateProfessionalPermission(sal, prof); err != nil {
-		return err
-	}
+	// // TODO: validate this
+	// if err := s.validateProfessionalPermission(sal, prof); err != nil {
+	// 	return err
+	// }
 
 	if file != nil {
 		log.Println("[application.CreateService] - Uploading file")
@@ -83,7 +83,7 @@ func (s *ServiceService) CreateService(input service.CreateServiceRequest, file 
 
 	log.Println("[application.CreateService] - Creating service")
 	newService := service.NewService(input)
-	_, err = s.serviceRepository.Save(newService)
+	_, err := s.serviceRepository.Save(newService)
 	if err != nil {
 		return err
 	}
@@ -92,21 +92,21 @@ func (s *ServiceService) CreateService(input service.CreateServiceRequest, file 
 
 func (s *ServiceService) UpdateService(serviceId string, input service.UpdateServiceRequest, file *multipart.FileHeader) error {
 	log.Println("[application.UpdateService] - Validating salon:", input.SalonId)
-	sal, err := s.validateSalon(input.SalonId)
-	if err != nil {
-		return err
-	}
+	// sal, err := s.validateSalon(input.SalonId)
+	// if err != nil {
+	// 	return err
+	// }
 
-	log.Println("[application.UpdateService] - Validating professional:", input.ProfessionalId)
-	prof, err := s.validateProfessional(input.ProfessionalId)
-	if err != nil {
-		return err
-	}
+	// log.Println("[application.UpdateService] - Validating professional:", input.ProfessionalId)
+	// prof, err := s.validateProfessional(input.ProfessionalId)
+	// if err != nil {
+	// 	return err
+	// }
 
-	// TODO: validate this
-	if err := s.validateProfessionalPermission(sal, prof); err != nil {
-		return err
-	}
+	// // TODO: validate this
+	// if err := s.validateProfessionalPermission(sal, prof); err != nil {
+	// 	return err
+	// }
 
 	log.Println("[application.UpdateService] - Validating service:", serviceId)
 	ser, err := s.serviceRepository.FindById(serviceId)
@@ -197,18 +197,18 @@ func (s *ServiceService) validateProfessional(professionalId string) (*professio
 	return prof, nil
 }
 
-func (s *ServiceService) validateProfessionalPermission(sal *salon.Salon, pro *professional.ProfessionalResponse) error {
-	isProfessionalMember := false
-	for _, v := range sal.Professionals {
-		if isProfessionalMember {
-			break
-		}
-		if v.ID == pro.ID {
-			isProfessionalMember = true
-		}
-	}
-	if !isProfessionalMember {
-		return errors.New("permission denied")
-	}
-	return nil
-}
+// func (s *ServiceService) validateProfessionalPermission(sal *salon.Salon, pro *professional.ProfessionalResponse) error {
+// 	isProfessionalMember := false
+// 	for _, v := range sal.SalonMembers {
+// 		if isProfessionalMember {
+// 			break
+// 		}
+// 		if v.ID == pro.ID {
+// 			isProfessionalMember = true
+// 		}
+// 	}
+// 	if !isProfessionalMember {
+// 		return errors.New("permission denied")
+// 	}
+// 	return nil
+// }

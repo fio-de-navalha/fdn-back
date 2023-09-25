@@ -1,5 +1,10 @@
 package salon
 
+type AddSalonMemberRequest struct {
+	ProfessionalId string `json:"professionalId"`
+	Role           string `json:"role"`
+}
+
 type AddSalonAddressRequest struct {
 	Address string `json:"address"`
 }

@@ -1,17 +1,39 @@
 package salon
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
+
+type SalonMember struct {
+	ID             string    `json:"id"`
+	SalonId        string    `json:"salonId"`
+	ProfessionalId string    `json:"professionalId"`
+	Role           string    `json:"role"`
+	CreatedAt      time.Time `json:"createdAt"`
+}
 
 type Address struct {
 	ID      string `json:"id"`
-	SalonId string `json:"salon_id"`
+	SalonId string `json:"salonId"`
 	Address string `json:"address"`
 }
 
 type Contact struct {
 	ID      string `json:"id"`
-	SalonId string `json:"salon_id"`
+	SalonId string `json:"salonId"`
 	Contact string `json:"contact"`
+}
+
+func NewSalonMember(salonId string, professionalId string, role string) *SalonMember {
+	return &SalonMember{
+		ID:             uuid.NewString(),
+		SalonId:        salonId,
+		ProfessionalId: professionalId,
+		Role:           role,
+		CreatedAt:      time.Now(),
+	}
 }
 
 func NewAddress(salonId string, address string) *Address {

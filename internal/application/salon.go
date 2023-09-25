@@ -10,6 +10,7 @@ import (
 
 type SalonService struct {
 	salonRepository        salon.SalonRepository
+	salonMemberRepository  salon.SalonMemberRepository
 	addressRepository      salon.AddressRepository
 	contactRepository      salon.ContactRepository
 	professionalRepository professional.ProfessionalRepository
@@ -17,12 +18,14 @@ type SalonService struct {
 
 func NewSalonService(
 	salonRepository salon.SalonRepository,
+	salonMemberRepository salon.SalonMemberRepository,
 	addressRepository salon.AddressRepository,
 	contactRepository salon.ContactRepository,
 	professionalRepository professional.ProfessionalRepository,
 ) *SalonService {
 	return &SalonService{
 		salonRepository:        salonRepository,
+		salonMemberRepository:  salonMemberRepository,
 		addressRepository:      addressRepository,
 		contactRepository:      contactRepository,
 		professionalRepository: professionalRepository,
@@ -48,34 +51,65 @@ func (s *SalonService) GetSalonById(id string) (*salon.Salon, error) {
 		return nil, errors.New("salon not found")
 	}
 	return &salon.Salon{
-		ID:            res.ID,
-		Name:          res.Name,
-		OwnerID:       res.OwnerID,
-		Professionals: res.Professionals,
-		Addresses:     res.Addresses,
-		Contacts:      res.Contacts,
-		Services:      res.Services,
-		Products:      res.Products,
+		ID:           res.ID,
+		Name:         res.Name,
+		SalonMembers: res.SalonMembers,
+		Addresses:    res.Addresses,
+		Contacts:     res.Contacts,
+		Services:     res.Services,
+		Products:     res.Products,
 	}, nil
 }
 
-func (s *SalonService) CreateSalon(input salon.CreateSalonRequest) (*salon.Salon, error) {
-	log.Println("[application.CreateSalon] - Validating professional:", input.OwnerID)
-	prof, err := s.professionalRepository.FindById(input.OwnerID)
+func (s *SalonService) CreateSalon(name string, professionalId string) (*salon.Salon, error) {
+	log.Println("[application.CreateSalon] - Validating professional:", professionalId)
+	prof, err := s.professionalRepository.FindById(professionalId)
 	if err != nil {
 		return nil, err
 	}
-	if prof != nil {
+	if prof == nil {
 		return nil, errors.New("professional not found")
 	}
 
-	log.Println("[application.CreateSalon] - Creating salon:", input.Name)
-	newSalon := salon.NewSalon(input)
-	res, err := s.salonRepository.Save(newSalon)
+	log.Println("[application.CreateSalon] - Creating salon:", name)
+	newSalon := salon.NewSalon(name)
+	sal, err := s.salonRepository.Save(newSalon)
 	if err != nil {
 		return nil, err
 	}
-	return res, nil
+
+	log.Println("[application.CreateSalon] - Adding salon owner:", professionalId)
+	newSalonMember := salon.NewSalonMember(sal.ID, professionalId, "owner")
+	salMem, err := s.salonMemberRepository.Save(newSalonMember)
+	if err != nil {
+		return nil, err
+	}
+	return &salon.Salon{
+		ID:        sal.ID,
+		Name:      sal.Name,
+		CreatedAt: sal.CreatedAt,
+		SalonMembers: []salon.SalonMember{
+			*salMem,
+		},
+	}, nil
+}
+
+func (s *SalonService) AddSalonMember(salonId string, professionalId string, role string) error {
+	log.Println("[application.AddSalonMember] - Validating salon:", salonId)
+	sal, err := s.salonRepository.FindById(salonId)
+	if err != nil {
+		return err
+	}
+	if sal == nil {
+		return errors.New("salon not found")
+	}
+
+	log.Println("[application.AddSalonMember] - Adding salon member")
+	newSalon := salon.NewSalonMember(sal.ID, professionalId, role)
+	if _, err := s.salonMemberRepository.Save(newSalon); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *SalonService) AddSalonAddress(salonId string, address string) error {

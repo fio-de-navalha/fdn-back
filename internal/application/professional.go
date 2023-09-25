@@ -43,7 +43,6 @@ func (s *ProfessionalService) GetProfessionalById(id string) (*professional.Prof
 		Name:      res.Name,
 		Email:     res.Email,
 		CreatedAt: res.CreatedAt,
-		Services:  res.Services,
 	}, nil
 }
 

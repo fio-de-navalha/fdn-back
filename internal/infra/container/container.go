@@ -18,6 +18,7 @@ var (
 
 func LoadContainers() {
 	salonRepo := database.NewGormSalonRepository()
+	salonMemberRepo := database.NewGormSalonMemberRepository()
 	customerRepo := database.NewGormCustomerRepository()
 	addressRepo := database.NewGormAddressRepository()
 	contactRepo := database.NewGormContactRepository()
@@ -33,7 +34,7 @@ func LoadContainers() {
 		config.CloudFlareEditToken,
 	)
 
-	SalonService = application.NewSalonService(salonRepo, addressRepo, contactRepo, professionalRepo)
+	SalonService = application.NewSalonService(salonRepo, salonMemberRepo, addressRepo, contactRepo, professionalRepo)
 	CustomerService = application.NewCustomerService(customerRepo)
 	ProfessionalService = application.NewProfessionalService(professionalRepo)
 	ServiceService = application.NewServiceService(serviceRepo, *SalonService, *ProfessionalService, cloudFlareService)
