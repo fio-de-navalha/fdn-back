@@ -4,6 +4,7 @@ import "time"
 
 type AppointmentRepository interface {
 	FindById(id string) (*Appointment, error)
+	FindByIdWithJoins(id string) (*Appointment, error)
 	FindByProfessionalId(professionalId string, startsAt time.Time, endsAt time.Time) ([]*Appointment, error)
 	FindByCustomerId(customerId string) ([]*Appointment, error)
 	FindByDates(startsAt time.Time, endsAt time.Time) ([]*Appointment, error)

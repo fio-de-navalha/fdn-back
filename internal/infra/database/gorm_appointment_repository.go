@@ -22,6 +22,22 @@ func (r *gormAppointmentRepository) FindById(id string) (*appointment.Appointmen
 	var a appointment.Appointment
 	result := r.db.
 		Select("id", "professional_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at", "canceled_at").
+		Where("id = ?", id).
+		First(&a)
+
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
+		return nil, result.Error
+	}
+	return &a, nil
+}
+
+func (r *gormAppointmentRepository) FindByIdWithJoins(id string) (*appointment.Appointment, error) {
+	var a appointment.Appointment
+	result := r.db.
+		Select("id", "professional_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at", "canceled_at").
 		Preload("Services").
 		Preload("Products").
 		Where("id = ?", id).

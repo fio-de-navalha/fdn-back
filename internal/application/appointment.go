@@ -63,7 +63,7 @@ func (s *AppointmentService) GetCustomerAppointments(customerId string) ([]*appo
 
 func (s *AppointmentService) GetAppointment(id string) (*appointment.Appointment, error) {
 	log.Println("[application.GetAppointment] - Getting appointment:", id)
-	a, err := s.appointmentRepository.FindById(id)
+	a, err := s.appointmentRepository.FindByIdWithJoins(id)
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +89,6 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 
 	go func() {
 		defer wg.Done()
-		log.Println("[application.CreateApppointment] - Validating professional:", input.ProfessionalId)
 		if err := s.validateEntity("professional", input.ProfessionalId, func(id string) (interface{}, error) {
 			return s.professionalService.GetProfessionalById(id)
 		}); err != nil {
@@ -99,7 +98,6 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 
 	go func() {
 		defer wg.Done()
-		log.Println("[application.CreateApppointment] - Validating customer:", input.CustomerId)
 		if err := s.validateEntity("customer", input.CustomerId, func(id string) (interface{}, error) {
 			return s.customerService.GetCustomerById(id)
 		}); err != nil {
@@ -210,7 +208,6 @@ func (s *AppointmentService) validateEntity(
 	param string,
 	fn func(string) (interface{}, error),
 ) error {
-	log.Println("[application.CreateApppointment] - Validating", context, ":", param)
 	_, err := fn(param)
 	if err != nil {
 		return errors.New(context + " not found")
