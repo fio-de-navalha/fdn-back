@@ -8,10 +8,10 @@
   "basePath": "/api",
   "schemes": ["http", "https"],
   "paths": {
-    "/auth/register/barber": {
+    "/auth/register/professional": {
       "post": {
-        "tags": ["Barber"],
-        "summary": "Register a new Barber",
+        "tags": ["Professional"],
+        "summary": "Register a new professional",
         "parameters": [
           {
             "name": "Body",
@@ -38,16 +38,16 @@
           "201": {
             "description": "Successful response",
             "schema": {
-              "$ref": "#/definitions/BarberAuth"
+              "$ref": "#/definitions/ProfessionalAuth"
             }
           }
         }
       }
     },
-    "/auth/login/barber": {
+    "/auth/login/professional": {
       "post": {
-        "tags": ["Barber"],
-        "summary": "Login as a Barber",
+        "tags": ["Professional"],
+        "summary": "Login as a professional",
         "parameters": [
           {
             "name": "Body",
@@ -71,7 +71,7 @@
           "200": {
             "description": "Successful response",
             "schema": {
-              "$ref": "#/definitions/BarberAuth"
+              "$ref": "#/definitions/ProfessionalAuth"
             }
           },
           "401": {
@@ -83,10 +83,10 @@
         }
       }
     },
-    "/auth/me/barber": {
+    "/auth/me/professional": {
       "get": {
-        "tags": ["Barber"],
-        "summary": "Check barber authentication",
+        "tags": ["Professional"],
+        "summary": "Check professional authentication",
         "security": [
           {
             "BearerAuth": []
@@ -96,7 +96,7 @@
           "200": {
             "description": "Successful response",
             "schema": {
-              "$ref": "#/definitions/BarberInfo"
+              "$ref": "#/definitions/Professional"
             }
           },
           "401": {
@@ -109,6 +109,66 @@
             "description": "Forbidden response",
             "schema": {
               "$ref": "#/definitions/403"
+            }
+          }
+        }
+      }
+    },
+    "/professional/{professionalId}": {
+      "get": {
+        "tags": ["Professional"],
+        "summary": "Get a professional information",
+        "parameters": [
+          {
+            "name": "professionalId",
+            "in": "path",
+            "description": "ID of the professional to retrieve",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Professional"
+            }
+          }
+        }
+      }
+    },
+    "/professional/{professionalId}/appointments": {
+      "get": {
+        "tags": ["Professional"],
+        "summary": "Get a professional appointments",
+        "parameters": [
+          {
+            "name": "professionalId",
+            "in": "path",
+            "description": "Professional to retrieve appointments",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "startsAt",
+            "in": "query",
+            "description": "Date to filter appointments",
+            "required": false,
+            "type": "string",
+            "example": "2023-09-08T15:04:05.999999Z"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/Appointments"
+            }
+          },
+          "404": {
+            "description": "Not found response",
+            "schema": {
+              "$ref": "#/definitions/404"
             }
           }
         }
@@ -284,15 +344,57 @@
         }
       }
     },
-    "/barber/{barberId}": {
-      "get": {
-        "tags": ["Barber"],
-        "summary": "Get a barber information",
+    "/salon": {
+      "post": {
+        "tags": ["Salon"],
+        "summary": "Create a salon",
         "parameters": [
           {
-            "name": "barberId",
+            "name": "Body",
+            "in": "body",
+            "description": "Request Body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/SalonAddress"
+            }
+          },
+          "401": {
+            "description": "Unauthorized response",
+            "schema": {
+              "$ref": "#/definitions/401"
+            }
+          },
+          "403": {
+            "description": "Forbidden response",
+            "schema": {
+              "$ref": "#/definitions/403"
+            }
+          }
+        }
+      }
+    },
+    "/salon/{salonId}": {
+      "get": {
+        "tags": ["Salon"],
+        "summary": "Get a salon",
+        "parameters": [
+          {
+            "name": "salonId",
             "in": "path",
-            "description": "ID of the barber to retrieve",
+            "description": "Salon Id to retrieve",
             "required": true,
             "type": "string"
           }
@@ -301,21 +403,21 @@
           "200": {
             "description": "Successful response",
             "schema": {
-              "$ref": "#/definitions/BarberInfo"
+              "$ref": "#/definitions/Salon"
             }
           }
         }
       }
     },
-    "/barber/{barberId}/address": {
+    "/salon/{salonId}/address": {
       "post": {
         "tags": ["Address"],
-        "summary": "Add a barber address",
+        "summary": "Add a salon address",
         "parameters": [
           {
-            "name": "barberId",
+            "name": "salonId",
             "in": "path",
-            "description": "ID of the barber to retrieve",
+            "description": "Salon Id",
             "required": true,
             "type": "string"
           },
@@ -338,7 +440,7 @@
           "200": {
             "description": "Successful response",
             "schema": {
-              "$ref": "#/definitions/BarberAddress"
+              "$ref": "#/definitions/SalonAddress"
             }
           },
           "401": {
@@ -356,15 +458,15 @@
         }
       }
     },
-    "/barber/{barberId}/address/{addressId}": {
+    "/salon/{salonId}/address/{addressId}": {
       "put": {
         "tags": ["Address"],
-        "summary": "Update a barber address",
+        "summary": "Update a salon address",
         "parameters": [
           {
-            "name": "barberId",
+            "name": "salonId",
             "in": "path",
-            "description": "ID of the barber to update",
+            "description": "Salon Id to update",
             "required": true,
             "type": "string"
           },
@@ -394,7 +496,7 @@
           "200": {
             "description": "Successful response",
             "schema": {
-              "$ref": "#/definitions/BarberAddress"
+              "$ref": "#/definitions/SalonAddress"
             }
           },
           "401": {
@@ -413,12 +515,12 @@
       },
       "delete": {
         "tags": ["Address"],
-        "summary": "Delete a barber address",
+        "summary": "Delete a salon address",
         "parameters": [
           {
-            "name": "barberId",
+            "name": "salonId",
             "in": "path",
-            "description": "ID of the barber to delete",
+            "description": "Salon Id to delete",
             "required": true,
             "type": "string"
           },
@@ -434,7 +536,7 @@
           "200": {
             "description": "Successful response",
             "schema": {
-              "$ref": "#/definitions/BarberAddress"
+              "$ref": "#/definitions/SalonAddress"
             }
           },
           "401": {
@@ -452,15 +554,15 @@
         }
       }
     },
-    "/barber/{barberId}/contact": {
+    "/salon/{salonId}/contact": {
       "post": {
         "tags": ["Contact"],
-        "summary": "Add a barber contact",
+        "summary": "Add a salon contact",
         "parameters": [
           {
-            "name": "barberId",
+            "name": "salonId",
             "in": "path",
-            "description": "ID of the barber to retrieve",
+            "description": "Salon Id to add contact",
             "required": true,
             "type": "string"
           },
@@ -483,7 +585,7 @@
           "200": {
             "description": "Successful response",
             "schema": {
-              "$ref": "#/definitions/BarberContact"
+              "$ref": "#/definitions/SalonContact"
             }
           },
           "401": {
@@ -501,15 +603,15 @@
         }
       }
     },
-    "/barber/{barberId}/contact/{contactId}": {
+    "/salon/{salonId}/contact/{contactId}": {
       "put": {
         "tags": ["Contact"],
-        "summary": "Update a barber contact",
+        "summary": "Update a salon contact",
         "parameters": [
           {
-            "name": "barberId",
+            "name": "salonId",
             "in": "path",
-            "description": "ID of the barber to update",
+            "description": "Salon Id to update",
             "required": true,
             "type": "string"
           },
@@ -528,7 +630,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "address": {
+                "contact": {
                   "type": "string"
                 }
               }
@@ -539,7 +641,7 @@
           "200": {
             "description": "Successful response",
             "schema": {
-              "$ref": "#/definitions/BarberContact"
+              "$ref": "#/definitions/SalonContact"
             }
           },
           "401": {
@@ -558,12 +660,12 @@
       },
       "delete": {
         "tags": ["Contact"],
-        "summary": "Delete a barber contact",
+        "summary": "Delete a salon contact",
         "parameters": [
           {
-            "name": "barberId",
+            "name": "salonId",
             "in": "path",
-            "description": "ID of the barber to delete",
+            "description": "ID of the salon to delete",
             "required": true,
             "type": "string"
           },
@@ -579,7 +681,7 @@
           "200": {
             "description": "Successful response",
             "schema": {
-              "$ref": "#/definitions/BarberContact"
+              "$ref": "#/definitions/SalonContact"
             }
           },
           "401": {
@@ -597,52 +699,15 @@
         }
       }
     },
-    "/barber/{barberId}/appointments": {
-      "get": {
-        "tags": ["Barber"],
-        "summary": "Get a barber appointments",
-        "parameters": [
-          {
-            "name": "barberId",
-            "in": "path",
-            "description": "ID of the barber to retrieve",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "startsAt",
-            "in": "query",
-            "description": "Date to filter appointments",
-            "required": false,
-            "type": "string",
-            "example": "2023-09-08T15:04:05.999999Z"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/Appointments"
-            }
-          },
-          "404": {
-            "description": "Not found response",
-            "schema": {
-              "$ref": "#/definitions/404"
-            }
-          }
-        }
-      }
-    },
-    "/barber/{barberId}/services": {
+    "/salon/{salonId}/services": {
       "get": {
         "tags": ["Service"],
-        "summary": "Get services from a barber",
+        "summary": "Get services from a salon",
         "parameters": [
           {
-            "name": "barberId",
+            "name": "salonId",
             "in": "path",
-            "description": "ID of the barber to retrieve the services",
+            "description": "Salon Id to retrieve the services",
             "required": true,
             "type": "string"
           }
@@ -666,9 +731,9 @@
         ],
         "parameters": [
           {
-            "name": "barberId",
+            "name": "salonId",
             "in": "path",
-            "description": "ID of the barber to create the service",
+            "description": "Salon Id to create the service",
             "required": true,
             "type": "string"
           },
@@ -714,7 +779,7 @@
         }
       }
     },
-    "/barber/{barberId}/services/{serviceId}": {
+    "/salon/{salonId}/services/{serviceId}": {
       "put": {
         "tags": ["Service"],
         "summary": "Update a service",
@@ -725,16 +790,16 @@
         ],
         "parameters": [
           {
-            "name": "barberId",
+            "name": "salonId",
             "in": "path",
-            "description": "ID of the barberId to update the service",
+            "description": "Salon Id to update the service",
             "required": true,
             "type": "string"
           },
           {
             "name": "serviceId",
             "in": "path",
-            "description": "ID of the service to update",
+            "description": "Service Id to update",
             "required": true,
             "type": "string"
           },
@@ -786,15 +851,15 @@
         }
       }
     },
-    "/barber/{barberId}/products": {
+    "/salon/{salonId}/products": {
       "get": {
         "tags": ["Product"],
-        "summary": "Get products from a barber",
+        "summary": "Get products from a salon",
         "parameters": [
           {
-            "name": "barberId",
+            "name": "salonId",
             "in": "path",
-            "description": "ID of the barber to retrieve the services",
+            "description": "Salon Id to retrieve the services",
             "required": true,
             "type": "string"
           }
@@ -818,9 +883,9 @@
         ],
         "parameters": [
           {
-            "name": "barberId",
+            "name": "salonId",
             "in": "path",
-            "description": "ID of the barber to create the service",
+            "description": "Salon Id to create the product",
             "required": true,
             "type": "string"
           },
@@ -860,7 +925,7 @@
         }
       }
     },
-    "/barber/{barberId}/products/{productId}": {
+    "/salon/{salonId}/products/{productId}": {
       "put": {
         "tags": ["Product"],
         "summary": "Update a product",
@@ -871,16 +936,16 @@
         ],
         "parameters": [
           {
-            "name": "barberId",
+            "name": "salonId",
             "in": "path",
-            "description": "ID of the barberId to update the service",
+            "description": "Salon Id to update the service",
             "required": true,
             "type": "string"
           },
           {
             "name": "productId",
             "in": "path",
-            "description": "ID of the product to update",
+            "description": "product Id to update",
             "required": true,
             "type": "string"
           },
@@ -915,7 +980,7 @@
           },
           "400": {
             "schema": {
-              "$ref": "#/definitions/BadRequest"
+              "$ref": "#/definitions/400"
             }
           },
           "401": {
@@ -944,7 +1009,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "barberId": {
+                "professionalId": {
                   "type": "string"
                 },
                 "customerId": {
@@ -1004,7 +1069,7 @@
           {
             "name": "appointmentId",
             "in": "path",
-            "description": "ID of the appointment to cancel",
+            "description": "Appointment Id to cancel",
             "required": true,
             "type": "string"
           }
@@ -1044,7 +1109,7 @@
           "id": {
             "type": "string"
           },
-          "barberId": {
+          "professionalId": {
             "type": "string"
           },
           "customerId": {
@@ -1074,7 +1139,7 @@
         }
       }
     },
-    "Barber": {
+    "Salon": {
       "type": "object",
       "properties": {
         "id": {
@@ -1083,28 +1148,26 @@
         "name": {
           "type": "string"
         },
-        "email": {
-          "type": "string"
-        },
         "createdAt": {
           "type": "string"
-        }
-      }
-    },
-    "BarberInfo": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
         },
-        "name": {
-          "type": "string"
+        "salonMembers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SalonMember"
+          }
         },
-        "email": {
-          "type": "string"
+        "addresses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SalonAddress"
+          }
         },
-        "createdAt": {
-          "type": "string"
+        "contact": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SalonContact"
+          }
         },
         "services": {
           "$ref": "#/definitions/ServiceList"
@@ -1114,13 +1177,33 @@
         }
       }
     },
-    "BarberAddress": {
+    "SalonMember": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string"
         },
-        "barberId": {
+        "salonId": {
+          "type": "string"
+        },
+        "professionalId": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      }
+    },
+    "SalonAddress": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "salonId": {
           "type": "string"
         },
         "address": {
@@ -1128,13 +1211,13 @@
         }
       }
     },
-    "BarberContact": {
+    "SalonContact": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string"
         },
-        "barberId": {
+        "salonId": {
           "type": "string"
         },
         "contact": {
@@ -1142,28 +1225,31 @@
         }
       }
     },
-    "BarberAuth": {
+    "Professional": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      }
+    },
+    "ProfessionalAuth": {
       "type": "object",
       "properties": {
         "accessToken": {
           "type": "string"
         },
-        "barber": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string"
-            },
-            "name": {
-              "type": "string"
-            },
-            "email": {
-              "type": "string"
-            },
-            "createdAt": {
-              "type": "string"
-            }
-          }
+        "professional": {
+          "$ref": "#/definitions/Professional"
         }
       }
     },
@@ -1191,21 +1277,7 @@
           "type": "string"
         },
         "customer": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string"
-            },
-            "name": {
-              "type": "string"
-            },
-            "phone": {
-              "type": "string"
-            },
-            "createdAt": {
-              "type": "string"
-            }
-          }
+          "$ref": "#/definitions/Customer"
         }
       }
     },
@@ -1215,7 +1287,7 @@
         "id": {
           "type": "string"
         },
-        "barberId": {
+        "salonId": {
           "type": "string"
         },
         "name": {
@@ -1250,7 +1322,7 @@
         "id": {
           "type": "string"
         },
-        "barberId": {
+        "salonId": {
           "type": "string"
         },
         "name": {
