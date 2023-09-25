@@ -86,14 +86,8 @@ func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 
 func (h *ServiceHandler) Update(c *fiber.Ctx) error {
 	log.Println("[handlers.Update] - Validating parameters")
-
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"error": "Permission denied",
-		})
-	}
-	if user.ID != c.Params("barberId") {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"error": "Permission denied",
 		})
