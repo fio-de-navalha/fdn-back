@@ -9,21 +9,21 @@ import (
 )
 
 type Appointment struct {
-	ID            string            `json:"id" gorm:"primaryKey"`
-	BarberId      string            `json:"barberId"`
-	CustomerId    string            `json:"customerId"`
-	DurationInMin int               `json:"durationInMin"`
-	TotalAmount   int               `json:"totalAmount"`
-	StartsAt      time.Time         `json:"startsAt"`
-	EndsAt        time.Time         `json:"endsAt"`
-	CreatedAt     time.Time         `json:"createdAt"`
-	CanceledAt    *time.Time        `json:"canceledAt"`
-	Services      []service.Service `json:"services" gorm:"many2many:appointment_service;"`
-	Products      []product.Product `json:"products" gorm:"many2many:appointment_product;"`
+	ID             string            `json:"id" gorm:"primaryKey"`
+	ProfessionalId string            `json:"professionalId"`
+	CustomerId     string            `json:"customerId"`
+	DurationInMin  int               `json:"durationInMin"`
+	TotalAmount    int               `json:"totalAmount"`
+	StartsAt       time.Time         `json:"startsAt"`
+	EndsAt         time.Time         `json:"endsAt"`
+	CreatedAt      time.Time         `json:"createdAt"`
+	CanceledAt     *time.Time        `json:"canceledAt"`
+	Services       []service.Service `json:"services" gorm:"many2many:appointment_service;"`
+	Products       []product.Product `json:"products" gorm:"many2many:appointment_product;"`
 }
 
 func NewAppointment(
-	barberId string,
+	professionalId string,
 	customerId string,
 	durationInMin int,
 	totalAmount int,
@@ -31,14 +31,14 @@ func NewAppointment(
 	endsAt time.Time,
 ) *Appointment {
 	return &Appointment{
-		ID:            uuid.NewString(),
-		BarberId:      barberId,
-		CustomerId:    customerId,
-		DurationInMin: durationInMin,
-		TotalAmount:   totalAmount,
-		StartsAt:      startsAt,
-		EndsAt:        endsAt,
-		CreatedAt:     time.Now(),
-		CanceledAt:    nil,
+		ID:             uuid.NewString(),
+		ProfessionalId: professionalId,
+		CustomerId:     customerId,
+		DurationInMin:  durationInMin,
+		TotalAmount:    totalAmount,
+		StartsAt:       startsAt,
+		EndsAt:         endsAt,
+		CreatedAt:      time.Now(),
+		CanceledAt:     nil,
 	}
 }

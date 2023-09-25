@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS contact (
     id UUID NOT NULL PRIMARY KEY,
-    barber_id UUID REFERENCES barber(id),
+    salon_id UUID REFERENCES salon(id),
     contact VARCHAR NOT NULL
 );

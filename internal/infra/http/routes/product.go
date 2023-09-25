@@ -10,9 +10,9 @@ import (
 func setupProductRouter(router fiber.Router) {
 	productHandler := handlers.NewProductHandler(*container.ProductService)
 
-	products := router.Group("/barber/:barberId")
+	products := router.Group("/salon/:salonId")
 
-	products.Get("/products", productHandler.GetByBarberId)
-	products.Post("/products", middlewares.EnsureBarberRole(), productHandler.Create)
-	products.Put("/products/:productId", middlewares.EnsureBarberRole(), productHandler.Update)
+	products.Get("/products", productHandler.GetBySalonId)
+	products.Post("/products", middlewares.EnsureProfessionalRole(), productHandler.Create)
+	products.Put("/products/:productId", middlewares.EnsureProfessionalRole(), productHandler.Update)
 }

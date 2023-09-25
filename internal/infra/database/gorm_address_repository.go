@@ -1,7 +1,7 @@
 package database
 
 import (
-	"github.com/fio-de-navalha/fdn-back/internal/domain/barber"
+	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
 	"gorm.io/gorm"
 )
 
@@ -15,18 +15,18 @@ func NewGormAddressRepository() *gormAddressRepository {
 	}
 }
 
-func (r *gormAddressRepository) FindByBarberId(barberId string) ([]*barber.Address, error) {
-	var addr []*barber.Address
-	res := r.db.Find(&addr, "barber_id = ?", barberId)
+func (r *gormAddressRepository) FindBySalonId(salonId string) ([]*salon.Address, error) {
+	var addr []*salon.Address
+	res := r.db.Find(&addr, "salon_id = ?", salonId)
 	if res.Error != nil {
 		return nil, res.Error
 	}
 	return addr, nil
 }
 
-func (r *gormAddressRepository) FindById(id string) (*barber.Address, error) {
-	var addr barber.Address
-	result := r.db.First(&addr, "id = ?", id)
+func (r *gormAddressRepository) FindById(id string, salonId string) (*salon.Address, error) {
+	var addr salon.Address
+	result := r.db.First(&addr, "id = ? AND salon_id = ?", id, salonId)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			return nil, nil
@@ -36,7 +36,7 @@ func (r *gormAddressRepository) FindById(id string) (*barber.Address, error) {
 	return &addr, nil
 }
 
-func (r *gormAddressRepository) Save(addr *barber.Address) (*barber.Address, error) {
+func (r *gormAddressRepository) Save(addr *salon.Address) (*salon.Address, error) {
 	result := r.db.Save(addr)
 	if result.Error != nil {
 		return nil, result.Error
@@ -45,7 +45,7 @@ func (r *gormAddressRepository) Save(addr *barber.Address) (*barber.Address, err
 }
 
 func (r *gormAddressRepository) Delete(addrId string) error {
-	var addr []*barber.Address
+	var addr []*salon.Address
 	res := r.db.Delete(&addr, "id = ?", addrId)
 	if res.Error != nil {
 		return res.Error

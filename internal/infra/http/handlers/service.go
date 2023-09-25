@@ -23,10 +23,10 @@ func NewServiceHandler(serviceService application.ServiceService) *ServiceHandle
 	}
 }
 
-func (h *ServiceHandler) GetByBarberId(c *fiber.Ctx) error {
-	log.Println("[handlers.GetByBarberId] - Validating parameters")
-	barberId := c.Params("barberId")
-	res, err := h.serviceService.GetServicesByBarberId(barberId)
+func (h *ServiceHandler) GetBySalonId(c *fiber.Ctx) error {
+	log.Println("[handlers.GetBySalonId] - Validating parameters")
+	salonId := c.Params("salonId")
+	res, err := h.serviceService.GetServicesBySalonId(salonId)
 	if err != nil {
 		if strings.Contains(err.Error(), "not found") {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
@@ -50,14 +50,16 @@ func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 		})
 	}
 
+	salonId := c.Params("salonId")
 	price, _ := strconv.Atoi(c.FormValue("price"))
 	durationInMin, _ := strconv.Atoi(c.FormValue("durationInMin"))
 	input := service.CreateServiceRequest{
-		BarberId:      user.ID,
-		Name:          c.FormValue("name"),
-		Description:   c.FormValue("description"),
-		Price:         price,
-		DurationInMin: durationInMin,
+		SalonId:        salonId,
+		ProfessionalId: user.ID,
+		Name:           c.FormValue("name"),
+		Description:    c.FormValue("description"),
+		Price:          price,
+		DurationInMin:  durationInMin,
 	}
 
 	validate := validator.New()
@@ -84,20 +86,20 @@ func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 
 func (h *ServiceHandler) Update(c *fiber.Ctx) error {
 	log.Println("[handlers.Update] - Validating parameters")
-	serviceId := c.Params("serviceId")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"error": "Permission denied",
 		})
 	}
-	if user.ID != c.Params("barberId") {
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"error": "Permission denied",
-		})
-	}
 
-	input := service.UpdateServiceRequest{}
+	salonId := c.Params("salonId")
+	serviceId := c.Params("serviceId")
+
+	input := service.UpdateServiceRequest{
+		SalonId:        salonId,
+		ProfessionalId: user.ID,
+	}
 	if name := c.FormValue("name"); name != "" {
 		input.Name = &name
 	}

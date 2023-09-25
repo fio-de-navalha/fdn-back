@@ -10,9 +10,9 @@ import (
 func setupServiceRouter(router fiber.Router) {
 	serviceHandler := handlers.NewServiceHandler(*container.ServiceService)
 
-	services := router.Group("/barber/:barberId")
+	services := router.Group("/salon/:salonId")
 
-	services.Get("/services", serviceHandler.GetByBarberId)
-	services.Post("/services", middlewares.EnsureBarberRole(), serviceHandler.Create)
-	services.Put("/services/:serviceId", middlewares.EnsureBarberRole(), serviceHandler.Update)
+	services.Get("/services", serviceHandler.GetBySalonId)
+	services.Post("/services", middlewares.EnsureProfessionalRole(), serviceHandler.Create)
+	services.Put("/services/:serviceId", middlewares.EnsureProfessionalRole(), serviceHandler.Update)
 }

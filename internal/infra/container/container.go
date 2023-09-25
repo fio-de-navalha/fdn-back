@@ -8,18 +8,21 @@ import (
 )
 
 var (
-	CustomerService    *application.CustomerService
-	BarberService      *application.BarberService
-	ServiceService     *application.ServiceService
-	ProductService     *application.ProductService
-	AppointmentService *application.AppointmentService
+	SalonService        *application.SalonService
+	CustomerService     *application.CustomerService
+	ProfessionalService *application.ProfessionalService
+	ServiceService      *application.ServiceService
+	ProductService      *application.ProductService
+	AppointmentService  *application.AppointmentService
 )
 
 func LoadContainers() {
+	salonRepo := database.NewGormSalonRepository()
+	salonMemberRepo := database.NewGormSalonMemberRepository()
 	customerRepo := database.NewGormCustomerRepository()
 	addressRepo := database.NewGormAddressRepository()
 	contactRepo := database.NewGormContactRepository()
-	barberRepo := database.NewGormBarberRepository()
+	professionalRepo := database.NewGormProfessionalRepository()
 	serviceRepo := database.NewGormServiceRepository()
 	productRepo := database.NewGormProductRepository()
 	appointmentRepo := database.NewGormAppointmentRepository()
@@ -31,13 +34,14 @@ func LoadContainers() {
 		config.CloudFlareEditToken,
 	)
 
+	SalonService = application.NewSalonService(salonRepo, salonMemberRepo, addressRepo, contactRepo, professionalRepo)
 	CustomerService = application.NewCustomerService(customerRepo)
-	BarberService = application.NewBarberService(barberRepo, addressRepo, contactRepo)
-	ServiceService = application.NewServiceService(serviceRepo, *BarberService, cloudFlareService)
-	ProductService = application.NewProductService(productRepo, *BarberService, cloudFlareService)
+	ProfessionalService = application.NewProfessionalService(professionalRepo)
+	ServiceService = application.NewServiceService(serviceRepo, *SalonService, *ProfessionalService, cloudFlareService)
+	ProductService = application.NewProductService(productRepo, *SalonService, *ProfessionalService, cloudFlareService)
 	AppointmentService = application.NewAppointmentService(
 		appointmentRepo,
-		*BarberService,
+		*ProfessionalService,
 		*CustomerService,
 		*ServiceService,
 		*ProductService,

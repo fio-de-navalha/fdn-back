@@ -4,7 +4,7 @@ import "github.com/google/uuid"
 
 type Service struct {
 	ID            string `json:"id" gorm:"primaryKey"`
-	BarberId      string `json:"barberId"`
+	SalonId       string `json:"salonId"`
 	Name          string `json:"name"`
 	Description   string `json:"description"`
 	Price         int    `json:"price"`
@@ -17,7 +17,7 @@ type Service struct {
 func NewService(input CreateServiceRequest) *Service {
 	return &Service{
 		ID:            uuid.NewString(),
-		BarberId:      input.BarberId,
+		SalonId:       input.SalonId,
 		Name:          input.Name,
 		Description:   input.Description,
 		Price:         input.Price,

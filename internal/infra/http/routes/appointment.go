@@ -10,7 +10,7 @@ import (
 func setupAppointmentRouter(router fiber.Router) {
 	appointmentHandler := handlers.NewAppointmentHandler(*container.AppointmentService)
 
-	router.Get("/barber/:barberId/appointments", appointmentHandler.GetBarberAppointments)
+	router.Get("/professional/:professionalId/appointments", appointmentHandler.GetProfessionalAppointments)
 	router.Get("/customer/:customerId/appointments", appointmentHandler.GetCustomerAppointments)
 
 	router.Post("/appointment", middlewares.EnsureAuth(), appointmentHandler.Create)

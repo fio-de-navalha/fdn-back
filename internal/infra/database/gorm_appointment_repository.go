@@ -21,7 +21,23 @@ func NewGormAppointmentRepository() *gormAppointmentRepository {
 func (r *gormAppointmentRepository) FindById(id string) (*appointment.Appointment, error) {
 	var a appointment.Appointment
 	result := r.db.
-		Select("id", "barber_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at", "canceled_at").
+		Select("id", "professional_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at", "canceled_at").
+		Where("id = ?", id).
+		First(&a)
+
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
+		return nil, result.Error
+	}
+	return &a, nil
+}
+
+func (r *gormAppointmentRepository) FindByIdWithJoins(id string) (*appointment.Appointment, error) {
+	var a appointment.Appointment
+	result := r.db.
+		Select("id", "professional_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at", "canceled_at").
 		Preload("Services").
 		Preload("Products").
 		Where("id = ?", id).
@@ -36,13 +52,13 @@ func (r *gormAppointmentRepository) FindById(id string) (*appointment.Appointmen
 	return &a, nil
 }
 
-func (r *gormAppointmentRepository) FindByBarberId(barberId string, startsAt time.Time, endsAt time.Time) ([]*appointment.Appointment, error) {
+func (r *gormAppointmentRepository) FindByProfessionalId(professionalId string, startsAt time.Time, endsAt time.Time) ([]*appointment.Appointment, error) {
 	var a []*appointment.Appointment
 	res := r.db.
-		Select("id", "barber_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at", "canceled_at").
+		Select("id", "professional_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at", "canceled_at").
 		Preload("Services").
 		Preload("Products").
-		Where("barber_id = ? AND starts_at > ? AND ends_at < ?", barberId, startsAt, endsAt).
+		Where("professional_id = ? AND starts_at > ? AND ends_at < ?", professionalId, startsAt, endsAt).
 		Find(&a)
 
 	if res.Error != nil {
@@ -54,7 +70,7 @@ func (r *gormAppointmentRepository) FindByBarberId(barberId string, startsAt tim
 func (r *gormAppointmentRepository) FindByCustomerId(customerId string) ([]*appointment.Appointment, error) {
 	var a []*appointment.Appointment
 	res := r.db.
-		Select("id", "barber_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at", "canceled_at").
+		Select("id", "professional_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at", "canceled_at").
 		Preload("Services").
 		Preload("Products").
 		Where("customer_id = ?", customerId).
@@ -69,7 +85,7 @@ func (r *gormAppointmentRepository) FindByCustomerId(customerId string) ([]*appo
 func (r *gormAppointmentRepository) FindByDates(startsAt time.Time, endsAt time.Time) ([]*appointment.Appointment, error) {
 	var a []*appointment.Appointment
 	res := r.db.
-		Select("id", "barber_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at", "canceled_at").
+		Select("id", "professional_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at", "canceled_at").
 		Where("starts_at <= ? AND ends_at >= ?", endsAt, startsAt).
 		Find(&a)
 
