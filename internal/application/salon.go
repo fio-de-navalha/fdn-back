@@ -4,16 +4,15 @@ import (
 	"errors"
 	"log"
 
-	"github.com/fio-de-navalha/fdn-back/internal/domain/professional"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
 )
 
 type SalonService struct {
-	salonRepository        salon.SalonRepository
-	salonMemberRepository  salon.SalonMemberRepository
-	addressRepository      salon.AddressRepository
-	contactRepository      salon.ContactRepository
-	professionalRepository professional.ProfessionalRepository
+	salonRepository       salon.SalonRepository
+	salonMemberRepository salon.SalonMemberRepository
+	addressRepository     salon.AddressRepository
+	contactRepository     salon.ContactRepository
+	professionalService   ProfessionalService
 }
 
 func NewSalonService(
@@ -21,14 +20,14 @@ func NewSalonService(
 	salonMemberRepository salon.SalonMemberRepository,
 	addressRepository salon.AddressRepository,
 	contactRepository salon.ContactRepository,
-	professionalRepository professional.ProfessionalRepository,
+	professionalService ProfessionalService,
 ) *SalonService {
 	return &SalonService{
-		salonRepository:        salonRepository,
-		salonMemberRepository:  salonMemberRepository,
-		addressRepository:      addressRepository,
-		contactRepository:      contactRepository,
-		professionalRepository: professionalRepository,
+		salonRepository:       salonRepository,
+		salonMemberRepository: salonMemberRepository,
+		addressRepository:     addressRepository,
+		contactRepository:     contactRepository,
+		professionalService:   professionalService,
 	}
 }
 
@@ -43,12 +42,9 @@ func (s *SalonService) GetManySalons() ([]*salon.Salon, error) {
 
 func (s *SalonService) GetSalonById(id string) (*salon.Salon, error) {
 	log.Println("[application.GetSalonById] - Getting salon:", id)
-	res, err := s.salonRepository.FindById(id)
+	res, err := s.validateSalon(id)
 	if err != nil {
 		return nil, err
-	}
-	if res == nil {
-		return nil, errors.New("salon not found")
 	}
 	return &salon.Salon{
 		ID:           res.ID,
@@ -63,12 +59,8 @@ func (s *SalonService) GetSalonById(id string) (*salon.Salon, error) {
 
 func (s *SalonService) CreateSalon(name string, professionalId string) (*salon.Salon, error) {
 	log.Println("[application.CreateSalon] - Validating professional:", professionalId)
-	prof, err := s.professionalRepository.FindById(professionalId)
-	if err != nil {
+	if _, err := s.professionalService.ValidateProfessionalById(professionalId); err != nil {
 		return nil, err
-	}
-	if prof == nil {
-		return nil, errors.New("professional not found")
 	}
 
 	log.Println("[application.CreateSalon] - Creating salon:", name)
@@ -96,31 +88,17 @@ func (s *SalonService) CreateSalon(name string, professionalId string) (*salon.S
 
 func (s *SalonService) AddSalonMember(salonId string, professionalId string, role string, requesterId string) error {
 	log.Println("[application.AddSalonMember] - Validating salon:", salonId)
-	sal, err := s.salonRepository.FindById(salonId)
+	sal, err := s.validateSalon(salonId)
 	if err != nil {
 		return err
 	}
-	if sal == nil {
-		return errors.New("salon not found")
-	}
 
-	isRequesterMember := false
-	for _, member := range sal.SalonMembers {
-		if member.ProfessionalId == requesterId {
-			isRequesterMember = true
-			break
-		}
-	}
-	if !isRequesterMember {
-		return errors.New("permission denied")
-	}
-
-	pro, err := s.professionalRepository.FindById(professionalId)
-	if err != nil {
+	if err := s.validateRequesterPermission(requesterId, sal.SalonMembers); err != nil {
 		return err
 	}
-	if pro == nil {
-		return errors.New("professional not found")
+
+	if _, err := s.professionalService.ValidateProfessionalById(professionalId); err != nil {
+		return err
 	}
 
 	for _, member := range sal.SalonMembers {
@@ -139,12 +117,9 @@ func (s *SalonService) AddSalonMember(salonId string, professionalId string, rol
 
 func (s *SalonService) AddSalonAddress(salonId string, address string) error {
 	log.Println("[application.AddSalonAddress] - Validating salon:", salonId)
-	sal, err := s.salonRepository.FindById(salonId)
+	sal, err := s.validateSalon(salonId)
 	if err != nil {
 		return err
-	}
-	if sal == nil {
-		return errors.New("salon not found")
 	}
 
 	newAddr := salon.NewAddress(sal.ID, address)
@@ -156,12 +131,9 @@ func (s *SalonService) AddSalonAddress(salonId string, address string) error {
 
 func (s *SalonService) UpdateSalonAddress(salonId string, addressId string, address string) (*salon.Address, error) {
 	log.Println("[application.UpdateSalonAddress] - Validating address:", addressId)
-	addr, err := s.addressRepository.FindById(addressId, salonId)
+	addr, err := s.validateSalonAddress(addressId, salonId)
 	if err != nil {
 		return nil, err
-	}
-	if addr == nil {
-		return nil, errors.New("address not found")
 	}
 
 	addr.Address = address
@@ -173,12 +145,9 @@ func (s *SalonService) UpdateSalonAddress(salonId string, addressId string, addr
 
 func (s *SalonService) RemoveSalonAddress(salonId string, addressId string) error {
 	log.Println("[application.RemoveSalonAddress] - Validating address:", addressId)
-	addr, err := s.addressRepository.FindById(addressId, salonId)
+	addr, err := s.validateSalonAddress(addressId, salonId)
 	if err != nil {
 		return err
-	}
-	if addr == nil {
-		return errors.New("address not found")
 	}
 
 	if err := s.addressRepository.Delete(addr.ID); err != nil {
@@ -189,12 +158,9 @@ func (s *SalonService) RemoveSalonAddress(salonId string, addressId string) erro
 
 func (s *SalonService) AddSalonContact(salonId string, contact string) error {
 	log.Println("[application.AddSalonContact] - Validating salon:", salonId)
-	sal, err := s.salonRepository.FindById(salonId)
+	sal, err := s.validateSalon(salonId)
 	if err != nil {
 		return err
-	}
-	if sal == nil {
-		return errors.New("salon not found")
 	}
 
 	newContact := salon.NewContact(sal.ID, contact)
@@ -206,12 +172,9 @@ func (s *SalonService) AddSalonContact(salonId string, contact string) error {
 
 func (s *SalonService) UpdateSalonContact(salonId string, contactId string, contact string) (*salon.Contact, error) {
 	log.Println("[application.UpdateSalonContact] - Validating contact:", contactId)
-	cntt, err := s.contactRepository.FindById(contactId, salonId)
+	cntt, err := s.validateSalonContact(contactId, salonId)
 	if err != nil {
 		return nil, err
-	}
-	if cntt == nil {
-		return nil, errors.New("contact not found")
 	}
 
 	cntt.Contact = contact
@@ -223,16 +186,61 @@ func (s *SalonService) UpdateSalonContact(salonId string, contactId string, cont
 
 func (s *SalonService) RemoveSalonContact(salonId string, contactId string) error {
 	log.Println("[application.RemoveSalonContact] - Validating contact:", contactId)
-	cntt, err := s.contactRepository.FindById(contactId, salonId)
+	cntt, err := s.validateSalonContact(contactId, salonId)
 	if err != nil {
 		return err
-	}
-	if cntt == nil {
-		return errors.New("contact not found")
 	}
 
 	if err := s.contactRepository.Delete(cntt.ID); err != nil {
 		return err
 	}
 	return nil
+}
+
+func (s *SalonService) validateSalon(salonId string) (*salon.Salon, error) {
+	res, err := s.salonRepository.FindById(salonId)
+	if err != nil {
+		return nil, err
+	}
+	if res == nil {
+		return nil, errors.New("salon not found")
+	}
+	return res, nil
+}
+
+func (s *SalonService) validateRequesterPermission(requesterId string, salonMembers []salon.SalonMember) error {
+	isRequesterMember := false
+	for _, member := range salonMembers {
+		if member.ProfessionalId == requesterId {
+			isRequesterMember = true
+			break
+		}
+	}
+	if !isRequesterMember {
+		return errors.New("permission denied")
+	}
+
+	return nil
+}
+
+func (s *SalonService) validateSalonAddress(addressId, salonId string) (*salon.Address, error) {
+	addr, err := s.addressRepository.FindById(addressId, salonId)
+	if err != nil {
+		return nil, err
+	}
+	if addr == nil {
+		return nil, errors.New("address not found")
+	}
+	return addr, nil
+}
+
+func (s *SalonService) validateSalonContact(contactId, salonId string) (*salon.Contact, error) {
+	cntt, err := s.contactRepository.FindById(contactId, salonId)
+	if err != nil {
+		return nil, err
+	}
+	if cntt == nil {
+		return nil, errors.New("contact not found")
+	}
+	return cntt, nil
 }

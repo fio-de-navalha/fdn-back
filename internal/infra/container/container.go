@@ -34,9 +34,9 @@ func LoadContainers() {
 		config.CloudFlareEditToken,
 	)
 
-	SalonService = application.NewSalonService(salonRepo, salonMemberRepo, addressRepo, contactRepo, professionalRepo)
 	CustomerService = application.NewCustomerService(customerRepo)
 	ProfessionalService = application.NewProfessionalService(professionalRepo)
+	SalonService = application.NewSalonService(salonRepo, salonMemberRepo, addressRepo, contactRepo, *ProfessionalService)
 	ServiceService = application.NewServiceService(serviceRepo, *SalonService, *ProfessionalService, cloudFlareService)
 	ProductService = application.NewProductService(productRepo, *SalonService, *ProfessionalService, cloudFlareService)
 	AppointmentService = application.NewAppointmentService(

@@ -31,12 +31,9 @@ func (s *ProfessionalService) GetManyProfessionals() ([]*professional.Profession
 
 func (s *ProfessionalService) GetProfessionalById(id string) (*professional.ProfessionalResponse, error) {
 	log.Println("[application.GetProfessionalById] - Getting professional:", id)
-	res, err := s.professionalRepository.FindById(id)
+	res, err := s.ValidateProfessionalById(id)
 	if err != nil {
 		return nil, err
-	}
-	if res == nil {
-		return nil, errors.New("professional not found")
 	}
 	return &professional.ProfessionalResponse{
 		ID:        res.ID,
@@ -130,4 +127,15 @@ func (s *ProfessionalService) LoginProfessional(input professional.LoginProfessi
 			CreatedAt: res.CreatedAt,
 		},
 	}, nil
+}
+
+func (s *ProfessionalService) ValidateProfessionalById(professionalId string) (*professional.Professional, error) {
+	prof, err := s.professionalRepository.FindById(professionalId)
+	if err != nil {
+		return nil, err
+	}
+	if prof == nil {
+		return nil, errors.New("professional not found")
+	}
+	return prof, nil
 }
