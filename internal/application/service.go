@@ -61,7 +61,7 @@ func (s *ServiceService) CreateService(input service.CreateServiceRequest, file 
 	}
 
 	// TODO: validate this
-	if err := s.validateProfessionalPermission(sal, prof); err != nil {
+	if err := s.validateProfessionalPermission(prof.ID, sal.SalonMembers); err != nil {
 		return err
 	}
 
@@ -99,7 +99,7 @@ func (s *ServiceService) UpdateService(serviceId string, input service.UpdateSer
 	}
 
 	// TODO: validate this
-	if err := s.validateProfessionalPermission(sal, prof); err != nil {
+	if err := s.validateProfessionalPermission(prof.ID, sal.SalonMembers); err != nil {
 		return err
 	}
 
@@ -188,14 +188,12 @@ func (s *ServiceService) validateProfessional(professionalId string) (*professio
 	return prof, nil
 }
 
-func (s *ServiceService) validateProfessionalPermission(sal *salon.Salon, pro *professional.ProfessionalResponse) error {
+func (s *ServiceService) validateProfessionalPermission(professionalId string, salonMembers []salon.SalonMember) error {
 	isProfessionalMember := false
-	for _, v := range sal.SalonMembers {
-		if isProfessionalMember {
-			break
-		}
-		if v.ProfessionalId == pro.ID {
+	for _, member := range salonMembers {
+		if member.ProfessionalId == professionalId {
 			isProfessionalMember = true
+			break
 		}
 	}
 	if !isProfessionalMember {
