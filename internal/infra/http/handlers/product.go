@@ -3,11 +3,11 @@ package handlers
 import (
 	"log"
 	"strconv"
-	"strings"
 
 	"github.com/fio-de-navalha/fdn-back/internal/application"
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/product"
+	"github.com/fio-de-navalha/fdn-back/internal/infra/http/helpers"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http/middlewares"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
@@ -28,14 +28,7 @@ func (h *ProductHandler) GetBySalonId(c *fiber.Ctx) error {
 	salonId := c.Params("salonId")
 	res, err := h.productService.GetProductsBySalonId(salonId)
 	if err != nil {
-		if strings.Contains(err.Error(), "not found") {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"error": err.Error(),
-			})
-		}
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
 	return c.Status(fiber.StatusOK).JSON(res)
@@ -45,9 +38,7 @@ func (h *ProductHandler) Create(c *fiber.Ctx) error {
 	log.Println("[handlers.Create] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"error": "Permission denied",
-		})
+		return helpers.BuildErrorResponse(c, "permission denied")
 	}
 
 	salonId := c.Params("salonId")
@@ -61,22 +52,13 @@ func (h *ProductHandler) Create(c *fiber.Ctx) error {
 
 	validate := validator.New()
 	if err := validate.Struct(input); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
 	file, _ := c.FormFile("file")
 	err := h.productService.CreateProduct(input, file)
 	if err != nil {
-		if strings.Contains(err.Error(), "not found") {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"error": err.Error(),
-			})
-		}
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
 	return c.Status(fiber.StatusCreated).Send(nil)
@@ -86,9 +68,7 @@ func (h *ProductHandler) Update(c *fiber.Ctx) error {
 	log.Println("[handlers.Update] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"error": "Permission denied",
-		})
+		return helpers.BuildErrorResponse(c, "permission denied")
 	}
 
 	salonId := c.Params("salonId")
@@ -117,14 +97,7 @@ func (h *ProductHandler) Update(c *fiber.Ctx) error {
 	file, _ := c.FormFile("file")
 	err := h.productService.UpdateProduct(productId, input, file)
 	if err != nil {
-		if strings.Contains(err.Error(), "not found") {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"error": err.Error(),
-			})
-		}
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
 	return c.Send(nil)
