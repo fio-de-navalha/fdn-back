@@ -7,7 +7,3 @@ type CreateSalonRequest struct {
 type UpdateSalonRequest struct {
 	Name *string `json:"name"`
 }
-
-type ManageBarberRequest struct {
-	BarberID string `json:"barberId" validate:"required,uuid4,min=1"`
-}

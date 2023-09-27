@@ -1,7 +1,7 @@
 package salon
 
 type AddSalonMemberRequest struct {
-	ProfessionalId string `json:"professionalId"`
+	ProfessionalId string `json:"professionalId" validate:"required,uuid4"`
 	Role           string `json:"role"`
 }
 

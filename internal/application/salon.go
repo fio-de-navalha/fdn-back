@@ -94,7 +94,7 @@ func (s *SalonService) CreateSalon(name string, professionalId string) (*salon.S
 	}, nil
 }
 
-func (s *SalonService) AddSalonMember(salonId string, professionalId string, role string) error {
+func (s *SalonService) AddSalonMember(salonId string, professionalId string, role string, requesterId string) error {
 	log.Println("[application.AddSalonMember] - Validating salon:", salonId)
 	sal, err := s.salonRepository.FindById(salonId)
 	if err != nil {
@@ -102,6 +102,31 @@ func (s *SalonService) AddSalonMember(salonId string, professionalId string, rol
 	}
 	if sal == nil {
 		return errors.New("salon not found")
+	}
+
+	isRequesterMember := false
+	for _, member := range sal.SalonMembers {
+		if member.ProfessionalId == requesterId {
+			isRequesterMember = true
+			break
+		}
+	}
+	if !isRequesterMember {
+		return errors.New("permission denied")
+	}
+
+	pro, err := s.professionalRepository.FindById(professionalId)
+	if err != nil {
+		return err
+	}
+	if pro == nil {
+		return errors.New("professional not found")
+	}
+
+	for _, member := range sal.SalonMembers {
+		if member.ProfessionalId == professionalId {
+			return errors.New("professional already exists in salon")
+		}
 	}
 
 	log.Println("[application.AddSalonMember] - Adding salon member")

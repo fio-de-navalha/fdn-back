@@ -348,6 +348,11 @@
       "post": {
         "tags": ["Salon"],
         "summary": "Create a salon",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "Body",
@@ -366,10 +371,7 @@
         ],
         "responses": {
           "201": {
-            "description": "Successful response",
-            "schema": {
-              "$ref": "#/definitions/SalonAddress"
-            }
+            "description": "Successful response"
           },
           "401": {
             "description": "Unauthorized response",
@@ -409,10 +411,68 @@
         }
       }
     },
+    "/salon/{salonId}/members": {
+      "post": {
+        "tags": ["Salon"],
+        "summary": "Add a member to salon",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "description": "Request Body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "professionalId": {
+                  "type": "string"
+                },
+                "role": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response"
+          },
+          "401": {
+            "description": "Unauthorized response",
+            "schema": {
+              "$ref": "#/definitions/401"
+            }
+          },
+          "403": {
+            "description": "Forbidden response",
+            "schema": {
+              "$ref": "#/definitions/403"
+            }
+          },
+          "404": {
+            "description": "Forbidden response",
+            "schema": {
+              "$ref": "#/definitions/404"
+            }
+          }
+        }
+      }
+    },
     "/salon/{salonId}/address": {
       "post": {
         "tags": ["Address"],
         "summary": "Add a salon address",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "salonId",
@@ -462,6 +522,11 @@
       "put": {
         "tags": ["Address"],
         "summary": "Update a salon address",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "salonId",
@@ -516,6 +581,11 @@
       "delete": {
         "tags": ["Address"],
         "summary": "Delete a salon address",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "salonId",
@@ -558,6 +628,11 @@
       "post": {
         "tags": ["Contact"],
         "summary": "Add a salon contact",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "salonId",
@@ -607,6 +682,11 @@
       "put": {
         "tags": ["Contact"],
         "summary": "Update a salon contact",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "salonId",
@@ -661,6 +741,11 @@
       "delete": {
         "tags": ["Contact"],
         "summary": "Delete a salon contact",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "salonId",
