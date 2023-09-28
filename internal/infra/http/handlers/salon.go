@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"log"
-	"strings"
 
 	"github.com/fio-de-navalha/fdn-back/internal/application"
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
@@ -86,34 +85,20 @@ func (h *SalonHandler) AddSalonAddress(c *fiber.Ctx) error {
 	log.Println("[handlers.AddSalonAddress] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"error": "Permission denied",
-		})
+		return helpers.BuildErrorResponse(c, "permission denied")
 	}
 
 	body := new(salon.AddSalonAddressRequest)
 	if err := c.BodyParser(&body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid request body",
-		})
+		return helpers.BuildErrorResponse(c, err.Error())
 	}
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
 	if err := h.salonService.AddSalonAddress(user.ID, body.Address); err != nil {
-		if strings.Contains(err.Error(), "not found") {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"error": err.Error(),
-			})
-		}
-
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return helpers.BuildErrorResponse(c, err.Error())
 	}
 	return c.Status(fiber.StatusCreated).Send(nil)
 }
