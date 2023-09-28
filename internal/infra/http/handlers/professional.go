@@ -101,7 +101,7 @@ func (h *ProfessionalHandler) LoginProfessional(c *fiber.Ctx) error {
 }
 
 func (h *ProfessionalHandler) MeProfessional(c *fiber.Ctx) error {
-	log.Println("[ProfessionalHandler.MeProfessional] - Validating barber")
+	log.Println("[ProfessionalHandler.MeProfessional] - Validating professional")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "Permission denied")

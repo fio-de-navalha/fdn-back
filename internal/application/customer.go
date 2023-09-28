@@ -46,12 +46,8 @@ func (s *CustomerService) GetCustomerByPhone(phone string) (*customer.Customer, 
 
 func (s *CustomerService) RegisterCustomer(input customer.RegisterRequest) (*customer.AuthResponse, error) {
 	log.Println("[CustomerService.RegisterCustomer] - Getting customer by phone:", input.Phone)
-	barberExists, err := s.customerRepository.FindByPhone(input.Phone)
-	if err != nil {
+	if _, err := s.validateCustomerByPhone(input.Phone); err != nil {
 		return nil, err
-	}
-	if barberExists != nil {
-		return nil, errors.New("customer alredy exists")
 	}
 
 	hashedPassword, err := cryptography.HashPassword(input.Password)
@@ -119,4 +115,15 @@ func (s *CustomerService) LoginCustomer(input customer.LoginRequest) (*customer.
 			CreatedAt: cus.CreatedAt,
 		},
 	}, nil
+}
+
+func (s *CustomerService) validateCustomerByPhone(phone string) (*customer.Customer, error) {
+	cust, err := s.customerRepository.FindByPhone(phone)
+	if err != nil {
+		return nil, err
+	}
+	if cust != nil {
+		return nil, errors.New("customer alredy exists")
+	}
+	return cust, nil
 }
