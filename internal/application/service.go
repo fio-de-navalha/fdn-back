@@ -34,12 +34,12 @@ func NewServiceService(
 }
 
 func (s *ServiceService) GetServicesBySalonId(salonId string) ([]*service.Service, error) {
-	log.Println("[application.GetServicesBySalonId] - Validating salon:", salonId)
+	log.Println("[ServiceService.GetServicesBySalonId] - Validating salon:", salonId)
 	if _, err := s.validateSalon(salonId); err != nil {
 		return nil, err
 	}
 
-	log.Println("[application.GetServicesBySalonId] - Getting services from salon:", salonId)
+	log.Println("[ServiceService.GetServicesBySalonId] - Getting services from salon:", salonId)
 	res, err := s.serviceRepository.FindBySalonId(salonId)
 	if err != nil {
 		return nil, err
@@ -48,13 +48,13 @@ func (s *ServiceService) GetServicesBySalonId(salonId string) ([]*service.Servic
 }
 
 func (s *ServiceService) CreateService(input service.CreateServiceRequest, file *multipart.FileHeader) error {
-	log.Println("[application.CreateService] - Validating salon:", input.SalonId)
+	log.Println("[ServiceService.CreateService] - Validating salon:", input.SalonId)
 	sal, err := s.validateSalon(input.SalonId)
 	if err != nil {
 		return err
 	}
 
-	log.Println("[application.CreateService] - Validating professional:", input.ProfessionalId)
+	log.Println("[ServiceService.CreateService] - Validating professional:", input.ProfessionalId)
 	prof, err := s.validateProfessional(input.ProfessionalId)
 	if err != nil {
 		return err
@@ -66,7 +66,7 @@ func (s *ServiceService) CreateService(input service.CreateServiceRequest, file 
 	}
 
 	if file != nil {
-		log.Println("[application.CreateService] - Uploading file")
+		log.Println("[ServiceService.CreateService] - Uploading file")
 		file.Filename = constants.FilePrefix + file.Filename
 		res, err := s.imageStorageService.UploadImage(file)
 		if err != nil {
@@ -77,7 +77,7 @@ func (s *ServiceService) CreateService(input service.CreateServiceRequest, file 
 		input.ImageUrl = res.Urls[0]
 	}
 
-	log.Println("[application.CreateService] - Creating service")
+	log.Println("[ServiceService.CreateService] - Creating service")
 	newService := service.NewService(input)
 	if _, err = s.serviceRepository.Save(newService); err != nil {
 		return err
@@ -86,13 +86,13 @@ func (s *ServiceService) CreateService(input service.CreateServiceRequest, file 
 }
 
 func (s *ServiceService) UpdateService(serviceId string, input service.UpdateServiceRequest, file *multipart.FileHeader) error {
-	log.Println("[application.UpdateService] - Validating salon:", input.SalonId)
+	log.Println("[ServiceService.UpdateService] - Validating salon:", input.SalonId)
 	sal, err := s.validateSalon(input.SalonId)
 	if err != nil {
 		return err
 	}
 
-	log.Println("[application.UpdateService] - Validating professional:", input.ProfessionalId)
+	log.Println("[ServiceService.UpdateService] - Validating professional:", input.ProfessionalId)
 	prof, err := s.validateProfessional(input.ProfessionalId)
 	if err != nil {
 		return err
@@ -103,14 +103,14 @@ func (s *ServiceService) UpdateService(serviceId string, input service.UpdateSer
 		return err
 	}
 
-	log.Println("[application.UpdateService] - Validating service:", serviceId)
+	log.Println("[ServiceService.UpdateService] - Validating service:", serviceId)
 	ser, err := s.validateService(serviceId)
 	if err != nil {
 		return err
 	}
 
 	if file != nil {
-		log.Println("[application.UpdateService] - Updating image")
+		log.Println("[ServiceService.UpdateService] - Updating image")
 		res, err := s.imageStorageService.UpdateImage(ser.ImageId, file)
 		if err != nil {
 			return err
@@ -136,7 +136,7 @@ func (s *ServiceService) UpdateService(serviceId string, input service.UpdateSer
 		ser.Available = *input.Available
 	}
 
-	log.Println("[application.UpdateService] - Updating service")
+	log.Println("[ServiceService.UpdateService] - Updating service")
 	if _, err = s.serviceRepository.Save(ser); err != nil {
 		return err
 	}

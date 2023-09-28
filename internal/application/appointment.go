@@ -37,7 +37,7 @@ func NewAppointmentService(
 }
 
 func (s *AppointmentService) GetProfessionalAppointments(professionalId string, startsAt time.Time) ([]*appointment.Appointment, error) {
-	log.Println("[application.GetProfessionalAppointments] - Getting appointments from professional:", professionalId)
+	log.Println("[AppointmentService.GetProfessionalAppointments] - Getting appointments from professional:", professionalId)
 	endsAt := time.Date(
 		startsAt.Year(),
 		startsAt.Month(),
@@ -53,7 +53,7 @@ func (s *AppointmentService) GetProfessionalAppointments(professionalId string, 
 }
 
 func (s *AppointmentService) GetCustomerAppointments(customerId string) ([]*appointment.Appointment, error) {
-	log.Println("[application.GetCustomerAppointments] - Getting appointments from customer:", customerId)
+	log.Println("[AppointmentService.GetCustomerAppointments] - Getting appointments from customer:", customerId)
 	a, err := s.appointmentRepository.FindByCustomerId(customerId)
 	if err != nil {
 		return nil, err
@@ -62,7 +62,7 @@ func (s *AppointmentService) GetCustomerAppointments(customerId string) ([]*appo
 }
 
 func (s *AppointmentService) GetAppointment(id string) (*appointment.Appointment, error) {
-	log.Println("[application.GetAppointment] - Getting appointment:", id)
+	log.Println("[AppointmentService.GetAppointment] - Getting appointment:", id)
 	a, err := s.appointmentRepository.FindByIdWithJoins(id)
 	if err != nil {
 		return nil, err
@@ -107,7 +107,7 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 
 	go func() {
 		defer wg.Done()
-		log.Println("[application.CreateApppointment] - Validating services:", input.ServiceIds)
+		log.Println("[AppointmentService.CreateApppointment] - Validating services:", input.ServiceIds)
 		services, err := s.serviceService.getManyServices(input.ServiceIds)
 		if err != nil {
 			errs <- err
@@ -128,7 +128,7 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 
 	go func() {
 		defer wg.Done()
-		log.Println("[application.CreateApppointment] - Validating products:", input.ProductIds)
+		log.Println("[AppointmentService.CreateApppointment] - Validating products:", input.ProductIds)
 		products, err := s.productService.getManyProducts(input.ProductIds)
 		if err != nil {
 			errs <- err
@@ -155,13 +155,13 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 
 	// TODO: Validate if salon is open or not
 
-	log.Println("[application.CreateApppointment] - Validating appointment time range availability")
+	log.Println("[AppointmentService.CreateApppointment] - Validating appointment time range availability")
 	endsAt := input.StartsAt.Add(time.Minute * time.Duration(resultService.Duration))
 	if err := s.validateAppointmentTimeRange(input.StartsAt, endsAt); err != nil {
 		return err
 	}
 
-	log.Println("[application.CreateApppointment] - Creating appointment")
+	log.Println("[AppointmentService.CreateApppointment] - Creating appointment")
 	appo := appointment.NewAppointment(
 		input.ProfessionalId,
 		input.CustomerId,
@@ -179,7 +179,7 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 }
 
 func (s *AppointmentService) CancelApppointment(requesterId string, appointmentId string) error {
-	log.Println("[application.CancelApppointment] - Validating appointment:", appointmentId)
+	log.Println("[AppointmentService.CancelApppointment] - Validating appointment:", appointmentId)
 	appo, err := s.appointmentRepository.FindById(appointmentId)
 	if err != nil {
 		return err
@@ -195,7 +195,7 @@ func (s *AppointmentService) CancelApppointment(requesterId string, appointmentI
 		return errors.New("cannot cancel past appointment")
 	}
 
-	log.Println("[application.CancelApppointment] - Canceling appointment:", appointmentId)
+	log.Println("[AppointmentService.CancelApppointment] - Canceling appointment:", appointmentId)
 	if _, err := s.appointmentRepository.Cancel(appo); err != nil {
 		return err
 	}

@@ -24,7 +24,7 @@ func NewAppointmentHandler(appointmentService application.AppointmentService) *A
 }
 
 func (h *AppointmentHandler) GetProfessionalAppointments(c *fiber.Ctx) error {
-	log.Println("[handlers.GetProfessionalAppointments] - Validating parameters")
+	log.Println("[AppointmentHandler.GetProfessionalAppointments] - Validating parameters")
 	professionalId := c.Params("professionalId")
 	startsAtQuery := c.Query("startsAt")
 	if startsAtQuery == "" {
@@ -44,7 +44,7 @@ func (h *AppointmentHandler) GetProfessionalAppointments(c *fiber.Ctx) error {
 }
 
 func (h *AppointmentHandler) GetCustomerAppointments(c *fiber.Ctx) error {
-	log.Println("[handlers.GetCustomerAppointments] - Validating parameters")
+	log.Println("[AppointmentHandler.GetCustomerAppointments] - Validating parameters")
 	id := c.Params("customerId")
 	res, err := h.appointmentService.GetCustomerAppointments(id)
 	if err != nil {
@@ -54,7 +54,7 @@ func (h *AppointmentHandler) GetCustomerAppointments(c *fiber.Ctx) error {
 }
 
 func (h *AppointmentHandler) GetAppointment(c *fiber.Ctx) error {
-	log.Println("[handlers.GetAppointment] - Validating parameters")
+	log.Println("[AppointmentHandler.GetAppointment] - Validating parameters")
 	id := c.Params("id")
 	res, err := h.appointmentService.GetAppointment(id)
 	if err != nil {
@@ -64,7 +64,7 @@ func (h *AppointmentHandler) GetAppointment(c *fiber.Ctx) error {
 }
 
 func (h *AppointmentHandler) Create(c *fiber.Ctx) error {
-	log.Println("[handlers.Create] - Validating parameters")
+	log.Println("[AppointmentHandler.Create] - Validating parameters")
 	body := new(appointment.CreateAppointmentRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -101,7 +101,7 @@ func (h *AppointmentHandler) Create(c *fiber.Ctx) error {
 }
 
 func (h *AppointmentHandler) Cancel(c *fiber.Ctx) error {
-	log.Println("[handlers.Cancel] - Validating parameters")
+	log.Println("[AppointmentHandler.Cancel] - Validating parameters")
 	appointmentId := c.Params("appointmentId")
 
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)

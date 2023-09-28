@@ -24,7 +24,7 @@ func NewServiceHandler(serviceService application.ServiceService) *ServiceHandle
 }
 
 func (h *ServiceHandler) GetBySalonId(c *fiber.Ctx) error {
-	log.Println("[handlers.GetBySalonId] - Validating parameters")
+	log.Println("[ServiceHandler.GetBySalonId] - Validating parameters")
 	salonId := c.Params("salonId")
 	res, err := h.serviceService.GetServicesBySalonId(salonId)
 	if err != nil {
@@ -35,7 +35,7 @@ func (h *ServiceHandler) GetBySalonId(c *fiber.Ctx) error {
 }
 
 func (h *ServiceHandler) Create(c *fiber.Ctx) error {
-	log.Println("[handlers.Create] - Validating parameters")
+	log.Println("[ServiceHandler.Create] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "Permission denied")
@@ -67,7 +67,7 @@ func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 }
 
 func (h *ServiceHandler) Update(c *fiber.Ctx) error {
-	log.Println("[handlers.Update] - Validating parameters")
+	log.Println("[ServiceHandler.Update] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "Permission denied")

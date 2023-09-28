@@ -24,7 +24,7 @@ func NewProfessionalHandler(professionalService application.ProfessionalService)
 }
 
 func (h *ProfessionalHandler) GetProfessionalById(c *fiber.Ctx) error {
-	log.Println("[handlers.GetProfessionalById] - Validating parameters")
+	log.Println("[ProfessionalHandler.GetProfessionalById] - Validating parameters")
 	id := c.Params("id")
 	res, err := h.professionalService.GetProfessionalById(id)
 	if err != nil {
@@ -35,7 +35,7 @@ func (h *ProfessionalHandler) GetProfessionalById(c *fiber.Ctx) error {
 }
 
 func (h *ProfessionalHandler) RegisterProfessional(c *fiber.Ctx) error {
-	log.Println("[handlers.RegisterProfessional] - Validating parameters")
+	log.Println("[ProfessionalHandler.RegisterProfessional] - Validating parameters")
 	body := new(professional.RegisterProfessionalRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -68,7 +68,7 @@ func (h *ProfessionalHandler) RegisterProfessional(c *fiber.Ctx) error {
 }
 
 func (h *ProfessionalHandler) LoginProfessional(c *fiber.Ctx) error {
-	log.Println("[handlers.LoginProfessional] - Validating parameters")
+	log.Println("[ProfessionalHandler.LoginProfessional] - Validating parameters")
 	body := new(professional.LoginProfessionalRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -101,7 +101,7 @@ func (h *ProfessionalHandler) LoginProfessional(c *fiber.Ctx) error {
 }
 
 func (h *ProfessionalHandler) MeProfessional(c *fiber.Ctx) error {
-	log.Println("[handlers.MeProfessional] - Validating barber")
+	log.Println("[ProfessionalHandler.MeProfessional] - Validating barber")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "Permission denied")

@@ -21,7 +21,7 @@ func NewProfessionalService(
 }
 
 func (s *ProfessionalService) GetManyProfessionals() ([]*professional.Professional, error) {
-	log.Println("[application.GetManyProfessionals] - Getting many professionals")
+	log.Println("[ProfessionalService.GetManyProfessionals] - Getting many professionals")
 	res, err := s.professionalRepository.FindMany()
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func (s *ProfessionalService) GetManyProfessionals() ([]*professional.Profession
 }
 
 func (s *ProfessionalService) GetProfessionalById(id string) (*professional.ProfessionalResponse, error) {
-	log.Println("[application.GetProfessionalById] - Getting professional:", id)
+	log.Println("[ProfessionalService.GetProfessionalById] - Getting professional:", id)
 	res, err := s.ValidateProfessionalById(id)
 	if err != nil {
 		return nil, err
@@ -44,7 +44,7 @@ func (s *ProfessionalService) GetProfessionalById(id string) (*professional.Prof
 }
 
 func (s *ProfessionalService) GetProfessionalByEmail(email string) (*professional.Professional, error) {
-	log.Println("[application.GetProfessionalByEmail] - Getting professional by email:", email)
+	log.Println("[ProfessionalService.GetProfessionalByEmail] - Getting professional by email:", email)
 	res, err := s.professionalRepository.FindByEmail(email)
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func (s *ProfessionalService) GetProfessionalByEmail(email string) (*professiona
 }
 
 func (s *ProfessionalService) RegisterProfessional(input professional.RegisterProfessionalRequest) (*professional.AuthResponse, error) {
-	log.Println("[application.RegisterProfessional] - Validating professional:", input.Email)
+	log.Println("[ProfessionalService.RegisterProfessional] - Validating professional:", input.Email)
 	profExists, err := s.professionalRepository.FindByEmail(input.Email)
 	if err != nil {
 		return nil, err
@@ -73,14 +73,14 @@ func (s *ProfessionalService) RegisterProfessional(input professional.RegisterPr
 		Password: hashedPassword,
 	}
 
-	log.Println("[application.RegisterProfessional] - Creating professional:", input.Email)
+	log.Println("[ProfessionalService.RegisterProfessional] - Creating professional:", input.Email)
 	res := professional.NewProfessional(input)
 	_, err = s.professionalRepository.Save(res)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Println("[application.RegisterProfessional] - Generating token")
+	log.Println("[ProfessionalService.RegisterProfessional] - Generating token")
 	token, err := cryptography.GenerateToken(res.ID, "professional")
 	if err != nil {
 		return nil, err
@@ -98,7 +98,7 @@ func (s *ProfessionalService) RegisterProfessional(input professional.RegisterPr
 }
 
 func (s *ProfessionalService) LoginProfessional(input professional.LoginProfessionalRequest) (*professional.AuthResponse, error) {
-	log.Println("[application.LoginProfessional] - Validating professional:", input.Email)
+	log.Println("[ProfessionalService.LoginProfessional] - Validating professional:", input.Email)
 	res, err := s.professionalRepository.FindByEmail(input.Email)
 	if err != nil {
 		return nil, err
@@ -112,7 +112,7 @@ func (s *ProfessionalService) LoginProfessional(input professional.LoginProfessi
 		return nil, errors.New("invalid credentials")
 	}
 
-	log.Println("[application.LoginProfessional] - Generating token")
+	log.Println("[ProfessionalService.LoginProfessional] - Generating token")
 	token, err := cryptography.GenerateToken(res.ID, "professional")
 	if err != nil {
 		return nil, err

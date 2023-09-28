@@ -32,7 +32,7 @@ func NewSalonService(
 }
 
 func (s *SalonService) GetManySalons() ([]*salon.Salon, error) {
-	log.Println("[application.GetManySalons] - Getting many salons")
+	log.Println("[SalonService.GetManySalons] - Getting many salons")
 	res, err := s.salonRepository.FindMany()
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func (s *SalonService) GetManySalons() ([]*salon.Salon, error) {
 }
 
 func (s *SalonService) GetSalonById(id string) (*salon.Salon, error) {
-	log.Println("[application.GetSalonById] - Getting salon:", id)
+	log.Println("[SalonService.GetSalonById] - Getting salon:", id)
 	res, err := s.validateSalon(id)
 	if err != nil {
 		return nil, err
@@ -58,19 +58,19 @@ func (s *SalonService) GetSalonById(id string) (*salon.Salon, error) {
 }
 
 func (s *SalonService) CreateSalon(name string, professionalId string) (*salon.Salon, error) {
-	log.Println("[application.CreateSalon] - Validating professional:", professionalId)
+	log.Println("[SalonService.CreateSalon] - Validating professional:", professionalId)
 	if _, err := s.professionalService.ValidateProfessionalById(professionalId); err != nil {
 		return nil, err
 	}
 
-	log.Println("[application.CreateSalon] - Creating salon:", name)
+	log.Println("[SalonService.CreateSalon] - Creating salon:", name)
 	newSalon := salon.NewSalon(name)
 	sal, err := s.salonRepository.Save(newSalon)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Println("[application.CreateSalon] - Adding salon owner:", professionalId)
+	log.Println("[SalonService.CreateSalon] - Adding salon owner:", professionalId)
 	newSalonMember := salon.NewSalonMember(sal.ID, professionalId, "owner")
 	salMem, err := s.salonMemberRepository.Save(newSalonMember)
 	if err != nil {
@@ -87,7 +87,7 @@ func (s *SalonService) CreateSalon(name string, professionalId string) (*salon.S
 }
 
 func (s *SalonService) AddSalonMember(salonId string, professionalId string, role string, requesterId string) error {
-	log.Println("[application.AddSalonMember] - Validating salon:", salonId)
+	log.Println("[SalonService.AddSalonMember] - Validating salon:", salonId)
 	sal, err := s.validateSalon(salonId)
 	if err != nil {
 		return err
@@ -107,7 +107,7 @@ func (s *SalonService) AddSalonMember(salonId string, professionalId string, rol
 		}
 	}
 
-	log.Println("[application.AddSalonMember] - Adding salon member")
+	log.Println("[SalonService.AddSalonMember] - Adding salon member")
 	newSalon := salon.NewSalonMember(sal.ID, professionalId, role)
 	if _, err := s.salonMemberRepository.Save(newSalon); err != nil {
 		return err
@@ -116,7 +116,7 @@ func (s *SalonService) AddSalonMember(salonId string, professionalId string, rol
 }
 
 func (s *SalonService) AddSalonAddress(salonId string, address string) error {
-	log.Println("[application.AddSalonAddress] - Validating salon:", salonId)
+	log.Println("[SalonService.AddSalonAddress] - Validating salon:", salonId)
 	sal, err := s.validateSalon(salonId)
 	if err != nil {
 		return err
@@ -130,7 +130,7 @@ func (s *SalonService) AddSalonAddress(salonId string, address string) error {
 }
 
 func (s *SalonService) UpdateSalonAddress(salonId string, addressId string, address string) (*salon.Address, error) {
-	log.Println("[application.UpdateSalonAddress] - Validating address:", addressId)
+	log.Println("[SalonService.UpdateSalonAddress] - Validating address:", addressId)
 	addr, err := s.validateSalonAddress(addressId, salonId)
 	if err != nil {
 		return nil, err
@@ -144,7 +144,7 @@ func (s *SalonService) UpdateSalonAddress(salonId string, addressId string, addr
 }
 
 func (s *SalonService) RemoveSalonAddress(salonId string, addressId string) error {
-	log.Println("[application.RemoveSalonAddress] - Validating address:", addressId)
+	log.Println("[SalonService.RemoveSalonAddress] - Validating address:", addressId)
 	addr, err := s.validateSalonAddress(addressId, salonId)
 	if err != nil {
 		return err
@@ -157,7 +157,7 @@ func (s *SalonService) RemoveSalonAddress(salonId string, addressId string) erro
 }
 
 func (s *SalonService) AddSalonContact(salonId string, contact string) error {
-	log.Println("[application.AddSalonContact] - Validating salon:", salonId)
+	log.Println("[SalonService.AddSalonContact] - Validating salon:", salonId)
 	sal, err := s.validateSalon(salonId)
 	if err != nil {
 		return err
@@ -171,7 +171,7 @@ func (s *SalonService) AddSalonContact(salonId string, contact string) error {
 }
 
 func (s *SalonService) UpdateSalonContact(salonId string, contactId string, contact string) (*salon.Contact, error) {
-	log.Println("[application.UpdateSalonContact] - Validating contact:", contactId)
+	log.Println("[SalonService.UpdateSalonContact] - Validating contact:", contactId)
 	cntt, err := s.validateSalonContact(contactId, salonId)
 	if err != nil {
 		return nil, err
@@ -185,7 +185,7 @@ func (s *SalonService) UpdateSalonContact(salonId string, contactId string, cont
 }
 
 func (s *SalonService) RemoveSalonContact(salonId string, contactId string) error {
-	log.Println("[application.RemoveSalonContact] - Validating contact:", contactId)
+	log.Println("[SalonService.RemoveSalonContact] - Validating contact:", contactId)
 	cntt, err := s.validateSalonContact(contactId, salonId)
 	if err != nil {
 		return err

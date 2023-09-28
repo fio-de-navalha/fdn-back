@@ -24,7 +24,7 @@ func NewCustomerHandler(customerService application.CustomerService) *CustomerHa
 }
 
 func (h *CustomerHandler) GetCustomerById(c *fiber.Ctx) error {
-	log.Println("[handlers.GetCustomerById] - Validating parameters")
+	log.Println("[CustomerHandler.GetCustomerById] - Validating parameters")
 	id := c.Params("id")
 	res, err := h.customerService.GetCustomerById(id)
 	if err != nil {
@@ -35,7 +35,7 @@ func (h *CustomerHandler) GetCustomerById(c *fiber.Ctx) error {
 }
 
 func (h *CustomerHandler) RegisterCustomer(c *fiber.Ctx) error {
-	log.Println("[handlers.RegisterCustomer] - Validating parameters")
+	log.Println("[CustomerHandler.RegisterCustomer] - Validating parameters")
 	body := new(customer.RegisterRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -69,7 +69,7 @@ func (h *CustomerHandler) RegisterCustomer(c *fiber.Ctx) error {
 }
 
 func (h *CustomerHandler) LoginCustomer(c *fiber.Ctx) error {
-	log.Println("[handlers.LoginCustomer] - Validating parameters")
+	log.Println("[CustomerHandler.LoginCustomer] - Validating parameters")
 	body := new(customer.LoginRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -101,7 +101,7 @@ func (h *CustomerHandler) LoginCustomer(c *fiber.Ctx) error {
 }
 
 func (h *CustomerHandler) MeCustomer(c *fiber.Ctx) error {
-	log.Println("[handlers.MeCustomer] - Validating token")
+	log.Println("[CustomerHandler.MeCustomer] - Validating token")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")

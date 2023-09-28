@@ -23,7 +23,7 @@ func NewSalonHandler(salonService application.SalonService) *SalonHandler {
 }
 
 func (h *SalonHandler) GetSalonById(c *fiber.Ctx) error {
-	log.Println("[handlers.GetSalonById] - Validating parameters")
+	log.Println("[SalonHandler.GetSalonById] - Validating parameters")
 	id := c.Params("id")
 	res, err := h.salonService.GetSalonById(id)
 	if err != nil {
@@ -34,7 +34,7 @@ func (h *SalonHandler) GetSalonById(c *fiber.Ctx) error {
 }
 
 func (h *SalonHandler) CraeteSalon(c *fiber.Ctx) error {
-	log.Println("[handlers.CraeteSalon] - Validating parameters")
+	log.Println("[SalonHandler.CraeteSalon] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
@@ -58,7 +58,7 @@ func (h *SalonHandler) CraeteSalon(c *fiber.Ctx) error {
 }
 
 func (h *SalonHandler) AddSalonMember(c *fiber.Ctx) error {
-	log.Println("[handlers.AddSalonMember] - Validating parameters")
+	log.Println("[SalonHandler.AddSalonMember] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
@@ -82,7 +82,7 @@ func (h *SalonHandler) AddSalonMember(c *fiber.Ctx) error {
 }
 
 func (h *SalonHandler) AddSalonAddress(c *fiber.Ctx) error {
-	log.Println("[handlers.AddSalonAddress] - Validating parameters")
+	log.Println("[SalonHandler.AddSalonAddress] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
@@ -104,7 +104,7 @@ func (h *SalonHandler) AddSalonAddress(c *fiber.Ctx) error {
 }
 
 func (h *SalonHandler) AddSalonContact(c *fiber.Ctx) error {
-	log.Println("[handlers.AddSalonContact] - Validating parameters")
+	log.Println("[SalonHandler.AddSalonContact] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
@@ -126,7 +126,7 @@ func (h *SalonHandler) AddSalonContact(c *fiber.Ctx) error {
 }
 
 func (h *SalonHandler) UpdateSalonAddress(c *fiber.Ctx) error {
-	log.Println("[handlers.UpdateSalonAddress] - Validating parameters")
+	log.Println("[SalonHandler.UpdateSalonAddress] - Validating parameters")
 	if _, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser); !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
 	}
@@ -150,7 +150,7 @@ func (h *SalonHandler) UpdateSalonAddress(c *fiber.Ctx) error {
 }
 
 func (h *SalonHandler) UpdateSalonContact(c *fiber.Ctx) error {
-	log.Println("[handlers.UpdateSalonContact] - Validating parameters")
+	log.Println("[SalonHandler.UpdateSalonContact] - Validating parameters")
 	if _, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser); !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
 	}
@@ -174,7 +174,7 @@ func (h *SalonHandler) UpdateSalonContact(c *fiber.Ctx) error {
 }
 
 func (h *SalonHandler) RemoveSalonAddress(c *fiber.Ctx) error {
-	log.Println("[handlers.RemoveSalonAddress] - Validating parameters")
+	log.Println("[SalonHandler.RemoveSalonAddress] - Validating parameters")
 	if _, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser); !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
 	}
@@ -188,7 +188,7 @@ func (h *SalonHandler) RemoveSalonAddress(c *fiber.Ctx) error {
 }
 
 func (h *SalonHandler) RemoveSalonContact(c *fiber.Ctx) error {
-	log.Println("[handlers.RemoveSalonContact] - Validating parameters")
+	log.Println("[SalonHandler.RemoveSalonContact] - Validating parameters")
 	if _, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser); !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
 	}

@@ -19,7 +19,7 @@ func NewCustomerService(customerRepository customer.CustomerRepository) *Custome
 }
 
 func (s *CustomerService) GetCustomerById(id string) (*customer.CustomerResponse, error) {
-	log.Println("[application.GetCustomerById] - Getting customer:", id)
+	log.Println("[CustomerService.GetCustomerById] - Getting customer:", id)
 	cus, err := s.customerRepository.FindById(id)
 	if err != nil {
 		return nil, err
@@ -36,7 +36,7 @@ func (s *CustomerService) GetCustomerById(id string) (*customer.CustomerResponse
 }
 
 func (s *CustomerService) GetCustomerByPhone(phone string) (*customer.Customer, error) {
-	log.Println("[application.GetCustomerByPhone] - Getting customer by phone:", phone)
+	log.Println("[CustomerService.GetCustomerByPhone] - Getting customer by phone:", phone)
 	cus, err := s.customerRepository.FindByPhone(phone)
 	if err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func (s *CustomerService) GetCustomerByPhone(phone string) (*customer.Customer, 
 }
 
 func (s *CustomerService) RegisterCustomer(input customer.RegisterRequest) (*customer.AuthResponse, error) {
-	log.Println("[application.RegisterCustomer] - Getting customer by phone:", input.Phone)
+	log.Println("[CustomerService.RegisterCustomer] - Getting customer by phone:", input.Phone)
 	barberExists, err := s.customerRepository.FindByPhone(input.Phone)
 	if err != nil {
 		return nil, err
@@ -65,14 +65,14 @@ func (s *CustomerService) RegisterCustomer(input customer.RegisterRequest) (*cus
 		Password: hashedPassword,
 	}
 
-	log.Println("[application.RegisterCustomer] - Creating customer")
+	log.Println("[CustomerService.RegisterCustomer] - Creating customer")
 	cus := customer.NewCustomer(input)
 	_, err = s.customerRepository.Save(cus)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Println("[application.RegisterCustomer] - Generating token")
+	log.Println("[CustomerService.RegisterCustomer] - Generating token")
 	token, err := cryptography.GenerateToken(cus.ID, "customer")
 	if err != nil {
 		return nil, err
@@ -90,7 +90,7 @@ func (s *CustomerService) RegisterCustomer(input customer.RegisterRequest) (*cus
 }
 
 func (s *CustomerService) LoginCustomer(input customer.LoginRequest) (*customer.AuthResponse, error) {
-	log.Println("[application.LoginCustomer] - Getting customer by phone:", input.Phone)
+	log.Println("[CustomerService.LoginCustomer] - Getting customer by phone:", input.Phone)
 	cus, err := s.customerRepository.FindByPhone(input.Phone)
 	if err != nil {
 		return nil, err
@@ -104,7 +104,7 @@ func (s *CustomerService) LoginCustomer(input customer.LoginRequest) (*customer.
 		return nil, errors.New("invalid credentials")
 	}
 
-	log.Println("[application.LoginCustomer] - Generating token")
+	log.Println("[CustomerService.LoginCustomer] - Generating token")
 	token, err := cryptography.GenerateToken(cus.ID, "customer")
 	if err != nil {
 		return nil, err

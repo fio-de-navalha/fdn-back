@@ -24,7 +24,7 @@ func NewProductHandler(productService application.ProductService) *ProductHandle
 }
 
 func (h *ProductHandler) GetBySalonId(c *fiber.Ctx) error {
-	log.Println("[handlers.GetBySalonId] - Validating parameters")
+	log.Println("[ProductHandler.GetBySalonId] - Validating parameters")
 	salonId := c.Params("salonId")
 	res, err := h.productService.GetProductsBySalonId(salonId)
 	if err != nil {
@@ -35,7 +35,7 @@ func (h *ProductHandler) GetBySalonId(c *fiber.Ctx) error {
 }
 
 func (h *ProductHandler) Create(c *fiber.Ctx) error {
-	log.Println("[handlers.Create] - Validating parameters")
+	log.Println("[ProductHandler.Create] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
@@ -65,7 +65,7 @@ func (h *ProductHandler) Create(c *fiber.Ctx) error {
 }
 
 func (h *ProductHandler) Update(c *fiber.Ctx) error {
-	log.Println("[handlers.Update] - Validating parameters")
+	log.Println("[ProductHandler.Update] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
@@ -73,7 +73,6 @@ func (h *ProductHandler) Update(c *fiber.Ctx) error {
 
 	salonId := c.Params("salonId")
 	productId := c.Params("productId")
-
 	input := product.UpdateProductRequest{
 		SalonId:        salonId,
 		ProfessionalId: user.ID,
