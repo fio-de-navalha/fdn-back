@@ -6,24 +6,17 @@ import (
 	"github.com/google/uuid"
 )
 
+type AddSalonMemberRequest struct {
+	ProfessionalId string `json:"professionalId" validate:"required,uuid4"`
+	Role           string `json:"role"`
+}
+
 type SalonMember struct {
 	ID             string    `json:"id"`
 	SalonId        string    `json:"salonId"`
 	ProfessionalId string    `json:"professionalId"`
 	Role           string    `json:"role"`
 	CreatedAt      time.Time `json:"createdAt"`
-}
-
-type Address struct {
-	ID      string `json:"id"`
-	SalonId string `json:"salonId"`
-	Address string `json:"address"`
-}
-
-type Contact struct {
-	ID      string `json:"id"`
-	SalonId string `json:"salonId"`
-	Contact string `json:"contact"`
 }
 
 func NewSalonMember(salonId string, professionalId string, role string) *SalonMember {
@@ -33,21 +26,5 @@ func NewSalonMember(salonId string, professionalId string, role string) *SalonMe
 		ProfessionalId: professionalId,
 		Role:           role,
 		CreatedAt:      time.Now(),
-	}
-}
-
-func NewAddress(salonId string, address string) *Address {
-	return &Address{
-		ID:      uuid.NewString(),
-		SalonId: salonId,
-		Address: address,
-	}
-}
-
-func NewContact(salonId string, contact string) *Contact {
-	return &Contact{
-		ID:      uuid.NewString(),
-		SalonId: salonId,
-		Contact: contact,
 	}
 }
