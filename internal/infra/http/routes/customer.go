@@ -4,17 +4,17 @@ import (
 	"github.com/fio-de-navalha/fdn-back/internal/infra/container"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http/handlers"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http/middlewares"
-	"github.com/gofiber/fiber/v2"
+	"github.com/labstack/echo/v4"
 )
 
-func setupCustomerRouter(router fiber.Router) {
+func setupCustomerRouter(r *echo.Group) {
 	customerHandler := handlers.NewCustomerHandler(*container.CustomerService)
 
-	customers := router.Group("/customer")
-	customers.Get("/:id", middlewares.EnsureAuth(), customerHandler.GetCustomerById)
+	customers := r.Group("/customer")
+	customers.GET("/:id", authMiddleware, customerHandler.GetCustomerById)
 
-	auth := router.Group("/auth")
-	auth.Post("/register/customer", customerHandler.RegisterCustomer)
-	auth.Post("/login/customer", customerHandler.LoginCustomer)
-	auth.Get("/me/customer", middlewares.EnsureAuth(), customerHandler.MeCustomer)
+	auth := r.Group("/auth")
+	auth.POST("/register/customer", customerHandler.RegisterCustomer)
+	auth.POST("/login/customer", customerHandler.LoginCustomer)
+	auth.GET("/me/customer", middlewares.EnsureAuth(), customerHandler.MeCustomer)
 }

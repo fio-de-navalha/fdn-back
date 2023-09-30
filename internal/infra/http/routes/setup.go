@@ -1,11 +1,9 @@
 package routes
 
-import (
-	"github.com/gofiber/fiber/v2"
-)
+import "github.com/labstack/echo/v4"
 
-func FiberSetupRouters(app *fiber.App) {
-	router := app.Group("/api")
+func FiberSetupRouters(e *echo.Echo) {
+	router := e.Group("/api")
 
 	setupHealthRouter(router)
 	setupCustomerRouter(router)

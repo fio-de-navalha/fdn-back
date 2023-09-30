@@ -12,5 +12,6 @@ func init() {
 }
 
 func main() {
-	http.StartServer()
+	s := http.NewServer()
+	s.StartServer()
 }

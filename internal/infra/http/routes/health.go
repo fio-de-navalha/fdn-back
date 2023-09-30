@@ -1,10 +1,13 @@
 package routes
 
 import (
-	"github.com/fio-de-navalha/fdn-back/internal/infra/http/handlers"
-	"github.com/gofiber/fiber/v2"
+	"net/http"
+
+	"github.com/labstack/echo/v4"
 )
 
-func setupHealthRouter(router fiber.Router) {
-	router.Get("/health", handlers.GetHealth)
+func setupHealthRouter(r *echo.Group) {
+	r.GET("/health", func(c echo.Context) error {
+		return c.String(http.StatusOK, "OK")
+	})
 }
