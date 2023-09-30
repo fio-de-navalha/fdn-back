@@ -830,6 +830,12 @@
           },
           {
             "in": "formData",
+            "name": "desciption",
+            "type": "string",
+            "required": false
+          },
+          {
+            "in": "formData",
             "name": "price",
             "type": "number",
             "required": true
