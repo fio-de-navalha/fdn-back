@@ -27,6 +27,18 @@ func (r *gormPeriodRepository) FindBySalonId(salonId string) ([]*salon.Period, e
 	return p, nil
 }
 
+func (r *gormPeriodRepository) FindBySalonAndDay(salonId string, day int) (*salon.Period, error) {
+	var p *salon.Period
+	result := r.db.First(&p, "salon_id = ? AND day = ?", salonId, day)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
+		return nil, result.Error
+	}
+	return p, nil
+}
+
 func (r *gormPeriodRepository) FindById(id string, salonId string) (*salon.Period, error) {
 	var p salon.Period
 	result := r.db.First(&p, "id = ? AND salon_id = ?", id, salonId)

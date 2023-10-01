@@ -3,6 +3,7 @@ package appointment
 import "time"
 
 type CreateAppointmentRequest struct {
+	SalonId        string    `json:"salonId" validate:"required,uuid4"`
 	ProfessionalId string    `json:"professionalId" validate:"required,uuid4"`
 	CustomerId     string    `json:"customerId" validate:"required,uuid4"`
 	StartsAt       time.Time `json:"startsAt" validate:"required"`

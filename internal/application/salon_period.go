@@ -8,6 +8,20 @@ import (
 	"github.com/fio-de-navalha/fdn-back/internal/validation"
 )
 
+func (s *SalonService) GetSalonPeriodByDay(salonId string, day int) (*salon.Period, error) {
+	log.Println("[SalonService.GetSalonPeriodByDay] - Validating salon:", salonId)
+	if _, err := s.validateSalon(salonId); err != nil {
+		return nil, err
+	}
+
+	log.Println("[SalonService.GetSalonPeriodByDay] - Getting period")
+	period, err := s.periodRepository.FindBySalonAndDay(salonId, day)
+	if err != nil {
+		return nil, err
+	}
+	return period, nil
+}
+
 func (s *SalonService) AddSalonPeriod(salonId, requesterId string, input salon.AddPeriodRequest) error {
 	log.Println("[SalonService.AddSalonPeriod] - Validating salon:", salonId)
 	sal, err := s.validateSalon(salonId)

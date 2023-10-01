@@ -1188,7 +1188,7 @@
           "200": {
             "description": "Successful response",
             "schema": {
-              "$ref": "#/definitions/SalonContact"
+              "$ref": "#/definitions/SalonPeriod"
             }
           },
           "401": {
@@ -1269,6 +1269,9 @@
             "schema": {
               "type": "object",
               "properties": {
+                "salonId": {
+                  "type": "string"
+                },
                 "professionalId": {
                   "type": "string"
                 },
@@ -1481,6 +1484,26 @@
           "type": "string"
         },
         "contact": {
+          "type": "string"
+        }
+      }
+    },
+    "SalonPeriod": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "salonId": {
+          "type": "string"
+        },
+        "day": {
+          "type": "number"
+        },
+        "open": {
+          "type": "string"
+        },
+        "close": {
           "type": "string"
         }
       }

@@ -52,5 +52,6 @@ func LoadContainers() {
 		*CustomerService,
 		*ServiceService,
 		*ProductService,
+		*SalonService,
 	)
 }
