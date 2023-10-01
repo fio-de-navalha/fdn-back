@@ -24,8 +24,8 @@ func NewSalonHandler(salonService application.SalonService) *SalonHandler {
 
 func (h *SalonHandler) GetSalonById(c *fiber.Ctx) error {
 	log.Println("[SalonHandler.GetSalonById] - Validating parameters")
-	id := c.Params("id")
-	res, err := h.salonService.GetSalonById(id)
+	salonId := c.Params("salonId")
+	res, err := h.salonService.GetSalonById(salonId)
 	if err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}

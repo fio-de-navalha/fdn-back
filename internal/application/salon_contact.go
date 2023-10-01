@@ -14,6 +14,7 @@ func (s *SalonService) AddSalonContact(salonId string, contact string) error {
 		return err
 	}
 
+	log.Println("[SalonService.AddSalonContact] - Creating contact")
 	newContact := salon.NewContact(sal.ID, contact)
 	if _, err := s.contactRepository.Save(newContact); err != nil {
 		return err
@@ -28,6 +29,7 @@ func (s *SalonService) UpdateSalonContact(salonId string, contactId string, cont
 		return nil, err
 	}
 
+	log.Println("[SalonService.UpdateSalonContact] - Updating contact:", contactId)
 	cntt.Contact = contact
 	if _, err := s.contactRepository.Save(cntt); err != nil {
 		return nil, err
@@ -42,6 +44,7 @@ func (s *SalonService) RemoveSalonContact(salonId string, contactId string) erro
 		return err
 	}
 
+	log.Println("[SalonService.RemoveSalonContact] - Deleting contact:", contactId)
 	if err := s.contactRepository.Delete(cntt.ID); err != nil {
 		return err
 	}

@@ -18,7 +18,7 @@ func (h *SalonHandler) AddSalonMember(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, "permission denied")
 	}
 
-	id := c.Params("id")
+	salonId := c.Params("salonId")
 	body := new(salon.AddSalonMemberRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -28,7 +28,7 @@ func (h *SalonHandler) AddSalonMember(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	if err := h.salonService.AddSalonMember(id, body.ProfessionalId, body.Role, user.ID); err != nil {
+	if err := h.salonService.AddSalonMember(salonId, body.ProfessionalId, body.Role, user.ID); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 

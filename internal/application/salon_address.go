@@ -14,6 +14,7 @@ func (s *SalonService) AddSalonAddress(salonId string, address string) error {
 		return err
 	}
 
+	log.Println("[SalonService.AddSalonAddress] - Creating address")
 	newAddr := salon.NewAddress(sal.ID, address)
 	if _, err := s.addressRepository.Save(newAddr); err != nil {
 		return err
@@ -28,6 +29,7 @@ func (s *SalonService) UpdateSalonAddress(salonId string, addressId string, addr
 		return nil, err
 	}
 
+	log.Println("[SalonService.UpdateSalonAddress] - Updating address:", addressId)
 	addr.Address = address
 	if _, err := s.addressRepository.Save(addr); err != nil {
 		return nil, err
@@ -42,6 +44,7 @@ func (s *SalonService) RemoveSalonAddress(salonId string, addressId string) erro
 		return err
 	}
 
+	log.Println("[SalonService.RemoveSalonAddress] - Deleting address:", addressId)
 	if err := s.addressRepository.Delete(addr.ID); err != nil {
 		return err
 	}
