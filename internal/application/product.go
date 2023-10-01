@@ -8,8 +8,6 @@ import (
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/image"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/product"
-	"github.com/fio-de-navalha/fdn-back/internal/domain/professional"
-	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
 )
 
 type ProductService struct {
@@ -53,19 +51,18 @@ func (s *ProductService) GetProductsBySalonId(salonId string) ([]*product.Produc
 
 func (s *ProductService) CreateProduct(input product.CreateProductRequest, file *multipart.FileHeader) error {
 	log.Println("[ProductService.CreateProduct] - Validating salon:", input.SalonId)
-	sal, err := s.validateSalon(input.SalonId)
+	sal, err := s.salonService.validateSalon(input.SalonId)
 	if err != nil {
 		return err
 	}
 
 	log.Println("[ProductService.CreateProduct] - Validating professional:", input.ProfessionalId)
-	prof, err := s.validateProfessional(input.ProfessionalId)
+	prof, err := s.professionalService.validateProfessionalById(input.ProfessionalId)
 	if err != nil {
 		return err
 	}
 
-	// TODO: validate this
-	if err := s.validateProfessionalPermission(sal, prof); err != nil {
+	if err := s.salonService.validateRequesterPermission(prof.ID, sal.SalonMembers); err != nil {
 		return err
 	}
 
@@ -91,19 +88,18 @@ func (s *ProductService) CreateProduct(input product.CreateProductRequest, file 
 
 func (s *ProductService) UpdateProduct(productId string, input product.UpdateProductRequest, file *multipart.FileHeader) error {
 	log.Println("[ProductService.UpdateProduct] - Validating salon:", input.SalonId)
-	sal, err := s.validateSalon(input.SalonId)
+	sal, err := s.salonService.validateSalon(input.SalonId)
 	if err != nil {
 		return err
 	}
 
 	log.Println("[ProductService.UpdateProduct] - Validating professional:", input.ProfessionalId)
-	prof, err := s.validateProfessional(input.ProfessionalId)
+	prof, err := s.professionalService.validateProfessionalById(input.ProfessionalId)
 	if err != nil {
 		return err
 	}
 
-	// TODO: validate this
-	if err := s.validateProfessionalPermission(sal, prof); err != nil {
+	if err := s.salonService.validateRequesterPermission(prof.ID, sal.SalonMembers); err != nil {
 		return err
 	}
 
@@ -149,53 +145,14 @@ func (s *ProductService) getManyProducts(productIds []string) ([]*product.Produc
 	return res, nil
 }
 
-func (s *ProductService) ValidateProductsAvailability(products []*product.Product) []string {
+func (s *ProductService) validateProductsAvailability(products []*product.Product) []string {
 	var productsIdsToSave []string
 	for _, v := range products {
 		if v.Available {
 			productsIdsToSave = append(productsIdsToSave, v.ID)
 		}
 	}
-
 	return productsIdsToSave
-}
-
-func (s *ProductService) validateSalon(salonId string) (*salon.Salon, error) {
-	sal, err := s.salonService.GetSalonById(salonId)
-	if err != nil {
-		return nil, err
-	}
-	if sal == nil {
-		return nil, errors.New("salon not found")
-	}
-	return sal, nil
-}
-
-func (s *ProductService) validateProfessional(professionalId string) (*professional.ProfessionalResponse, error) {
-	prof, err := s.professionalService.GetProfessionalById(professionalId)
-	if err != nil {
-		return nil, err
-	}
-	if prof == nil {
-		return nil, errors.New("professional not found")
-	}
-	return prof, nil
-}
-
-func (s *ProductService) validateProfessionalPermission(sal *salon.Salon, pro *professional.ProfessionalResponse) error {
-	isProfessionalMember := false
-	for _, v := range sal.SalonMembers {
-		if isProfessionalMember {
-			break
-		}
-		if v.ProfessionalId == pro.ID {
-			isProfessionalMember = true
-		}
-	}
-	if !isProfessionalMember {
-		return errors.New("permission denied")
-	}
-	return nil
 }
 
 func (s *ProductService) validateProduct(productId string) (*product.Product, error) {
@@ -206,6 +163,5 @@ func (s *ProductService) validateProduct(productId string) (*product.Product, er
 	if pro == nil {
 		return nil, errors.New("product not found")
 	}
-
 	return pro, nil
 }

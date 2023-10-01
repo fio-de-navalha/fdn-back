@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS period (
+    id UUID NOT NULL PRIMARY KEY,
+    salon_id UUID REFERENCES salon(id),
+    day INTEGER NOT NULL,
+    open VARCHAR NOT NULL,
+    close VARCHAR NOT NULL
+);

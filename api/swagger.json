@@ -1082,6 +1082,175 @@
         }
       }
     },
+    "/salon/{salonId}/period": {
+      "post": {
+        "tags": ["Period"],
+        "summary": "Add a salon period",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "salonId",
+            "in": "path",
+            "description": "Salon Id to add period",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "description": "Request Body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "day": {
+                  "type": "number"
+                },
+                "open": {
+                  "type": "string"
+                },
+                "close": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response"
+          },
+          "401": {
+            "description": "Unauthorized response",
+            "schema": {
+              "$ref": "#/definitions/401"
+            }
+          },
+          "403": {
+            "description": "Forbidden response",
+            "schema": {
+              "$ref": "#/definitions/403"
+            }
+          }
+        }
+      }
+    },
+    "/salon/{salonId}/period/{periodId}": {
+      "put": {
+        "tags": ["Period"],
+        "summary": "Update a salon period",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "salonId",
+            "in": "path",
+            "description": "Salon Id to add period",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "periodId",
+            "in": "path",
+            "description": "Period Id to update",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "description": "Request Body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "day": {
+                  "type": "number"
+                },
+                "open": {
+                  "type": "string"
+                },
+                "close": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/SalonPeriod"
+            }
+          },
+          "401": {
+            "description": "Unauthorized response",
+            "schema": {
+              "$ref": "#/definitions/401"
+            }
+          },
+          "403": {
+            "description": "Forbidden response",
+            "schema": {
+              "$ref": "#/definitions/403"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Period"],
+        "summary": "Delete a salon period",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "salonId",
+            "in": "path",
+            "description": "ID of the salon to delete",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "periodId",
+            "in": "path",
+            "description": "ID of the contact to period",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "$ref": "#/definitions/SalonContact"
+            }
+          },
+          "401": {
+            "description": "Unauthorized response",
+            "schema": {
+              "$ref": "#/definitions/401"
+            }
+          },
+          "403": {
+            "description": "Forbidden response",
+            "schema": {
+              "$ref": "#/definitions/403"
+            }
+          }
+        }
+      }
+    },
     "/appointment": {
       "post": {
         "tags": ["Appointment"],
@@ -1100,6 +1269,9 @@
             "schema": {
               "type": "object",
               "properties": {
+                "salonId": {
+                  "type": "string"
+                },
                 "professionalId": {
                   "type": "string"
                 },
@@ -1312,6 +1484,26 @@
           "type": "string"
         },
         "contact": {
+          "type": "string"
+        }
+      }
+    },
+    "SalonPeriod": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "salonId": {
+          "type": "string"
+        },
+        "day": {
+          "type": "number"
+        },
+        "open": {
+          "type": "string"
+        },
+        "close": {
           "type": "string"
         }
       }

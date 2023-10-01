@@ -33,6 +33,7 @@ func (r *gormSalonRepository) FindById(id string) (*salon.Salon, error) {
 		Preload("SalonMembers").
 		Preload("Addresses").
 		Preload("Contacts").
+		Preload("Periods").
 		Preload("Services").
 		Preload("Products").
 		First(&sal, "id = ?", id)

@@ -31,7 +31,7 @@ func (s *ProfessionalService) GetManyProfessionals() ([]*professional.Profession
 
 func (s *ProfessionalService) GetProfessionalById(id string) (*professional.ProfessionalResponse, error) {
 	log.Println("[ProfessionalService.GetProfessionalById] - Getting professional:", id)
-	res, err := s.ValidateProfessionalById(id)
+	res, err := s.validateProfessionalById(id)
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +129,7 @@ func (s *ProfessionalService) LoginProfessional(input professional.LoginProfessi
 	}, nil
 }
 
-func (s *ProfessionalService) ValidateProfessionalById(professionalId string) (*professional.Professional, error) {
+func (s *ProfessionalService) validateProfessionalById(professionalId string) (*professional.Professional, error) {
 	prof, err := s.professionalRepository.FindById(professionalId)
 	if err != nil {
 		return nil, err

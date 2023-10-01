@@ -12,6 +12,7 @@ type SalonService struct {
 	salonMemberRepository salon.SalonMemberRepository
 	addressRepository     salon.AddressRepository
 	contactRepository     salon.ContactRepository
+	periodRepository      salon.PeriodRepository
 	professionalService   ProfessionalService
 }
 
@@ -20,6 +21,7 @@ func NewSalonService(
 	salonMemberRepository salon.SalonMemberRepository,
 	addressRepository salon.AddressRepository,
 	contactRepository salon.ContactRepository,
+	periodRepository salon.PeriodRepository,
 	professionalService ProfessionalService,
 ) *SalonService {
 	return &SalonService{
@@ -27,6 +29,7 @@ func NewSalonService(
 		salonMemberRepository: salonMemberRepository,
 		addressRepository:     addressRepository,
 		contactRepository:     contactRepository,
+		periodRepository:      periodRepository,
 		professionalService:   professionalService,
 	}
 }
@@ -52,6 +55,7 @@ func (s *SalonService) GetSalonById(id string) (*salon.Salon, error) {
 		SalonMembers: res.SalonMembers,
 		Addresses:    res.Addresses,
 		Contacts:     res.Contacts,
+		Periods:      res.Periods,
 		Services:     res.Services,
 		Products:     res.Products,
 	}, nil
@@ -59,7 +63,7 @@ func (s *SalonService) GetSalonById(id string) (*salon.Salon, error) {
 
 func (s *SalonService) CreateSalon(name string, professionalId string) (*salon.Salon, error) {
 	log.Println("[SalonService.CreateSalon] - Validating professional:", professionalId)
-	if _, err := s.professionalService.ValidateProfessionalById(professionalId); err != nil {
+	if _, err := s.professionalService.validateProfessionalById(professionalId); err != nil {
 		return nil, err
 	}
 
@@ -86,117 +90,6 @@ func (s *SalonService) CreateSalon(name string, professionalId string) (*salon.S
 	}, nil
 }
 
-func (s *SalonService) AddSalonMember(salonId string, professionalId string, role string, requesterId string) error {
-	log.Println("[SalonService.AddSalonMember] - Validating salon:", salonId)
-	sal, err := s.validateSalon(salonId)
-	if err != nil {
-		return err
-	}
-
-	if err := s.validateRequesterPermission(requesterId, sal.SalonMembers); err != nil {
-		return err
-	}
-
-	if _, err := s.professionalService.ValidateProfessionalById(professionalId); err != nil {
-		return err
-	}
-
-	for _, member := range sal.SalonMembers {
-		if member.ProfessionalId == professionalId {
-			return errors.New("professional already exists in salon")
-		}
-	}
-
-	log.Println("[SalonService.AddSalonMember] - Adding salon member")
-	newSalon := salon.NewSalonMember(sal.ID, professionalId, role)
-	if _, err := s.salonMemberRepository.Save(newSalon); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *SalonService) AddSalonAddress(salonId string, address string) error {
-	log.Println("[SalonService.AddSalonAddress] - Validating salon:", salonId)
-	sal, err := s.validateSalon(salonId)
-	if err != nil {
-		return err
-	}
-
-	newAddr := salon.NewAddress(sal.ID, address)
-	if _, err := s.addressRepository.Save(newAddr); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *SalonService) UpdateSalonAddress(salonId string, addressId string, address string) (*salon.Address, error) {
-	log.Println("[SalonService.UpdateSalonAddress] - Validating address:", addressId)
-	addr, err := s.validateSalonAddress(addressId, salonId)
-	if err != nil {
-		return nil, err
-	}
-
-	addr.Address = address
-	if _, err := s.addressRepository.Save(addr); err != nil {
-		return nil, err
-	}
-	return addr, nil
-}
-
-func (s *SalonService) RemoveSalonAddress(salonId string, addressId string) error {
-	log.Println("[SalonService.RemoveSalonAddress] - Validating address:", addressId)
-	addr, err := s.validateSalonAddress(addressId, salonId)
-	if err != nil {
-		return err
-	}
-
-	if err := s.addressRepository.Delete(addr.ID); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *SalonService) AddSalonContact(salonId string, contact string) error {
-	log.Println("[SalonService.AddSalonContact] - Validating salon:", salonId)
-	sal, err := s.validateSalon(salonId)
-	if err != nil {
-		return err
-	}
-
-	newContact := salon.NewContact(sal.ID, contact)
-	if _, err := s.contactRepository.Save(newContact); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *SalonService) UpdateSalonContact(salonId string, contactId string, contact string) (*salon.Contact, error) {
-	log.Println("[SalonService.UpdateSalonContact] - Validating contact:", contactId)
-	cntt, err := s.validateSalonContact(contactId, salonId)
-	if err != nil {
-		return nil, err
-	}
-
-	cntt.Contact = contact
-	if _, err := s.contactRepository.Save(cntt); err != nil {
-		return nil, err
-	}
-	return cntt, nil
-}
-
-func (s *SalonService) RemoveSalonContact(salonId string, contactId string) error {
-	log.Println("[SalonService.RemoveSalonContact] - Validating contact:", contactId)
-	cntt, err := s.validateSalonContact(contactId, salonId)
-	if err != nil {
-		return err
-	}
-
-	if err := s.contactRepository.Delete(cntt.ID); err != nil {
-		return err
-	}
-	return nil
-}
-
 func (s *SalonService) validateSalon(salonId string) (*salon.Salon, error) {
 	res, err := s.salonRepository.FindById(salonId)
 	if err != nil {
@@ -206,41 +99,4 @@ func (s *SalonService) validateSalon(salonId string) (*salon.Salon, error) {
 		return nil, errors.New("salon not found")
 	}
 	return res, nil
-}
-
-func (s *SalonService) validateRequesterPermission(requesterId string, salonMembers []salon.SalonMember) error {
-	isRequesterMember := false
-	for _, member := range salonMembers {
-		if member.ProfessionalId == requesterId {
-			isRequesterMember = true
-			break
-		}
-	}
-	if !isRequesterMember {
-		return errors.New("permission denied")
-	}
-
-	return nil
-}
-
-func (s *SalonService) validateSalonAddress(addressId, salonId string) (*salon.Address, error) {
-	addr, err := s.addressRepository.FindById(addressId, salonId)
-	if err != nil {
-		return nil, err
-	}
-	if addr == nil {
-		return nil, errors.New("address not found")
-	}
-	return addr, nil
-}
-
-func (s *SalonService) validateSalonContact(contactId, salonId string) (*salon.Contact, error) {
-	cntt, err := s.contactRepository.FindById(contactId, salonId)
-	if err != nil {
-		return nil, err
-	}
-	if cntt == nil {
-		return nil, errors.New("contact not found")
-	}
-	return cntt, nil
 }

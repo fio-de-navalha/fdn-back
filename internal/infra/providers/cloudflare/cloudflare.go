@@ -35,7 +35,7 @@ func NewCloudFlareService(
 }
 
 func (s *CloudFlareService) GetImageById(imageId string) (*image.ImageResponse, error) {
-	log.Println("[cloudflare.GetImageById] - Getting image:", imageId)
+	log.Println("[CloudFlareService.GetImageById] - Getting image:", imageId)
 	url := s.baseUrl + "/" + imageId
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -74,7 +74,7 @@ func (s *CloudFlareService) GetImageById(imageId string) (*image.ImageResponse, 
 }
 
 func (s *CloudFlareService) UploadImage(file *multipart.FileHeader) (*image.ImageResponse, error) {
-	log.Println("[cloudflare.UploadImage] - Upload image:", file.Filename)
+	log.Println("[CloudFlareService.UploadImage] - Upload image:", file.Filename)
 	fileContent, err := file.Open()
 	if err != nil {
 		fmt.Println("Error opening file:", err)
@@ -168,7 +168,7 @@ func (s *CloudFlareService) UpdateImage(imageId string, file *multipart.FileHead
 }
 
 func (s *CloudFlareService) DeleteImage(imageId string) error {
-	log.Println("[cloudflare.GetImageById] - Getting image:", imageId)
+	log.Println("[CloudFlareService.DeleteImage] - Getting image:", imageId)
 	url := s.baseUrl + "/" + imageId
 	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {

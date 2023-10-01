@@ -16,14 +16,3 @@ type singleImageResponse struct {
 	Errors   []interface{} `json:"errors"`
 	Messages []interface{} `json:"messages"`
 }
-
-type imagesResult struct {
-	Images []imageResult `json:"images"`
-}
-
-type multipleImagesResponse struct {
-	Result   imagesResult  `json:"result"`
-	Success  bool          `json:"success"`
-	Errors   []interface{} `json:"errors"`
-	Messages []interface{} `json:"messages"`
-}

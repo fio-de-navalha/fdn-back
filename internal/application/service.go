@@ -60,8 +60,7 @@ func (s *ServiceService) CreateService(input service.CreateServiceRequest, file 
 		return err
 	}
 
-	// TODO: validate this
-	if err := s.validateProfessionalPermission(prof.ID, sal.SalonMembers); err != nil {
+	if err := s.salonService.validateRequesterPermission(prof.ID, sal.SalonMembers); err != nil {
 		return err
 	}
 
@@ -98,8 +97,7 @@ func (s *ServiceService) UpdateService(serviceId string, input service.UpdateSer
 		return err
 	}
 
-	// TODO: validate this
-	if err := s.validateProfessionalPermission(prof.ID, sal.SalonMembers); err != nil {
+	if err := s.salonService.validateRequesterPermission(prof.ID, sal.SalonMembers); err != nil {
 		return err
 	}
 
@@ -186,20 +184,6 @@ func (s *ServiceService) validateProfessional(professionalId string) (*professio
 		return nil, errors.New("professional not found")
 	}
 	return prof, nil
-}
-
-func (s *ServiceService) validateProfessionalPermission(professionalId string, salonMembers []salon.SalonMember) error {
-	isProfessionalMember := false
-	for _, member := range salonMembers {
-		if member.ProfessionalId == professionalId {
-			isProfessionalMember = true
-			break
-		}
-	}
-	if !isProfessionalMember {
-		return errors.New("permission denied")
-	}
-	return nil
 }
 
 func (s *ServiceService) validateService(serviceId string) (*service.Service, error) {

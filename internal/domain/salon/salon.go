@@ -8,6 +8,14 @@ import (
 	"github.com/google/uuid"
 )
 
+type CreateSalonRequest struct {
+	Name string `json:"name" validate:"required,min=3,max=30"`
+}
+
+type UpdateSalonRequest struct {
+	Name *string `json:"name"`
+}
+
 type Salon struct {
 	ID           string            `json:"id"`
 	Name         string            `json:"name"`
@@ -15,6 +23,7 @@ type Salon struct {
 	SalonMembers []SalonMember     `json:"salonMembers"`
 	Addresses    []Address         `json:"addresses"`
 	Contacts     []Contact         `json:"contacts"`
+	Periods      []Period          `json:"periods"`
 	Services     []service.Service `json:"services"`
 	Products     []product.Product `json:"products"`
 }

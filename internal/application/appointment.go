@@ -3,6 +3,7 @@ package application
 import (
 	"errors"
 	"log"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -18,6 +19,7 @@ type AppointmentService struct {
 	customerService       CustomerService
 	serviceService        ServiceService
 	productService        ProductService
+	salonService          SalonService
 }
 
 func NewAppointmentService(
@@ -26,6 +28,7 @@ func NewAppointmentService(
 	customerService CustomerService,
 	serviceService ServiceService,
 	productService ProductService,
+	salonService SalonService,
 ) *AppointmentService {
 	return &AppointmentService{
 		appointmentRepository: appointmentRepository,
@@ -33,6 +36,7 @@ func NewAppointmentService(
 		customerService:       customerService,
 		serviceService:        serviceService,
 		productService:        productService,
+		salonService:          salonService,
 	}
 }
 
@@ -133,7 +137,7 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 		if err != nil {
 			errs <- err
 		}
-		idsToSave := s.productService.ValidateProductsAvailability(products)
+		idsToSave := s.productService.validateProductsAvailability(products)
 		if err := s.validateAssociation("products", input.ProductIds, idsToSave); err != nil {
 			errs <- err
 		}
@@ -153,11 +157,9 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 	resultService := <-resultServiceChan
 	resultProduct := <-resultProductChan
 
-	// TODO: Validate if salon is open or not
-
 	log.Println("[AppointmentService.CreateApppointment] - Validating appointment time range availability")
 	endsAt := input.StartsAt.Add(time.Minute * time.Duration(resultService.Duration))
-	if err := s.validateAppointmentTimeRange(input.StartsAt, endsAt); err != nil {
+	if err := s.validateAppointmentTimeRange(input.SalonId, input.StartsAt, endsAt); err != nil {
 		return err
 	}
 
@@ -212,11 +214,35 @@ func (s *AppointmentService) validateEntity(
 	if err != nil {
 		return errors.New(context + " not found")
 	}
-
 	return nil
 }
 
-func (s *AppointmentService) validateAppointmentTimeRange(startsAt, endsAt time.Time) error {
+func (s *AppointmentService) validateAppointmentTimeRange(salonId string, startsAt, endsAt time.Time) error {
+	day := startsAt.Weekday()
+	per, err := s.salonService.GetSalonPeriodByDay(salonId, int(day))
+	if err != nil {
+		return err
+	}
+	if per == nil {
+		return errors.New("appointment time conflict. Salon is closed")
+	}
+
+	openHourStr := strings.Split(per.Open, ":")
+	openHour, _ := strconv.Atoi(openHourStr[0])
+	openMinute, _ := strconv.Atoi(openHourStr[1])
+	openTime := time.Date(startsAt.Year(), startsAt.Month(), startsAt.Day(), openHour, openMinute, 0, 0, time.UTC)
+	if startsAt.Before(openTime) {
+		return errors.New("appointment time conflict. Cannot create appointment before salon is open")
+	}
+
+	closeHourStr := strings.Split(per.Close, ":")
+	closeHour, _ := strconv.Atoi(closeHourStr[0])
+	closeMinute, _ := strconv.Atoi(closeHourStr[1])
+	closeTime := time.Date(startsAt.Year(), startsAt.Month(), startsAt.Day(), closeHour, closeMinute, 0, 0, time.UTC)
+	if startsAt.After(closeTime) {
+		return errors.New("appointment time conflict. Cannot create appointment after salon is closed")
+	}
+
 	appos, err := s.appointmentRepository.FindByDates(startsAt, endsAt)
 	if err != nil {
 		return err

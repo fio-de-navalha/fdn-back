@@ -87,6 +87,7 @@ func (h *AppointmentHandler) Create(c *fiber.Ctx) error {
 	}
 
 	input := appointment.CreateAppointmentRequest{
+		SalonId:        body.SalonId,
 		ProfessionalId: body.ProfessionalId,
 		CustomerId:     body.CustomerId,
 		StartsAt:       body.StartsAt,
