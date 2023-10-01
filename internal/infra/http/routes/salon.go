@@ -22,4 +22,8 @@ func setupSalonRouter(router fiber.Router) {
 	salons.Post("/:id/contact", middlewares.EnsureProfessionalRole(), salonHandler.AddSalonContact)
 	salons.Put("/:id/contact/:contactId", middlewares.EnsureProfessionalRole(), salonHandler.UpdateSalonContact)
 	salons.Delete("/:id/contact/:contactId", middlewares.EnsureProfessionalRole(), salonHandler.RemoveSalonContact)
+
+	salons.Post("/:salonId/period", middlewares.EnsureProfessionalRole(), salonHandler.AddSalonPeriod)
+	salons.Put("/:salonId/period/:periodId", middlewares.EnsureProfessionalRole(), salonHandler.UpdateSalonPeriod)
+	salons.Delete("/:salonId/period/:periodId", middlewares.EnsureProfessionalRole(), salonHandler.RemoveSalonPeriod)
 }

@@ -22,6 +22,7 @@ func LoadContainers() {
 	customerRepo := database.NewGormCustomerRepository()
 	addressRepo := database.NewGormAddressRepository()
 	contactRepo := database.NewGormContactRepository()
+	periodRepo := database.NewGormPeriodRepository()
 	professionalRepo := database.NewGormProfessionalRepository()
 	serviceRepo := database.NewGormServiceRepository()
 	productRepo := database.NewGormProductRepository()
@@ -36,9 +37,15 @@ func LoadContainers() {
 
 	CustomerService = application.NewCustomerService(customerRepo)
 	ProfessionalService = application.NewProfessionalService(professionalRepo)
-	SalonService = application.NewSalonService(salonRepo, salonMemberRepo, addressRepo, contactRepo, *ProfessionalService)
-	ServiceService = application.NewServiceService(serviceRepo, *SalonService, *ProfessionalService, cloudFlareService)
-	ProductService = application.NewProductService(productRepo, *SalonService, *ProfessionalService, cloudFlareService)
+	SalonService = application.NewSalonService(
+		salonRepo, salonMemberRepo, addressRepo, contactRepo, periodRepo, *ProfessionalService,
+	)
+	ServiceService = application.NewServiceService(
+		serviceRepo, *SalonService, *ProfessionalService, cloudFlareService,
+	)
+	ProductService = application.NewProductService(
+		productRepo, *SalonService, *ProfessionalService, cloudFlareService,
+	)
 	AppointmentService = application.NewAppointmentService(
 		appointmentRepo,
 		*ProfessionalService,

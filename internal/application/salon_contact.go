@@ -1,6 +1,7 @@
 package application
 
 import (
+	"errors"
 	"log"
 
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
@@ -45,4 +46,15 @@ func (s *SalonService) RemoveSalonContact(salonId string, contactId string) erro
 		return err
 	}
 	return nil
+}
+
+func (s *SalonService) validateSalonContact(contactId, salonId string) (*salon.Contact, error) {
+	cntt, err := s.contactRepository.FindById(contactId, salonId)
+	if err != nil {
+		return nil, err
+	}
+	if cntt == nil {
+		return nil, errors.New("contact not found")
+	}
+	return cntt, nil
 }

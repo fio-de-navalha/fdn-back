@@ -7,31 +7,54 @@ import (
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
 )
 
-func (s *SalonService) AddSalonMember(salonId string, professionalId string, role string, requesterId string) error {
-	log.Println("[SalonService.AddSalonMember] - Validating salon:", salonId)
+func (s *SalonService) AddSalonAddress(salonId string, address string) error {
+	log.Println("[SalonService.AddSalonAddress] - Validating salon:", salonId)
 	sal, err := s.validateSalon(salonId)
 	if err != nil {
 		return err
 	}
 
-	if err := s.validateRequesterPermission(requesterId, sal.SalonMembers); err != nil {
-		return err
-	}
-
-	if _, err := s.professionalService.ValidateProfessionalById(professionalId); err != nil {
-		return err
-	}
-
-	for _, member := range sal.SalonMembers {
-		if member.ProfessionalId == professionalId {
-			return errors.New("professional already exists in salon")
-		}
-	}
-
-	log.Println("[SalonService.AddSalonMember] - Adding salon member")
-	newSalon := salon.NewSalonMember(sal.ID, professionalId, role)
-	if _, err := s.salonMemberRepository.Save(newSalon); err != nil {
+	newAddr := salon.NewAddress(sal.ID, address)
+	if _, err := s.addressRepository.Save(newAddr); err != nil {
 		return err
 	}
 	return nil
+}
+
+func (s *SalonService) UpdateSalonAddress(salonId string, addressId string, address string) (*salon.Address, error) {
+	log.Println("[SalonService.UpdateSalonAddress] - Validating address:", addressId)
+	addr, err := s.validateSalonAddress(addressId, salonId)
+	if err != nil {
+		return nil, err
+	}
+
+	addr.Address = address
+	if _, err := s.addressRepository.Save(addr); err != nil {
+		return nil, err
+	}
+	return addr, nil
+}
+
+func (s *SalonService) RemoveSalonAddress(salonId string, addressId string) error {
+	log.Println("[SalonService.RemoveSalonAddress] - Validating address:", addressId)
+	addr, err := s.validateSalonAddress(addressId, salonId)
+	if err != nil {
+		return err
+	}
+
+	if err := s.addressRepository.Delete(addr.ID); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *SalonService) validateSalonAddress(addressId, salonId string) (*salon.Address, error) {
+	addr, err := s.addressRepository.FindById(addressId, salonId)
+	if err != nil {
+		return nil, err
+	}
+	if addr == nil {
+		return nil, errors.New("address not found")
+	}
+	return addr, nil
 }

@@ -1,48 +1,51 @@
 package application
 
 import (
+	"errors"
 	"log"
 
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
 )
 
-func (s *SalonService) AddSalonAddress(salonId string, address string) error {
-	log.Println("[SalonService.AddSalonAddress] - Validating salon:", salonId)
+func (s *SalonService) AddSalonMember(salonId string, professionalId string, role string, requesterId string) error {
+	log.Println("[SalonService.AddSalonMember] - Validating salon:", salonId)
 	sal, err := s.validateSalon(salonId)
 	if err != nil {
 		return err
 	}
 
-	newAddr := salon.NewAddress(sal.ID, address)
-	if _, err := s.addressRepository.Save(newAddr); err != nil {
+	if err := s.validateRequesterPermission(requesterId, sal.SalonMembers); err != nil {
+		return err
+	}
+
+	if _, err := s.professionalService.validateProfessionalById(professionalId); err != nil {
+		return err
+	}
+
+	for _, member := range sal.SalonMembers {
+		if member.ProfessionalId == professionalId {
+			return errors.New("professional already exists in salon")
+		}
+	}
+
+	log.Println("[SalonService.AddSalonMember] - Adding salon member")
+	newSalon := salon.NewSalonMember(sal.ID, professionalId, role)
+	if _, err := s.salonMemberRepository.Save(newSalon); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *SalonService) UpdateSalonAddress(salonId string, addressId string, address string) (*salon.Address, error) {
-	log.Println("[SalonService.UpdateSalonAddress] - Validating address:", addressId)
-	addr, err := s.validateSalonAddress(addressId, salonId)
-	if err != nil {
-		return nil, err
+func (s *SalonService) validateRequesterPermission(requesterId string, salonMembers []salon.SalonMember) error {
+	isRequesterMember := false
+	for _, member := range salonMembers {
+		if member.ProfessionalId == requesterId {
+			isRequesterMember = true
+			break
+		}
 	}
-
-	addr.Address = address
-	if _, err := s.addressRepository.Save(addr); err != nil {
-		return nil, err
-	}
-	return addr, nil
-}
-
-func (s *SalonService) RemoveSalonAddress(salonId string, addressId string) error {
-	log.Println("[SalonService.RemoveSalonAddress] - Validating address:", addressId)
-	addr, err := s.validateSalonAddress(addressId, salonId)
-	if err != nil {
-		return err
-	}
-
-	if err := s.addressRepository.Delete(addr.ID); err != nil {
-		return err
+	if !isRequesterMember {
+		return errors.New("permission denied")
 	}
 	return nil
 }

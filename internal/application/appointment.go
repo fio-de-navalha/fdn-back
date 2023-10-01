@@ -133,7 +133,7 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 		if err != nil {
 			errs <- err
 		}
-		idsToSave := s.productService.ValidateProductsAvailability(products)
+		idsToSave := s.productService.validateProductsAvailability(products)
 		if err := s.validateAssociation("products", input.ProductIds, idsToSave); err != nil {
 			errs <- err
 		}

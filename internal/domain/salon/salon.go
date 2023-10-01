@@ -23,6 +23,7 @@ type Salon struct {
 	SalonMembers []SalonMember     `json:"salonMembers"`
 	Addresses    []Address         `json:"addresses"`
 	Contacts     []Contact         `json:"contacts"`
+	Periods      []Period          `json:"periods"`
 	Services     []service.Service `json:"services"`
 	Products     []product.Product `json:"products"`
 }
