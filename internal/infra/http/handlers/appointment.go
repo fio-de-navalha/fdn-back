@@ -83,6 +83,7 @@ func (h *AppointmentHandler) Create(c *fiber.Ctx) error {
 	}
 
 	if body.StartsAt.Before(time.Now()) {
+		log.Println("[AppointmentHandler.Create] - cannot create appointment in the past")
 		return helpers.BuildErrorResponse(c, "cannot create appointment in the past")
 	}
 
