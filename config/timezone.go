@@ -6,8 +6,8 @@ import (
 )
 
 func setupTimezone() {
-	location := time.FixedZone("GMT-3", -3*60*60)
-    time.Local = location
+    time.Local, _ = time.LoadLocation("America/Sao_Paulo")
     currentTime := time.Now()
-    fmt.Println("Current time in GMT-3:", currentTime.Format(time.RFC3339))
+    fmt.Println("Current timezone:", time.Local)
+    fmt.Println("Current time:", currentTime.Format(time.RFC3339))
 }
