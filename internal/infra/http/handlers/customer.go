@@ -42,7 +42,7 @@ func (h *CustomerHandler) RegisterCustomer(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[CustomerHandler.RegisterCustomer] - Request body:", utils.StructPrettify(&body))
+	log.Println("[CustomerHandler.RegisterCustomer] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -77,7 +77,7 @@ func (h *CustomerHandler) LoginCustomer(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[CustomerHandler.LoginCustomer] - Request body:", utils.StructPrettify(&body))
+	log.Println("[CustomerHandler.LoginCustomer] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())

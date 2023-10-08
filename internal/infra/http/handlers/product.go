@@ -51,7 +51,7 @@ func (h *ProductHandler) Create(c *fiber.Ctx) error {
 		Price:          price,
 	}
 
-	log.Println("[ProductHandler.Create] - Request body:", utils.StructPrettify(&input))
+	log.Println("[ProductHandler.Create] - Request body:", utils.StructStringfy(&input))
 	validate := validator.New()
 	if err := validate.Struct(input); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -80,7 +80,7 @@ func (h *ProductHandler) Update(c *fiber.Ctx) error {
 		ProfessionalId: user.ID,
 	}
 
-	log.Println("[ProductHandler.Update] - Request body:", utils.StructPrettify(&input))
+	log.Println("[ProductHandler.Update] - Request body:", utils.StructStringfy(&input))
 	if name := c.FormValue("name"); name != "" {
 		input.Name = &name
 	}

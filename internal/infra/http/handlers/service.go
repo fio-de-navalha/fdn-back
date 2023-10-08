@@ -54,7 +54,7 @@ func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 		DurationInMin:  durationInMin,
 	}
 
-	log.Println("[ServiceHandler.Create] - Request body:", utils.StructPrettify(&input))
+	log.Println("[ServiceHandler.Create] - Request body:", utils.StructStringfy(&input))
 	validate := validator.New()
 	if err := validate.Struct(input); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -83,7 +83,7 @@ func (h *ServiceHandler) Update(c *fiber.Ctx) error {
 		ProfessionalId: user.ID,
 	}
 
-	log.Println("[ServiceHandler.Update] - Request body:", utils.StructPrettify(&input))
+	log.Println("[ServiceHandler.Update] - Request body:", utils.StructStringfy(&input))
 	if name := c.FormValue("name"); name != "" {
 		input.Name = &name
 	}

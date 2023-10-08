@@ -42,7 +42,7 @@ func (h *ProfessionalHandler) RegisterProfessional(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[ProfessionalHandler.RegisterProfessional] - Request body:", utils.StructPrettify(&body))
+	log.Println("[ProfessionalHandler.RegisterProfessional] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -77,7 +77,7 @@ func (h *ProfessionalHandler) LoginProfessional(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[ProfessionalHandler.LoginProfessional] - Request body:", utils.StructPrettify(&body))
+	log.Println("[ProfessionalHandler.LoginProfessional] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())

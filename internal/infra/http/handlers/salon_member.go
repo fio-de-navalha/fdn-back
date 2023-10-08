@@ -25,7 +25,7 @@ func (h *SalonHandler) AddSalonMember(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[SalonHandler.AddSalonMember] - Request body:", utils.StructPrettify(&body))
+	log.Println("[SalonHandler.AddSalonMember] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())

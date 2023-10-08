@@ -24,7 +24,7 @@ func (h *SalonHandler) AddSalonContact(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[SalonHandler.AddSalonContact] - Request body:", utils.StructPrettify(&body))
+	log.Println("[SalonHandler.AddSalonContact] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -49,7 +49,7 @@ func (h *SalonHandler) UpdateSalonContact(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[SalonHandler.UpdateSalonContact] - Request body:", utils.StructPrettify(&body))
+	log.Println("[SalonHandler.UpdateSalonContact] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())

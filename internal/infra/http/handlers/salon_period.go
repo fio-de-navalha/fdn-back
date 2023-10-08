@@ -36,7 +36,7 @@ func (h *SalonHandler) AddSalonPeriod(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[SalonHandler.AddSalonPeriod] - Request body:", utils.StructPrettify(&body))
+	log.Println("[SalonHandler.AddSalonPeriod] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	validate.RegisterValidation("hourMinuteFormat", hourMinuteFormat)
 	if err := validate.Struct(body); err != nil {
@@ -71,7 +71,7 @@ func (h *SalonHandler) UpdateSalonPeriod(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[SalonHandler.UpdateSalonPeriod] - Request body:", utils.StructPrettify(&body))
+	log.Println("[SalonHandler.UpdateSalonPeriod] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	validate.RegisterValidation("hourMinuteFormat", hourMinuteFormat)
 	if err := validate.Struct(body); err != nil {
