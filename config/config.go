@@ -6,6 +6,7 @@ import (
 )
 
 func LoadConfigs() {
+	setupTimezone()
 	loadEnvVariables()
 	database.Connect()
 	migrations.Migrate()
