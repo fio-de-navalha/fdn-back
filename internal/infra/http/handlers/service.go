@@ -9,6 +9,7 @@ import (
 	"github.com/fio-de-navalha/fdn-back/internal/domain/service"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http/helpers"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http/middlewares"
+	"github.com/fio-de-navalha/fdn-back/internal/utils"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
@@ -53,6 +54,7 @@ func (h *ServiceHandler) Create(c *fiber.Ctx) error {
 		DurationInMin:  durationInMin,
 	}
 
+	log.Println("[ServiceHandler.Create] - Request body:", utils.StructPrettify(&input))
 	validate := validator.New()
 	if err := validate.Struct(input); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -80,6 +82,8 @@ func (h *ServiceHandler) Update(c *fiber.Ctx) error {
 		SalonId:        salonId,
 		ProfessionalId: user.ID,
 	}
+
+	log.Println("[ServiceHandler.Update] - Request body:", utils.StructPrettify(&input))
 	if name := c.FormValue("name"); name != "" {
 		input.Name = &name
 	}

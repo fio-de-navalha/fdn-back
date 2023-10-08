@@ -8,6 +8,7 @@ import (
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http/helpers"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http/middlewares"
+	"github.com/fio-de-navalha/fdn-back/internal/utils"
 	"github.com/fio-de-navalha/fdn-back/internal/validation"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
@@ -36,6 +37,7 @@ func (h *SalonHandler) AddSalonPeriod(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
+	log.Println("[SalonHandler.AddSalonPeriod] - Request body:", utils.StructPrettify(&body))
 	validate := validator.New()
 	validate.RegisterValidation("hourMinuteFormat", hourMinuteFormat)
 	if err := validate.Struct(body); err != nil {
@@ -70,6 +72,7 @@ func (h *SalonHandler) UpdateSalonPeriod(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
+	log.Println("[SalonHandler.UpdateSalonPeriod] - Request body:", utils.StructPrettify(&body))
 	validate := validator.New()
 	validate.RegisterValidation("hourMinuteFormat", hourMinuteFormat)
 	if err := validate.Struct(body); err != nil {

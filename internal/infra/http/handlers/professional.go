@@ -9,6 +9,7 @@ import (
 	"github.com/fio-de-navalha/fdn-back/internal/domain/professional"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http/helpers"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http/middlewares"
+	"github.com/fio-de-navalha/fdn-back/internal/utils"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
@@ -40,6 +41,8 @@ func (h *ProfessionalHandler) RegisterProfessional(c *fiber.Ctx) error {
 	if err := c.BodyParser(&body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
+
+	log.Println("[ProfessionalHandler.RegisterProfessional] - Request body:", utils.StructPrettify(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -74,6 +77,7 @@ func (h *ProfessionalHandler) LoginProfessional(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
+	log.Println("[ProfessionalHandler.LoginProfessional] - Request body:", utils.StructPrettify(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())

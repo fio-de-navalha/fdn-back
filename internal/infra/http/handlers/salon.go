@@ -8,6 +8,7 @@ import (
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http/helpers"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http/middlewares"
+	"github.com/fio-de-navalha/fdn-back/internal/utils"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
@@ -44,6 +45,8 @@ func (h *SalonHandler) CraeteSalon(c *fiber.Ctx) error {
 	if err := c.BodyParser(&body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
+
+	log.Println("[SalonHandler.CraeteSalon] - Request body:", utils.StructPrettify(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
