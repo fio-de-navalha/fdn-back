@@ -1,7 +1,6 @@
 package application
 
 import (
-	"errors"
 	"log"
 	"mime/multipart"
 
@@ -39,7 +38,10 @@ func (s *ProductService) GetProductsBySalonId(salonId string) ([]*product.Produc
 		return nil, err
 	}
 	if sal == nil {
-		return nil, errors.New("salon not found")
+		return nil, &utils.AppError{
+			Code:    constants.SALON_NOT_FOUND_ERROR_CODE,
+			Message: constants.SALON_NOT_FOUND_ERROR_MESSAGE,
+		}
 	}
 
 	log.Println("[ProductService.GetProductsBySalonId] - Getting products from salon:", salonId)

@@ -1,7 +1,6 @@
 package application
 
 import (
-	"errors"
 	"log"
 	"mime/multipart"
 
@@ -171,7 +170,10 @@ func (s *ServiceService) validateSalon(salonId string) (*salon.Salon, error) {
 		return nil, err
 	}
 	if sal == nil {
-		return nil, errors.New("salon not found")
+		return nil, &utils.AppError{
+			Code:    constants.SALON_NOT_FOUND_ERROR_CODE,
+			Message: constants.SALON_NOT_FOUND_ERROR_MESSAGE,
+		}
 	}
 	return sal, nil
 }
@@ -196,7 +198,10 @@ func (s *ServiceService) validateService(serviceId string) (*service.Service, er
 		return nil, err
 	}
 	if ser == nil {
-		return nil, errors.New("service not found")
+		return nil, &utils.AppError{
+			Code:    constants.SERVICE_NOT_FOUND_ERROR_CODE,
+			Message: constants.SERVICE_NOT_FOUND_ERROR_MESSAGE,
+		}
 	}
 
 	return ser, nil

@@ -1,10 +1,11 @@
 package application
 
 import (
-	"errors"
 	"log"
 
+	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
+	"github.com/fio-de-navalha/fdn-back/internal/utils"
 )
 
 type SalonService struct {
@@ -96,7 +97,10 @@ func (s *SalonService) validateSalon(salonId string) (*salon.Salon, error) {
 		return nil, err
 	}
 	if res == nil {
-		return nil, errors.New("salon not found")
+		return nil, &utils.AppError{
+			Code:    constants.SALON_NOT_FOUND_ERROR_CODE,
+			Message: constants.SALON_NOT_FOUND_ERROR_MESSAGE,
+		}
 	}
 	return res, nil
 }

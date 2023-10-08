@@ -1,7 +1,6 @@
 package application
 
 import (
-	"errors"
 	"log"
 
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
@@ -61,7 +60,10 @@ func (s *ProfessionalService) RegisterProfessional(input professional.RegisterPr
 		return nil, err
 	}
 	if profExists != nil {
-		return nil, errors.New("professional alredy exists")
+		return nil, &utils.AppError{
+			Code:    constants.PROFESSIONAL_ALREADY_EXISTS_ERROR_CODE,
+			Message: constants.PROFESSIONAL_ALREADY_EXISTS_ERROR_MESSAGE,
+		}
 	}
 
 	hashedPassword, err := cryptography.HashPassword(input.Password)
@@ -106,12 +108,18 @@ func (s *ProfessionalService) LoginProfessional(input professional.LoginProfessi
 		return nil, err
 	}
 	if res == nil {
-		return nil, errors.New("invalid credentials")
+		return nil, &utils.AppError{
+			Code:    constants.INVALID_CREDENTIAL_ERROR_CODE,
+			Message: constants.INVALID_CREDENTIAL_ERROR_MESSAGE,
+		}
 	}
 
 	validPassword := cryptography.ComparePassword(res.Password, input.Password)
 	if !validPassword {
-		return nil, errors.New("invalid credentials")
+		return nil, &utils.AppError{
+			Code:    constants.INVALID_CREDENTIAL_ERROR_CODE,
+			Message: constants.INVALID_CREDENTIAL_ERROR_MESSAGE,
+		}
 	}
 
 	log.Println("[ProfessionalService.LoginProfessional] - Generating token")

@@ -1,11 +1,12 @@
 package application
 
 import (
-	"errors"
 	"log"
 
+	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/customer"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/cryptography"
+	"github.com/fio-de-navalha/fdn-back/internal/utils"
 )
 
 type CustomerService struct {
@@ -25,7 +26,10 @@ func (s *CustomerService) GetCustomerById(id string) (*customer.CustomerResponse
 		return nil, err
 	}
 	if cus == nil {
-		return nil, errors.New("customer not found")
+		return nil, &utils.AppError{
+			Code:    constants.CUSTOMER_NOT_FOUND_ERROR_CODE,
+			Message: constants.CUSTOMER_NOT_FOUND_ERROR_MESSAGE,
+		}
 	}
 	return &customer.CustomerResponse{
 		ID:        cus.ID,
@@ -92,12 +96,18 @@ func (s *CustomerService) LoginCustomer(input customer.LoginRequest) (*customer.
 		return nil, err
 	}
 	if cus == nil {
-		return nil, errors.New("invalid credentials")
+		return nil, &utils.AppError{
+			Code:    constants.INVALID_CREDENTIAL_ERROR_CODE,
+			Message: constants.INVALID_CREDENTIAL_ERROR_MESSAGE,
+		}
 	}
 
 	validPassword := cryptography.ComparePassword(cus.Password, input.Password)
 	if !validPassword {
-		return nil, errors.New("invalid credentials")
+		return nil, &utils.AppError{
+			Code:    constants.INVALID_CREDENTIAL_ERROR_CODE,
+			Message: constants.INVALID_CREDENTIAL_ERROR_MESSAGE,
+		}
 	}
 
 	log.Println("[CustomerService.LoginCustomer] - Generating token")
@@ -123,7 +133,10 @@ func (s *CustomerService) validateCustomerByPhone(phone string) (*customer.Custo
 		return nil, err
 	}
 	if cust != nil {
-		return nil, errors.New("customer alredy exists")
+		return nil, &utils.AppError{
+			Code:    constants.CUSTOMER_ALREADY_EXISTS_ERROR_CODE,
+			Message: constants.CUSTOMER_ALREADY_EXISTS_ERROR_MESSAGE,
+		}
 	}
 	return cust, nil
 }

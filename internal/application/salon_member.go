@@ -1,7 +1,6 @@
 package application
 
 import (
-	"errors"
 	"log"
 
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
@@ -29,7 +28,10 @@ func (s *SalonService) AddSalonMember(salonId, professionalId, role, requesterId
 	log.Println("[SalonService.AddSalonMember] - Validating if professional is already a member")
 	for _, member := range sal.SalonMembers {
 		if member.ProfessionalId == professionalId {
-			return errors.New("professional already exists in salon")
+			return &utils.AppError{
+				Code:    constants.PROFESSIONAL_ALREADY_EXISTS_IN_SALON_ERROR_CODE,
+				Message: constants.PROFESSIONAL_ALREADY_EXISTS_IN_SALON_ERROR_MESSAGE,
+			}
 		}
 	}
 

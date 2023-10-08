@@ -1,10 +1,11 @@
 package application
 
 import (
-	"errors"
 	"log"
 
+	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
+	"github.com/fio-de-navalha/fdn-back/internal/utils"
 )
 
 func (s *SalonService) AddSalonAddress(salonId string, address string) error {
@@ -57,7 +58,10 @@ func (s *SalonService) validateSalonAddress(addressId, salonId string) (*salon.A
 		return nil, err
 	}
 	if addr == nil {
-		return nil, errors.New("address not found")
+		return nil, &utils.AppError{
+			Code:    constants.ADDRESS_NOT_FOUND_ERROR_CODE,
+			Message: constants.ADDRESS_NOT_FOUND_ERROR_MESSAGE,
+		}
 	}
 	return addr, nil
 }

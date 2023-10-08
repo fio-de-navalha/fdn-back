@@ -1,9 +1,9 @@
 package application
 
 import (
-	"errors"
 	"log"
 
+	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
 	"github.com/fio-de-navalha/fdn-back/internal/utils"
 )
@@ -120,7 +120,10 @@ func (s *SalonService) validateSalonPeriod(periodId, salonId string) (*salon.Per
 		return nil, err
 	}
 	if period == nil {
-		return nil, errors.New("period not found")
+		return nil, &utils.AppError{
+			Code:    constants.PERIOD_NOT_FOUND_ERROR_CODE,
+			Message: constants.PERIOD_NOT_FOUND_ERROR_MESSAGE,
+		}
 	}
 	return period, nil
 }
