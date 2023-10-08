@@ -14,8 +14,8 @@ func Connect() error {
 	var err error
 	dsn := viper.GetString("DATABASE_URL")
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
-		// Logger: logger.Default.LogMode(logger.Info),
-		Logger: logger.Default.LogMode(logger.Silent),
+		Logger: logger.Default.LogMode(logger.Info),
+		// Logger: logger.Default.LogMode(logger.Silent),
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true,
 		},
