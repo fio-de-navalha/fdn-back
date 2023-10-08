@@ -1,13 +1,18 @@
 package config
 
 import (
-	"fmt"
+	"log"
 	"time"
 )
 
 func setupTimezone() {
-    time.Local, _ = time.LoadLocation("America/Sao_Paulo")
+    local, err := time.LoadLocation("America/Sao_Paulo")
+    if err != nil {
+        log.Println(err)
+    }
+    
+    time.Local = local
     currentTime := time.Now()
-    fmt.Println("Current timezone:", time.Local)
-    fmt.Println("Current time:", currentTime.Format(time.RFC3339))
+    log.Println("Current timezone:", time.Local)
+    log.Println("Current time:", currentTime.Format(time.RFC3339))
 }
