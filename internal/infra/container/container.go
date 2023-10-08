@@ -1,8 +1,8 @@
 package container
 
 import (
+	"github.com/fio-de-navalha/fdn-back/config"
 	"github.com/fio-de-navalha/fdn-back/internal/application"
-	"github.com/fio-de-navalha/fdn-back/internal/config"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/database"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/providers/cloudflare"
 )

@@ -9,7 +9,6 @@ import (
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http/helpers"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http/middlewares"
 	"github.com/fio-de-navalha/fdn-back/internal/utils"
-	"github.com/fio-de-navalha/fdn-back/internal/validation"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )
@@ -28,7 +27,7 @@ func (h *SalonHandler) AddSalonPeriod(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, "permission denied")
 	}
 	salonId := c.Params("salonId")
-	if err := validation.ValidUUID(salonId); err != nil {
+	if err := utils.ValidUUID(salonId); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
@@ -58,12 +57,12 @@ func (h *SalonHandler) UpdateSalonPeriod(c *fiber.Ctx) error {
 	}
 
 	salonId := c.Params("salonId")
-	if err := validation.ValidUUID(salonId); err != nil {
+	if err := utils.ValidUUID(salonId); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
 	periodId := c.Params("periodId")
-	if err := validation.ValidUUID(periodId); err != nil {
+	if err := utils.ValidUUID(periodId); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
@@ -94,12 +93,12 @@ func (h *SalonHandler) RemoveSalonPeriod(c *fiber.Ctx) error {
 	}
 
 	salonId := c.Params("salonId")
-	if err := validation.ValidUUID(salonId); err != nil {
+	if err := utils.ValidUUID(salonId); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
 	periodId := c.Params("periodId")
-	if err := validation.ValidUUID(periodId); err != nil {
+	if err := utils.ValidUUID(periodId); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
