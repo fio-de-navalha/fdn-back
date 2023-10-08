@@ -4,8 +4,10 @@ import (
 	"errors"
 	"log"
 
+	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/professional"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/cryptography"
+	"github.com/fio-de-navalha/fdn-back/internal/utils"
 )
 
 type ProfessionalService struct {
@@ -135,7 +137,10 @@ func (s *ProfessionalService) validateProfessionalById(professionalId string) (*
 		return nil, err
 	}
 	if prof == nil {
-		return nil, errors.New("professional not found")
+		return nil, &utils.AppError{
+			Code:    constants.PROFESSIONAL_NOT_FOUND_ERROR_CODE,
+			Message: err.Error(),
+		}
 	}
 	return prof, nil
 }

@@ -56,7 +56,7 @@ func (s *CloudFlareService) GetImageById(imageId string) (*image.ImageResponse, 
 	defer resp.Body.Close()
 	if resp.StatusCode >= 500 {
 		return nil, &utils.AppError{
-			Code:    constants.CLOUDFLARE_UNAVAILABLE_ERROR,
+			Code:    constants.CLOUDFLARE_UNAVAILABLE_ERROR_CODE,
 			Message: "cloudflare service unavailable",
 		}
 	}
@@ -122,7 +122,7 @@ func (s *CloudFlareService) UploadImage(file *multipart.FileHeader) (*image.Imag
 	defer resp.Body.Close()
 	if resp.StatusCode >= 500 {
 		return nil, &utils.AppError{
-			Code:    constants.CLOUDFLARE_UNAVAILABLE_ERROR,
+			Code:    constants.CLOUDFLARE_UNAVAILABLE_ERROR_CODE,
 			Message: "cloudflare service unavailable",
 		}
 	}
@@ -201,7 +201,7 @@ func (s *CloudFlareService) DeleteImage(imageId string) error {
 	defer resp.Body.Close()
 	if resp.StatusCode >= 500 {
 		return &utils.AppError{
-			Code:    constants.CLOUDFLARE_UNAVAILABLE_ERROR,
+			Code:    constants.CLOUDFLARE_UNAVAILABLE_ERROR_CODE,
 			Message: "cloudflare service unavailable",
 		}
 	}

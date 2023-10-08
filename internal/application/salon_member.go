@@ -4,7 +4,9 @@ import (
 	"errors"
 	"log"
 
+	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
+	"github.com/fio-de-navalha/fdn-back/internal/utils"
 )
 
 func (s *SalonService) AddSalonMember(salonId, professionalId, role, requesterId string) error {
@@ -48,7 +50,10 @@ func (s *SalonService) validateRequesterPermission(requesterId string, salonMemb
 		}
 	}
 	if !isRequesterMember {
-		return errors.New("permission denied")
+		return &utils.AppError{
+			Code:    constants.PERMISSION_DENIED_ERROR_CODE,
+			Message: "permisison denied",
+		}
 	}
 	return nil
 }

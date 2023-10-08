@@ -8,6 +8,7 @@ import (
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/image"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/product"
+	"github.com/fio-de-navalha/fdn-back/internal/utils"
 )
 
 type ProductService struct {
@@ -161,7 +162,10 @@ func (s *ProductService) validateProduct(productId string) (*product.Product, er
 		return nil, err
 	}
 	if pro == nil {
-		return nil, errors.New("product not found")
+		return nil, &utils.AppError{
+			Code:    constants.PRODUCT_NOT_FOUND_ERROR_CODE,
+			Message: constants.PRODUCT_NOT_FOUND_ERROR_MESSAGE,
+		}
 	}
 	return pro, nil
 }

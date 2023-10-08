@@ -10,6 +10,7 @@ import (
 	"github.com/fio-de-navalha/fdn-back/internal/domain/professional"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/service"
+	"github.com/fio-de-navalha/fdn-back/internal/utils"
 )
 
 type ServiceService struct {
@@ -181,7 +182,10 @@ func (s *ServiceService) validateProfessional(professionalId string) (*professio
 		return nil, err
 	}
 	if prof == nil {
-		return nil, errors.New("professional not found")
+		return nil, &utils.AppError{
+			Code:    constants.PROFESSIONAL_NOT_FOUND_ERROR_CODE,
+			Message: "permisison denied",
+		}
 	}
 	return prof, nil
 }
