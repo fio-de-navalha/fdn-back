@@ -22,6 +22,7 @@ RUN echo "CLOUDFLARE_IMAGES_EDIT_TOKEN=${CLOUDFLARE_IMAGES_EDIT_TOKEN}" >> .env
 COPY go.mod go.sum ./
 COPY . . 
 RUN go build -o main ./cmd/http
+RUN apk --no-cache add tzdata
 
 FROM alpine:3.18 as binary
 COPY --from=base /app/main .
