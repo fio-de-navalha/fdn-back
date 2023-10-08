@@ -164,6 +164,7 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 	log.Println("[AppointmentService.CreateApppointment] - Validating appointment time range availability")
 	endsAt := input.StartsAt.Add(time.Minute * time.Duration(resultService.Duration))
 	if err := s.validateAppointmentTimeRange(input.SalonId, input.StartsAt, endsAt); err != nil {
+		log.Println("[AppointmentService.CreateApppointment] - Validating appointment time range availability:", err)
 		return err
 	}
 
@@ -178,6 +179,7 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 	)
 	servicesToSave, productsToSave := s.newAppointmentItems(appo.ID, resultService.IDs, resultProduct.IDs)
 	if _, err := s.appointmentRepository.Save(appo, servicesToSave, productsToSave); err != nil {
+		log.Println("[AppointmentService.CreateApppointment] - Creating appointment:", err)
 		return err
 	}
 
