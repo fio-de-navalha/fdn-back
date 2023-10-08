@@ -5,13 +5,13 @@ import (
 )
 
 type AddPeriodRequest struct {
-	Day   int    `json:"day" validate:"required,min=1,max=7"`
+	Day   int    `json:"day" validate:"required,min=0,max=6"`
 	Open  string `json:"open" validate:"required,hourMinuteFormat"`
 	Close string `json:"close" validate:"required,hourMinuteFormat"`
 }
 
 type UpdatePeriodRequest struct {
-	Day   *int    `json:"day" validate:"required,min=1,max=7"`
+	Day   *int    `json:"day" validate:"required,min=0,max=6"`
 	Open  *string `json:"open" validate:"required,hourMinuteFormat"`
 	Close *string `json:"close" validate:"required,hourMinuteFormat"`
 }

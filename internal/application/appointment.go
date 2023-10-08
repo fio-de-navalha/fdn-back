@@ -151,6 +151,10 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 	close(resultServiceChan)
 	close(resultProductChan)
 	for err := range errs {
+		log.Println("[AppointmentService.CreateApppointment] - Validation error:", err)
+	}
+
+	for err := range errs {
 		return err
 	}
 
