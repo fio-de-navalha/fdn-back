@@ -3,6 +3,7 @@ package cloudflare
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -53,6 +54,9 @@ func (s *CloudFlareService) GetImageById(imageId string) (*image.ImageResponse, 
 		return nil, err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode >= 500 {
+		return nil, errors.New("cloudflare service unavailable")
+	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -113,6 +117,9 @@ func (s *CloudFlareService) UploadImage(file *multipart.FileHeader) (*image.Imag
 		return nil, err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode >= 500 {
+		return nil, errors.New("cloudflare service unavailable")
+	}
 
 	resBody, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -186,6 +193,9 @@ func (s *CloudFlareService) DeleteImage(imageId string) error {
 		return err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode >= 500 {
+		return errors.New("cloudflare service unavailable")
+	}
 
 	return nil
 }

@@ -11,6 +11,7 @@ var errorsMap = map[string]int{
 	"invalid credentials": fiber.StatusUnauthorized,
 	"not found":           fiber.StatusNotFound,
 	"alredy exists":       fiber.StatusUnprocessableEntity,
+	"service unavailable": fiber.StatusServiceUnavailable,
 }
 
 func BuildErrorResponse(c *fiber.Ctx, errMsg string) error {
