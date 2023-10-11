@@ -1,5 +1,5 @@
+# Base
 FROM golang:1.21-alpine3.18 as base
-
 
 ARG PORT
 ARG JWT_SECRET
@@ -24,11 +24,10 @@ COPY go.mod go.sum ./
 COPY . . 
 RUN go build -o main ./cmd/http
 RUN apk --no-cache add tzdata
-ENV TZ=America/Sao_Paulo
 
+# Binary
 FROM alpine:3.18 as binary
 RUN apk --no-cache add tzdata
-ENV TZ=America/Sao_Paulo
 COPY --from=base /app/main .
 COPY --from=base /app/.env .
 COPY --from=base /app/db ./db

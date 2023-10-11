@@ -85,6 +85,7 @@ func (h *AppointmentHandler) Create(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, "permission denied")
 	}
 
+	body.StartsAt = utils.ConvertToGMTMinus3(body.StartsAt)
 	if body.StartsAt.Before(time.Now()) {
 		log.Println("[AppointmentHandler.Create] - Cannot create appointment in the past")
 		log.Println("[AppointmentHandler.Create] - StartsAt:", body.StartsAt)
