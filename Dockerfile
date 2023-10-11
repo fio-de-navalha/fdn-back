@@ -1,6 +1,5 @@
 FROM golang:1.21-alpine3.18 as base
-RUN apk add --no-cache tzdata
-ENV TZ=America/Sao_Paulo
+
 
 ARG PORT
 ARG JWT_SECRET
@@ -24,10 +23,12 @@ RUN echo "CLOUDFLARE_IMAGES_EDIT_TOKEN=${CLOUDFLARE_IMAGES_EDIT_TOKEN}" >> .env
 COPY go.mod go.sum ./
 COPY . . 
 RUN go build -o main ./cmd/http
-# RUN apk --no-cache add tzdata
+RUN apk --no-cache add tzdata
+ENV TZ=America/Sao_Paulo
 
 FROM alpine:3.18 as binary
-# RUN apk --no-cache add tzdata
+RUN apk --no-cache add tzdata
+ENV TZ=America/Sao_Paulo
 COPY --from=base /app/main .
 COPY --from=base /app/.env .
 COPY --from=base /app/db ./db
