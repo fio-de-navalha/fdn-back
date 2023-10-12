@@ -1,4 +1,4 @@
-package handlers
+package api
 
 import (
 	"log"
@@ -12,65 +12,65 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (h *SalonHandler) AddSalonAddress(c *fiber.Ctx) error {
-	log.Println("[SalonHandler.AddSalonAddress] - Validating parameters")
+func (h *SalonHandler) AddSalonContact(c *fiber.Ctx) error {
+	log.Println("[SalonHandler.AddSalonContact] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
 	}
 
-	body := new(salon.AddSalonAddressRequest)
+	body := new(salon.AddSalonContactRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[SalonHandler.AddSalonAddress] - Request body:", utils.StructStringfy(&body))
+	log.Println("[SalonHandler.AddSalonContact] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	if err := h.salonService.AddSalonAddress(user.ID, body.Address); err != nil {
+	if err := h.salonService.AddSalonContact(user.ID, body.Contact); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 	return c.Status(fiber.StatusCreated).Send(nil)
 }
 
-func (h *SalonHandler) UpdateSalonAddress(c *fiber.Ctx) error {
-	log.Println("[SalonHandler.UpdateSalonAddress] - Validating parameters")
+func (h *SalonHandler) UpdateSalonContact(c *fiber.Ctx) error {
+	log.Println("[SalonHandler.UpdateSalonContact] - Validating parameters")
 	if _, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser); !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
 	}
 
 	salonId := c.Params("salonId")
-	addressId := c.Params("addressId")
-	body := new(salon.AddSalonAddressRequest)
+	contactId := c.Params("contactId")
+	body := new(salon.AddSalonContactRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[SalonHandler.UpdateSalonAddress] - Request body:", utils.StructStringfy(&body))
+	log.Println("[SalonHandler.UpdateSalonContact] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	res, err := h.salonService.UpdateSalonAddress(salonId, addressId, body.Address)
+	res, err := h.salonService.UpdateSalonContact(salonId, contactId, body.Contact)
 	if err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func (h *SalonHandler) RemoveSalonAddress(c *fiber.Ctx) error {
-	log.Println("[SalonHandler.RemoveSalonAddress] - Validating parameters")
+func (h *SalonHandler) RemoveSalonContact(c *fiber.Ctx) error {
+	log.Println("[SalonHandler.RemoveSalonContact] - Validating parameters")
 	if _, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser); !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
 	}
 
 	salonId := c.Params("salonId")
-	addressId := c.Params("addressId")
-	if err := h.salonService.RemoveSalonAddress(salonId, addressId); err != nil {
+	contactId := c.Params("contactId")
+	if err := h.salonService.RemoveSalonContact(salonId, contactId); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 	return c.Status(fiber.StatusNoContent).Send(nil)

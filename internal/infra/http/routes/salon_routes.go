@@ -1,14 +1,14 @@
 package routes
 
 import (
+	"github.com/fio-de-navalha/fdn-back/internal/api"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/container"
-	"github.com/fio-de-navalha/fdn-back/internal/infra/http/handlers"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http/middlewares"
 	"github.com/gofiber/fiber/v2"
 )
 
 func setupSalonRouter(router fiber.Router) {
-	salonHandler := handlers.NewSalonHandler(*container.SalonService)
+	salonHandler := api.NewSalonHandler(*container.SalonService)
 
 	salons := router.Group("/salon")
 	salons.Get("/:salonId", salonHandler.GetSalonById)

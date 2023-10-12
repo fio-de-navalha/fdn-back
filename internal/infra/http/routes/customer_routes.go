@@ -1,14 +1,14 @@
 package routes
 
 import (
+	"github.com/fio-de-navalha/fdn-back/internal/api"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/container"
-	"github.com/fio-de-navalha/fdn-back/internal/infra/http/handlers"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http/middlewares"
 	"github.com/gofiber/fiber/v2"
 )
 
 func setupCustomerRouter(router fiber.Router) {
-	customerHandler := handlers.NewCustomerHandler(*container.CustomerService)
+	customerHandler := api.NewCustomerHandler(*container.CustomerService)
 
 	customers := router.Group("/customer")
 	customers.Get("/:id", middlewares.EnsureAuth(), customerHandler.GetCustomerById)
