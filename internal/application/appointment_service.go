@@ -117,6 +117,7 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 		if err != nil {
 			errs <- err
 		}
+		log.Println("services:", services)
 		if len(services) == 0 {
 			errs <- &utils.AppError{
 				Code:    constants.SERVICE_NOT_FOUND_ERROR_CODE,
@@ -248,15 +249,11 @@ func (s *AppointmentService) validateEntity(
 
 func (s *AppointmentService) validateAppointmentTimeRange(salonId string, startsAt, endsAt time.Time) error {
 	day := startsAt.Weekday()
-	log.Println("day string:", day)
-	log.Println("day int:", int(day))
 	per, err := s.salonService.GetSalonPeriodByDay(salonId, int(day))
 	if err != nil {
 		return err
 	}
-	log.Println("period:", per)
 	if per == nil {
-		log.Println("[AppointmentService.validateAppointmentTimeRange] - per == nil")
 		return &utils.AppError{
 			Code:    constants.SALON_CLOSED_ERROR_CODE,
 			Message: constants.SALON_CLOSED_ERROR_MESSAGE,
@@ -268,7 +265,6 @@ func (s *AppointmentService) validateAppointmentTimeRange(salonId string, starts
 	openMinute, _ := strconv.Atoi(openHourStr[1])
 	openTime := time.Date(startsAt.Year(), startsAt.Month(), startsAt.Day(), openHour, openMinute, 0, 0, config.GMTMinus3)
 	if startsAt.Before(openTime) {
-		log.Println("[AppointmentService.validateAppointmentTimeRange] - startsAt.Before(openTime)")
 		return &utils.AppError{
 			Code:    constants.SALON_CLOSED_ERROR_CODE,
 			Message: constants.SALON_CLOSED_ERROR_MESSAGE,
@@ -279,10 +275,7 @@ func (s *AppointmentService) validateAppointmentTimeRange(salonId string, starts
 	closeHour, _ := strconv.Atoi(closeHourStr[0])
 	closeMinute, _ := strconv.Atoi(closeHourStr[1])
 	closeTime := time.Date(startsAt.Year(), startsAt.Month(), startsAt.Day(), closeHour, closeMinute, 0, 0, config.GMTMinus3)
-	log.Println("closeTime default", closeTime)
-	log.Println("closeTime convert", utils.ConvertToGMTMinus3(closeTime))
 	if startsAt.After(closeTime) {
-		log.Println("[AppointmentService.validateAppointmentTimeRange] - startsAt.After(closeTime)")
 		return &utils.AppError{
 			Code:    constants.SALON_CLOSED_ERROR_CODE,
 			Message: constants.SALON_CLOSED_ERROR_MESSAGE,
