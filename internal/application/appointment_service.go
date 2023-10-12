@@ -266,7 +266,7 @@ func (s *AppointmentService) validateAppointmentTimeRange(salonId string, starts
 	openHour, _ := strconv.Atoi(openHourStr[0])
 	openMinute, _ := strconv.Atoi(openHourStr[1])
 	openTime := time.Date(startsAt.Year(), startsAt.Month(), startsAt.Day(), openHour, openMinute, 0, 0, time.UTC)
-	if startsAt.Before(openTime) {
+	if startsAt.Before(utils.ConvertToGMTMinus3(openTime)) {
 		log.Println("[AppointmentService.validateAppointmentTimeRange] - startsAt.Before(openTime)")
 		return &utils.AppError{
 			Code:    constants.SALON_CLOSED_ERROR_CODE,
@@ -278,7 +278,7 @@ func (s *AppointmentService) validateAppointmentTimeRange(salonId string, starts
 	closeHour, _ := strconv.Atoi(closeHourStr[0])
 	closeMinute, _ := strconv.Atoi(closeHourStr[1])
 	closeTime := time.Date(startsAt.Year(), startsAt.Month(), startsAt.Day(), closeHour, closeMinute, 0, 0, time.UTC)
-	if startsAt.After(closeTime) {
+	if startsAt.After(utils.ConvertToGMTMinus3(closeTime)) {
 		log.Println("[AppointmentService.validateAppointmentTimeRange] - startsAt.After(closeTime)")
 		return &utils.AppError{
 			Code:    constants.SALON_CLOSED_ERROR_CODE,
