@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/fio-de-navalha/fdn-back/config"
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/appointment"
 	"github.com/fio-de-navalha/fdn-back/internal/utils"
@@ -265,8 +266,8 @@ func (s *AppointmentService) validateAppointmentTimeRange(salonId string, starts
 	openHourStr := strings.Split(per.Open, ":")
 	openHour, _ := strconv.Atoi(openHourStr[0])
 	openMinute, _ := strconv.Atoi(openHourStr[1])
-	openTime := time.Date(startsAt.Year(), startsAt.Month(), startsAt.Day(), openHour, openMinute, 0, 0, time.UTC)
-	if startsAt.Before(utils.ConvertToGMTMinus3(openTime)) {
+	openTime := time.Date(startsAt.Year(), startsAt.Month(), startsAt.Day(), openHour, openMinute, 0, 0, config.GMTMinus3)
+	if startsAt.Before(openTime) {
 		log.Println("[AppointmentService.validateAppointmentTimeRange] - startsAt.Before(openTime)")
 		return &utils.AppError{
 			Code:    constants.SALON_CLOSED_ERROR_CODE,
@@ -277,8 +278,10 @@ func (s *AppointmentService) validateAppointmentTimeRange(salonId string, starts
 	closeHourStr := strings.Split(per.Close, ":")
 	closeHour, _ := strconv.Atoi(closeHourStr[0])
 	closeMinute, _ := strconv.Atoi(closeHourStr[1])
-	closeTime := time.Date(startsAt.Year(), startsAt.Month(), startsAt.Day(), closeHour, closeMinute, 0, 0, time.UTC)
-	if startsAt.After(utils.ConvertToGMTMinus3(closeTime)) {
+	closeTime := time.Date(startsAt.Year(), startsAt.Month(), startsAt.Day(), closeHour, closeMinute, 0, 0, config.GMTMinus3)
+	log.Println("closeTime default", closeTime)
+	log.Println("closeTime convert", utils.ConvertToGMTMinus3(closeTime))
+	if startsAt.After(closeTime) {
 		log.Println("[AppointmentService.validateAppointmentTimeRange] - startsAt.After(closeTime)")
 		return &utils.AppError{
 			Code:    constants.SALON_CLOSED_ERROR_CODE,
