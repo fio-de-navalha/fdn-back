@@ -8,13 +8,13 @@ import (
 )
 
 func setupProfessionalRouter(router fiber.Router) {
-	professionalHandler := api.NewProfessionalHandler(*container.ProfessionalService)
+	professionalController := api.NewProfessionalController(*container.ProfessionalService)
 
 	professionals := router.Group("/professional")
-	professionals.Get("/:id", professionalHandler.GetProfessionalById)
+	professionals.Get("/:id", professionalController.GetProfessionalById)
 
 	auth := router.Group("/auth")
-	auth.Post("/register/professional", professionalHandler.RegisterProfessional)
-	auth.Post("/login/professional", professionalHandler.LoginProfessional)
-	auth.Get("/me/professional", middlewares.EnsureProfessionalRole(), professionalHandler.MeProfessional)
+	auth.Post("/register/professional", professionalController.RegisterProfessional)
+	auth.Post("/login/professional", professionalController.LoginProfessional)
+	auth.Get("/me/professional", middlewares.EnsureProfessionalRole(), professionalController.MeProfessional)
 }

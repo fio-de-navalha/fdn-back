@@ -117,7 +117,6 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 		if err != nil {
 			errs <- err
 		}
-		log.Println("services:", services)
 		if len(services) == 0 {
 			errs <- &utils.AppError{
 				Code:    constants.SERVICE_NOT_FOUND_ERROR_CODE,

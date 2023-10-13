@@ -14,18 +14,18 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ProductHandler struct {
+type ProductController struct {
 	productService application.ProductService
 }
 
-func NewProductHandler(productService application.ProductService) *ProductHandler {
-	return &ProductHandler{
+func NewProductController(productService application.ProductService) *ProductController {
+	return &ProductController{
 		productService: productService,
 	}
 }
 
-func (h *ProductHandler) GetBySalonId(c *fiber.Ctx) error {
-	log.Println("[ProductHandler.GetBySalonId] - Validating parameters")
+func (h *ProductController) GetBySalonId(c *fiber.Ctx) error {
+	log.Println("[ProductController.GetBySalonId] - Validating parameters")
 	salonId := c.Params("salonId")
 	res, err := h.productService.GetProductsBySalonId(salonId)
 	if err != nil {
@@ -35,8 +35,8 @@ func (h *ProductHandler) GetBySalonId(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func (h *ProductHandler) Create(c *fiber.Ctx) error {
-	log.Println("[ProductHandler.Create] - Validating parameters")
+func (h *ProductController) Create(c *fiber.Ctx) error {
+	log.Println("[ProductController.Create] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
@@ -51,7 +51,7 @@ func (h *ProductHandler) Create(c *fiber.Ctx) error {
 		Price:          price,
 	}
 
-	log.Println("[ProductHandler.Create] - Request body:", utils.StructStringfy(&input))
+	log.Println("[ProductController.Create] - Request body:", utils.StructStringfy(&input))
 	validate := validator.New()
 	if err := validate.Struct(input); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -66,8 +66,8 @@ func (h *ProductHandler) Create(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).Send(nil)
 }
 
-func (h *ProductHandler) Update(c *fiber.Ctx) error {
-	log.Println("[ProductHandler.Update] - Validating parameters")
+func (h *ProductController) Update(c *fiber.Ctx) error {
+	log.Println("[ProductController.Update] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
@@ -80,7 +80,7 @@ func (h *ProductHandler) Update(c *fiber.Ctx) error {
 		ProfessionalId: user.ID,
 	}
 
-	log.Println("[ProductHandler.Update] - Request body:", utils.StructStringfy(&input))
+	log.Println("[ProductController.Update] - Request body:", utils.StructStringfy(&input))
 	if name := c.FormValue("name"); name != "" {
 		input.Name = &name
 	}

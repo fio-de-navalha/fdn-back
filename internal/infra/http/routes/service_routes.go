@@ -8,11 +8,11 @@ import (
 )
 
 func setupServiceRouter(router fiber.Router) {
-	serviceHandler := api.NewServiceHandler(*container.ServiceService)
+	serviceController := api.NewServiceController(*container.ServiceService)
 
 	services := router.Group("/salon/:salonId")
 
-	services.Get("/services", serviceHandler.GetBySalonId)
-	services.Post("/services", middlewares.EnsureProfessionalRole(), serviceHandler.Create)
-	services.Put("/services/:serviceId", middlewares.EnsureProfessionalRole(), serviceHandler.Update)
+	services.Get("/services", serviceController.GetBySalonId)
+	services.Post("/services", middlewares.EnsureProfessionalRole(), serviceController.Create)
+	services.Put("/services/:serviceId", middlewares.EnsureProfessionalRole(), serviceController.Update)
 }

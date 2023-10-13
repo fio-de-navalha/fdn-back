@@ -13,18 +13,18 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type SalonHandler struct {
+type SalonController struct {
 	salonService application.SalonService
 }
 
-func NewSalonHandler(salonService application.SalonService) *SalonHandler {
-	return &SalonHandler{
+func NewSalonController(salonService application.SalonService) *SalonController {
+	return &SalonController{
 		salonService: salonService,
 	}
 }
 
-func (h *SalonHandler) GetSalonById(c *fiber.Ctx) error {
-	log.Println("[SalonHandler.GetSalonById] - Validating parameters")
+func (h *SalonController) GetSalonById(c *fiber.Ctx) error {
+	log.Println("[SalonController.GetSalonById] - Validating parameters")
 	salonId := c.Params("salonId")
 	res, err := h.salonService.GetSalonById(salonId)
 	if err != nil {
@@ -34,8 +34,8 @@ func (h *SalonHandler) GetSalonById(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func (h *SalonHandler) CraeteSalon(c *fiber.Ctx) error {
-	log.Println("[SalonHandler.CraeteSalon] - Validating parameters")
+func (h *SalonController) CraeteSalon(c *fiber.Ctx) error {
+	log.Println("[SalonController.CraeteSalon] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
@@ -46,7 +46,7 @@ func (h *SalonHandler) CraeteSalon(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[SalonHandler.CraeteSalon] - Request body:", utils.StructStringfy(&body))
+	log.Println("[SalonController.CraeteSalon] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())

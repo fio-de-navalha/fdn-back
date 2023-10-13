@@ -20,8 +20,8 @@ func hourMinuteFormat(fl validator.FieldLevel) bool {
 	return err == nil
 }
 
-func (h *SalonHandler) AddSalonPeriod(c *fiber.Ctx) error {
-	log.Println("[SalonHandler.AddSalonPeriod] - Validating parameters")
+func (h *SalonController) AddSalonPeriod(c *fiber.Ctx) error {
+	log.Println("[SalonController.AddSalonPeriod] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
@@ -36,7 +36,7 @@ func (h *SalonHandler) AddSalonPeriod(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[SalonHandler.AddSalonPeriod] - Request body:", utils.StructStringfy(&body))
+	log.Println("[SalonController.AddSalonPeriod] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	validate.RegisterValidation("hourMinuteFormat", hourMinuteFormat)
 	if err := validate.Struct(body); err != nil {
@@ -49,8 +49,8 @@ func (h *SalonHandler) AddSalonPeriod(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).Send(nil)
 }
 
-func (h *SalonHandler) UpdateSalonPeriod(c *fiber.Ctx) error {
-	log.Println("[SalonHandler.UpdateSalonPeriod] - Validating parameters")
+func (h *SalonController) UpdateSalonPeriod(c *fiber.Ctx) error {
+	log.Println("[SalonController.UpdateSalonPeriod] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
@@ -71,7 +71,7 @@ func (h *SalonHandler) UpdateSalonPeriod(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[SalonHandler.UpdateSalonPeriod] - Request body:", utils.StructStringfy(&body))
+	log.Println("[SalonController.UpdateSalonPeriod] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	validate.RegisterValidation("hourMinuteFormat", hourMinuteFormat)
 	if err := validate.Struct(body); err != nil {
@@ -85,8 +85,8 @@ func (h *SalonHandler) UpdateSalonPeriod(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func (h *SalonHandler) RemoveSalonPeriod(c *fiber.Ctx) error {
-	log.Println("[SalonHandler.RemoveSalonPeriod] - Validating parameters")
+func (h *SalonController) RemoveSalonPeriod(c *fiber.Ctx) error {
+	log.Println("[SalonController.RemoveSalonPeriod] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")

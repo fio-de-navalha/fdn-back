@@ -12,8 +12,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (h *SalonHandler) AddSalonMember(c *fiber.Ctx) error {
-	log.Println("[SalonHandler.AddSalonMember] - Validating parameters")
+func (h *SalonController) AddSalonMember(c *fiber.Ctx) error {
+	log.Println("[SalonController.AddSalonMember] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
@@ -25,7 +25,7 @@ func (h *SalonHandler) AddSalonMember(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[SalonHandler.AddSalonMember] - Request body:", utils.StructStringfy(&body))
+	log.Println("[SalonController.AddSalonMember] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())

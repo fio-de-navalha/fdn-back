@@ -8,11 +8,11 @@ import (
 )
 
 func setupAppointmentRouter(router fiber.Router) {
-	appointmentHandler := api.NewAppointmentHandler(*container.AppointmentService)
+	appointmentController := api.NewAppointmentController(*container.AppointmentService)
 
-	router.Get("/professional/:professionalId/appointments", appointmentHandler.GetProfessionalAppointments)
-	router.Get("/customer/:customerId/appointments", appointmentHandler.GetCustomerAppointments)
+	router.Get("/professional/:professionalId/appointments", appointmentController.GetProfessionalAppointments)
+	router.Get("/customer/:customerId/appointments", appointmentController.GetCustomerAppointments)
 
-	router.Post("/appointment", middlewares.EnsureAuth(), appointmentHandler.Create)
-	router.Delete("/appointment/:appointmentId", middlewares.EnsureAuth(), appointmentHandler.Cancel)
+	router.Post("/appointment", middlewares.EnsureAuth(), appointmentController.Create)
+	router.Delete("/appointment/:appointmentId", middlewares.EnsureAuth(), appointmentController.Cancel)
 }

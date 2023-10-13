@@ -8,22 +8,22 @@ import (
 )
 
 func setupSalonRouter(router fiber.Router) {
-	salonHandler := api.NewSalonHandler(*container.SalonService)
+	salonController := api.NewSalonController(*container.SalonService)
 
 	salons := router.Group("/salon")
-	salons.Get("/:salonId", salonHandler.GetSalonById)
-	salons.Post("/", middlewares.EnsureProfessionalRole(), salonHandler.CraeteSalon)
-	salons.Post("/:id/members", middlewares.EnsureProfessionalRole(), salonHandler.AddSalonMember)
+	salons.Get("/:salonId", salonController.GetSalonById)
+	salons.Post("/", middlewares.EnsureProfessionalRole(), salonController.CraeteSalon)
+	salons.Post("/:id/members", middlewares.EnsureProfessionalRole(), salonController.AddSalonMember)
 
-	salons.Post("/:salonId/address", middlewares.EnsureProfessionalRole(), salonHandler.AddSalonAddress)
-	salons.Put("/:salonId/address/:addressId", middlewares.EnsureProfessionalRole(), salonHandler.UpdateSalonAddress)
-	salons.Delete("/:salonId/address/:addressId", middlewares.EnsureProfessionalRole(), salonHandler.RemoveSalonAddress)
+	salons.Post("/:salonId/address", middlewares.EnsureProfessionalRole(), salonController.AddSalonAddress)
+	salons.Put("/:salonId/address/:addressId", middlewares.EnsureProfessionalRole(), salonController.UpdateSalonAddress)
+	salons.Delete("/:salonId/address/:addressId", middlewares.EnsureProfessionalRole(), salonController.RemoveSalonAddress)
 
-	salons.Post("/:salonId/contact", middlewares.EnsureProfessionalRole(), salonHandler.AddSalonContact)
-	salons.Put("/:salonId/contact/:contactId", middlewares.EnsureProfessionalRole(), salonHandler.UpdateSalonContact)
-	salons.Delete("/:salonId/contact/:contactId", middlewares.EnsureProfessionalRole(), salonHandler.RemoveSalonContact)
+	salons.Post("/:salonId/contact", middlewares.EnsureProfessionalRole(), salonController.AddSalonContact)
+	salons.Put("/:salonId/contact/:contactId", middlewares.EnsureProfessionalRole(), salonController.UpdateSalonContact)
+	salons.Delete("/:salonId/contact/:contactId", middlewares.EnsureProfessionalRole(), salonController.RemoveSalonContact)
 
-	salons.Post("/:salonId/period", middlewares.EnsureProfessionalRole(), salonHandler.AddSalonPeriod)
-	salons.Put("/:salonId/period/:periodId", middlewares.EnsureProfessionalRole(), salonHandler.UpdateSalonPeriod)
-	salons.Delete("/:salonId/period/:periodId", middlewares.EnsureProfessionalRole(), salonHandler.RemoveSalonPeriod)
+	salons.Post("/:salonId/period", middlewares.EnsureProfessionalRole(), salonController.AddSalonPeriod)
+	salons.Put("/:salonId/period/:periodId", middlewares.EnsureProfessionalRole(), salonController.UpdateSalonPeriod)
+	salons.Delete("/:salonId/period/:periodId", middlewares.EnsureProfessionalRole(), salonController.RemoveSalonPeriod)
 }

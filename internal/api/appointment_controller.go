@@ -14,18 +14,18 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type AppointmentHandler struct {
+type AppointmentController struct {
 	appointmentService application.AppointmentService
 }
 
-func NewAppointmentHandler(appointmentService application.AppointmentService) *AppointmentHandler {
-	return &AppointmentHandler{
+func NewAppointmentController(appointmentService application.AppointmentService) *AppointmentController {
+	return &AppointmentController{
 		appointmentService: appointmentService,
 	}
 }
 
-func (h *AppointmentHandler) GetProfessionalAppointments(c *fiber.Ctx) error {
-	log.Println("[AppointmentHandler.GetProfessionalAppointments] - Validating parameters")
+func (h *AppointmentController) GetProfessionalAppointments(c *fiber.Ctx) error {
+	log.Println("[AppointmentController.GetProfessionalAppointments] - Validating parameters")
 	professionalId := c.Params("professionalId")
 	startsAtQuery := c.Query("startsAt")
 	if startsAtQuery == "" {
@@ -44,8 +44,8 @@ func (h *AppointmentHandler) GetProfessionalAppointments(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func (h *AppointmentHandler) GetCustomerAppointments(c *fiber.Ctx) error {
-	log.Println("[AppointmentHandler.GetCustomerAppointments] - Validating parameters")
+func (h *AppointmentController) GetCustomerAppointments(c *fiber.Ctx) error {
+	log.Println("[AppointmentController.GetCustomerAppointments] - Validating parameters")
 	id := c.Params("customerId")
 	res, err := h.appointmentService.GetCustomerAppointments(id)
 	if err != nil {
@@ -54,8 +54,8 @@ func (h *AppointmentHandler) GetCustomerAppointments(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func (h *AppointmentHandler) GetAppointment(c *fiber.Ctx) error {
-	log.Println("[AppointmentHandler.GetAppointment] - Validating parameters")
+func (h *AppointmentController) GetAppointment(c *fiber.Ctx) error {
+	log.Println("[AppointmentController.GetAppointment] - Validating parameters")
 	id := c.Params("id")
 	res, err := h.appointmentService.GetAppointment(id)
 	if err != nil {
@@ -64,14 +64,14 @@ func (h *AppointmentHandler) GetAppointment(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func (h *AppointmentHandler) Create(c *fiber.Ctx) error {
-	log.Println("[AppointmentHandler.Create] - Validating parameters")
+func (h *AppointmentController) Create(c *fiber.Ctx) error {
+	log.Println("[AppointmentController.Create] - Validating parameters")
 	body := new(appointment.CreateAppointmentRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[AppointmentHandler.Create] - Request body:", utils.StructStringfy(&body))
+	log.Println("[AppointmentController.Create] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -87,9 +87,9 @@ func (h *AppointmentHandler) Create(c *fiber.Ctx) error {
 
 	body.StartsAt = utils.ConvertToGMTMinus3(body.StartsAt)
 	if body.StartsAt.Before(time.Now()) {
-		log.Println("[AppointmentHandler.Create] - Cannot create appointment in the past")
-		log.Println("[AppointmentHandler.Create] - StartsAt:", body.StartsAt)
-		log.Println("[AppointmentHandler.Create] - CurrentTime:", time.Now())
+		log.Println("[AppointmentController.Create] - Cannot create appointment in the past")
+		log.Println("[AppointmentController.Create] - StartsAt:", body.StartsAt)
+		log.Println("[AppointmentController.Create] - CurrentTime:", time.Now())
 		return helpers.BuildErrorResponse(c, "cannot create appointment in the past")
 	}
 
@@ -103,14 +103,14 @@ func (h *AppointmentHandler) Create(c *fiber.Ctx) error {
 	}
 	err := h.appointmentService.CreateApppointment(input)
 	if err != nil {
-		log.Println("[AppointmentHandler.Create] - Appointment creation error:", err)
+		log.Println("[AppointmentController.Create] - Appointment creation error:", err)
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 	return c.Status(fiber.StatusCreated).Send(nil)
 }
 
-func (h *AppointmentHandler) Cancel(c *fiber.Ctx) error {
-	log.Println("[AppointmentHandler.Cancel] - Validating parameters")
+func (h *AppointmentController) Cancel(c *fiber.Ctx) error {
+	log.Println("[AppointmentController.Cancel] - Validating parameters")
 	appointmentId := c.Params("appointmentId")
 
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)

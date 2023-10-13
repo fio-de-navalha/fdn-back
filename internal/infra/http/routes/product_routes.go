@@ -8,11 +8,11 @@ import (
 )
 
 func setupProductRouter(router fiber.Router) {
-	productHandler := api.NewProductHandler(*container.ProductService)
+	productController := api.NewProductController(*container.ProductService)
 
 	products := router.Group("/salon/:salonId")
 
-	products.Get("/products", productHandler.GetBySalonId)
-	products.Post("/products", middlewares.EnsureProfessionalRole(), productHandler.Create)
-	products.Put("/products/:productId", middlewares.EnsureProfessionalRole(), productHandler.Update)
+	products.Get("/products", productController.GetBySalonId)
+	products.Post("/products", middlewares.EnsureProfessionalRole(), productController.Create)
+	products.Put("/products/:productId", middlewares.EnsureProfessionalRole(), productController.Update)
 }

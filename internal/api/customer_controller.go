@@ -14,18 +14,18 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type CustomerHandler struct {
+type CustomerController struct {
 	customerService application.CustomerService
 }
 
-func NewCustomerHandler(customerService application.CustomerService) *CustomerHandler {
-	return &CustomerHandler{
+func NewCustomerController(customerService application.CustomerService) *CustomerController {
+	return &CustomerController{
 		customerService: customerService,
 	}
 }
 
-func (h *CustomerHandler) GetCustomerById(c *fiber.Ctx) error {
-	log.Println("[CustomerHandler.GetCustomerById] - Validating parameters")
+func (h *CustomerController) GetCustomerById(c *fiber.Ctx) error {
+	log.Println("[CustomerController.GetCustomerById] - Validating parameters")
 	id := c.Params("id")
 	res, err := h.customerService.GetCustomerById(id)
 	if err != nil {
@@ -35,14 +35,14 @@ func (h *CustomerHandler) GetCustomerById(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func (h *CustomerHandler) RegisterCustomer(c *fiber.Ctx) error {
-	log.Println("[CustomerHandler.RegisterCustomer] - Validating parameters")
+func (h *CustomerController) RegisterCustomer(c *fiber.Ctx) error {
+	log.Println("[CustomerController.RegisterCustomer] - Validating parameters")
 	body := new(customer.RegisterRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[CustomerHandler.RegisterCustomer] - Request body:", utils.StructStringfy(&body))
+	log.Println("[CustomerController.RegisterCustomer] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -70,14 +70,14 @@ func (h *CustomerHandler) RegisterCustomer(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(res)
 }
 
-func (h *CustomerHandler) LoginCustomer(c *fiber.Ctx) error {
-	log.Println("[CustomerHandler.LoginCustomer] - Validating parameters")
+func (h *CustomerController) LoginCustomer(c *fiber.Ctx) error {
+	log.Println("[CustomerController.LoginCustomer] - Validating parameters")
 	body := new(customer.LoginRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[CustomerHandler.LoginCustomer] - Request body:", utils.StructStringfy(&body))
+	log.Println("[CustomerController.LoginCustomer] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -103,8 +103,8 @@ func (h *CustomerHandler) LoginCustomer(c *fiber.Ctx) error {
 	return c.JSON(res)
 }
 
-func (h *CustomerHandler) MeCustomer(c *fiber.Ctx) error {
-	log.Println("[CustomerHandler.MeCustomer] - Validating token")
+func (h *CustomerController) MeCustomer(c *fiber.Ctx) error {
+	log.Println("[CustomerController.MeCustomer] - Validating token")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")

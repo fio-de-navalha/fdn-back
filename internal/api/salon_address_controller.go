@@ -12,8 +12,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (h *SalonHandler) AddSalonAddress(c *fiber.Ctx) error {
-	log.Println("[SalonHandler.AddSalonAddress] - Validating parameters")
+func (h *SalonController) AddSalonAddress(c *fiber.Ctx) error {
+	log.Println("[SalonController.AddSalonAddress] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
@@ -24,7 +24,7 @@ func (h *SalonHandler) AddSalonAddress(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[SalonHandler.AddSalonAddress] - Request body:", utils.StructStringfy(&body))
+	log.Println("[SalonController.AddSalonAddress] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -36,8 +36,8 @@ func (h *SalonHandler) AddSalonAddress(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).Send(nil)
 }
 
-func (h *SalonHandler) UpdateSalonAddress(c *fiber.Ctx) error {
-	log.Println("[SalonHandler.UpdateSalonAddress] - Validating parameters")
+func (h *SalonController) UpdateSalonAddress(c *fiber.Ctx) error {
+	log.Println("[SalonController.UpdateSalonAddress] - Validating parameters")
 	if _, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser); !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
 	}
@@ -49,7 +49,7 @@ func (h *SalonHandler) UpdateSalonAddress(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[SalonHandler.UpdateSalonAddress] - Request body:", utils.StructStringfy(&body))
+	log.Println("[SalonController.UpdateSalonAddress] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -62,8 +62,8 @@ func (h *SalonHandler) UpdateSalonAddress(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func (h *SalonHandler) RemoveSalonAddress(c *fiber.Ctx) error {
-	log.Println("[SalonHandler.RemoveSalonAddress] - Validating parameters")
+func (h *SalonController) RemoveSalonAddress(c *fiber.Ctx) error {
+	log.Println("[SalonController.RemoveSalonAddress] - Validating parameters")
 	if _, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser); !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
 	}
