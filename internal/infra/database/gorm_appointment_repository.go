@@ -86,7 +86,7 @@ func (r *gormAppointmentRepository) FindByDates(startsAt time.Time, endsAt time.
 	var a []*appointment.Appointment
 	res := r.db.
 		Select("id", "professional_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at", "canceled_at").
-		Where("starts_at <= ? AND ends_at >= ?", endsAt, startsAt).
+		Where("starts_at <= ? AND ends_at > ?", endsAt, startsAt).
 		Find(&a)
 
 	if res.Error != nil {
