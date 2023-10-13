@@ -1,6 +1,8 @@
 package database
 
 import (
+	"fmt"
+
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
 	"gorm.io/gorm"
 )
@@ -28,6 +30,20 @@ func (r *gormSalonMemberRepository) FindById(id string, salonId string) (*salon.
 	var salMem salon.SalonMember
 	result := r.db.First(&salMem, "id = ? AND salon_id = ?", id, salonId)
 	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
+		return nil, result.Error
+	}
+	return &salMem, nil
+}
+
+func (r *gormSalonMemberRepository) FindByProfessionalId(professionalIdid string) (*salon.SalonMember, error) {
+	var salMem salon.SalonMember
+	result := r.db.First(&salMem, "professional_id = ?", professionalIdid)
+
+	if result.Error != nil {
+		fmt.Println(result.Error)
 		if result.Error == gorm.ErrRecordNotFound {
 			return nil, nil
 		}

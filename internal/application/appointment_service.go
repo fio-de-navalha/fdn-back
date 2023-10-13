@@ -43,11 +43,28 @@ func NewAppointmentService(
 
 func (s *AppointmentService) GetProfessionalAppointments(professionalId string, startsAt time.Time) ([]*appointment.Appointment, error) {
 	log.Println("[AppointmentService.GetProfessionalAppointments] - Getting appointments from professional:", professionalId)
+	res, err := s.salonService.GetSalonByProfessionalId(professionalId)
+	if err != nil {
+		return nil, err
+	}
+
+	var endsAtHour int
+	var endsAtMinute int
+	for _, period := range res.Periods {
+		if period.Day == int(time.Now().Weekday()) {
+			r := strings.Split(period.Close, ":")
+			hour, _ := strconv.Atoi(r[0])
+			minute, _ := strconv.Atoi(r[1])
+			endsAtHour = hour
+			endsAtMinute = minute
+		}
+	}
+
 	endsAt := time.Date(
 		startsAt.Year(),
 		startsAt.Month(),
 		startsAt.Day(),
-		constants.EndsAtHour, constants.EndsAtMinute, 0, 0,
+		endsAtHour, endsAtMinute, 0, 0,
 		startsAt.Location(),
 	)
 	a, err := s.appointmentRepository.FindByProfessionalId(professionalId, startsAt, endsAt)

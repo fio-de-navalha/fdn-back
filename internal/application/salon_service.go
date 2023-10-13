@@ -62,6 +62,39 @@ func (s *SalonService) GetSalonById(id string) (*salon.Salon, error) {
 	}, nil
 }
 
+func (s *SalonService) GetSalonByProfessionalId(professionalId string) (*salon.Salon, error) {
+	log.Println("[SalonService.GetSalonByProfessionalId] - Getting salon by professional:", professionalId)
+	if _, err := s.professionalService.validateProfessionalById(professionalId); err != nil {
+		return nil, err
+	}
+
+	salonMember, err := s.salonMemberRepository.FindByProfessionalId(professionalId)
+	if err != nil {
+		return nil, &utils.AppError{
+			Code:    constants.SALON_NOT_FOUND_ERROR_CODE,
+			Message: constants.SALON_NOT_FOUND_ERROR_MESSAGE,
+		}
+	}
+	res, err := s.salonRepository.FindById(salonMember.SalonId)
+	if err != nil {
+		return nil, &utils.AppError{
+			Code:    constants.SALON_NOT_FOUND_ERROR_CODE,
+			Message: constants.SALON_NOT_FOUND_ERROR_MESSAGE,
+		}
+	}
+
+	return &salon.Salon{
+		ID:           res.ID,
+		Name:         res.Name,
+		SalonMembers: res.SalonMembers,
+		Addresses:    res.Addresses,
+		Contacts:     res.Contacts,
+		Periods:      res.Periods,
+		Services:     res.Services,
+		Products:     res.Products,
+	}, nil
+}
+
 func (s *SalonService) CreateSalon(name string, professionalId string) (*salon.Salon, error) {
 	log.Println("[SalonService.CreateSalon] - Validating professional:", professionalId)
 	if _, err := s.professionalService.validateProfessionalById(professionalId); err != nil {
