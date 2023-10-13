@@ -51,7 +51,7 @@ func (s *AppointmentService) GetProfessionalAppointments(professionalId string, 
 	var endsAtHour int
 	var endsAtMinute int
 	for _, period := range res.Periods {
-		if period.Day == int(time.Now().Weekday()) {
+		if period.Day == int(startsAt.Weekday()) {
 			r := strings.Split(period.Close, ":")
 			hour, _ := strconv.Atoi(r[0])
 			minute, _ := strconv.Atoi(r[1])
