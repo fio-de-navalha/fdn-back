@@ -147,7 +147,7 @@ func (s *ProfessionalService) validateProfessionalById(professionalId string) (*
 	if prof == nil {
 		return nil, &utils.AppError{
 			Code:    constants.PROFESSIONAL_NOT_FOUND_ERROR_CODE,
-			Message: err.Error(),
+			Message: constants.PROFESSIONAL_NOT_FOUND_ERROR_MESSAGE,
 		}
 	}
 	return prof, nil
