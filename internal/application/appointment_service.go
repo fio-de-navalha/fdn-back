@@ -71,6 +71,9 @@ func (s *AppointmentService) GetProfessionalAppointments(professionalId string, 
 	if err != nil {
 		return nil, err
 	}
+
+	log.Println("@@@ StartsAt", a[0].StartsAt)
+	log.Println("@@@ EndsAt", a[0].EndsAt)
 	return a, nil
 }
 
