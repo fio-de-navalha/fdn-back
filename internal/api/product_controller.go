@@ -6,7 +6,7 @@ import (
 
 	"github.com/fio-de-navalha/fdn-back/internal/application"
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
-	"github.com/fio-de-navalha/fdn-back/internal/domain/product"
+	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http/helpers"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http/middlewares"
 	"github.com/fio-de-navalha/fdn-back/internal/utils"
@@ -44,7 +44,7 @@ func (h *ProductController) Create(c *fiber.Ctx) error {
 
 	salonId := c.Params("salonId")
 	price, _ := strconv.Atoi(c.FormValue("price"))
-	input := product.CreateProductRequest{
+	input := salon.CreateProductRequest{
 		SalonId:        salonId,
 		ProfessionalId: user.ID,
 		Name:           c.FormValue("name"),
@@ -75,7 +75,7 @@ func (h *ProductController) Update(c *fiber.Ctx) error {
 
 	salonId := c.Params("salonId")
 	productId := c.Params("productId")
-	input := product.UpdateProductRequest{
+	input := salon.UpdateProductRequest{
 		SalonId:        salonId,
 		ProfessionalId: user.ID,
 	}

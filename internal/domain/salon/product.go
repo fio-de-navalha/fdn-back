@@ -1,4 +1,6 @@
-package product
+package salon
+
+import "github.com/google/uuid"
 
 type CreateProductRequest struct {
 	SalonId        string `json:"salonId" validate:"required,uuid4,min=1"`
@@ -18,4 +20,33 @@ type UpdateProductRequest struct {
 	Available      *bool   `json:"available"`
 	ImageId        *string `json:"imageId"`
 	ImageUrl       *string `json:"imageUrl"`
+}
+
+type Product struct {
+	ID        string `json:"id" gorm:"primaryKey"`
+	SalonId   string `json:"salonId"`
+	Name      string `json:"name"`
+	Price     int    `json:"price"`
+	Available bool   `json:"available"`
+	ImageId   string `json:"imageId"`
+	ImageUrl  string `json:"imageUrl"`
+}
+
+func NewProduct(input CreateProductRequest) *Product {
+	return &Product{
+		ID:        uuid.NewString(),
+		SalonId:   input.SalonId,
+		Name:      input.Name,
+		Price:     input.Price,
+		Available: true,
+		ImageId:   input.ImageId,
+		ImageUrl:  input.ImageUrl,
+	}
+}
+
+type ProductRepository interface {
+	FindManyByIds(ids []string) ([]*Product, error)
+	FindById(id string) (*Product, error)
+	FindBySalonId(salonId string) ([]*Product, error)
+	Save(product *Product) (*Product, error)
 }

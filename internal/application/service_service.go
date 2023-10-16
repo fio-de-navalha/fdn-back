@@ -8,19 +8,18 @@ import (
 	"github.com/fio-de-navalha/fdn-back/internal/domain/image"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/professional"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
-	"github.com/fio-de-navalha/fdn-back/internal/domain/service"
 	"github.com/fio-de-navalha/fdn-back/internal/utils"
 )
 
 type ServiceService struct {
-	serviceRepository   service.ServiceRepository
+	serviceRepository   salon.ServiceRepository
 	salonService        SalonService
 	professionalService ProfessionalService
 	imageStorageService image.ImageStorageService
 }
 
 func NewServiceService(
-	serviceRepository service.ServiceRepository,
+	serviceRepository salon.ServiceRepository,
 	salonService SalonService,
 	professionalService ProfessionalService,
 	imageStorageService image.ImageStorageService,
@@ -33,7 +32,7 @@ func NewServiceService(
 	}
 }
 
-func (s *ServiceService) GetServicesBySalonId(salonId string) ([]*service.Service, error) {
+func (s *ServiceService) GetServicesBySalonId(salonId string) ([]*salon.Service, error) {
 	log.Println("[ServiceService.GetServicesBySalonId] - Validating salon:", salonId)
 	if _, err := s.validateSalon(salonId); err != nil {
 		return nil, err
@@ -47,7 +46,7 @@ func (s *ServiceService) GetServicesBySalonId(salonId string) ([]*service.Servic
 	return res, nil
 }
 
-func (s *ServiceService) CreateService(input service.CreateServiceRequest, file *multipart.FileHeader) error {
+func (s *ServiceService) CreateService(input salon.CreateServiceRequest, file *multipart.FileHeader) error {
 	log.Println("[ServiceService.CreateService] - Validating salon:", input.SalonId)
 	sal, err := s.validateSalon(input.SalonId)
 	if err != nil {
@@ -77,14 +76,14 @@ func (s *ServiceService) CreateService(input service.CreateServiceRequest, file 
 	}
 
 	log.Println("[ServiceService.CreateService] - Creating service")
-	newService := service.NewService(input)
+	newService := salon.NewService(input)
 	if _, err = s.serviceRepository.Save(newService); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *ServiceService) UpdateService(serviceId string, input service.UpdateServiceRequest, file *multipart.FileHeader) error {
+func (s *ServiceService) UpdateService(serviceId string, input salon.UpdateServiceRequest, file *multipart.FileHeader) error {
 	log.Println("[ServiceService.UpdateService] - Validating salon:", input.SalonId)
 	sal, err := s.validateSalon(input.SalonId)
 	if err != nil {
@@ -141,7 +140,7 @@ func (s *ServiceService) UpdateService(serviceId string, input service.UpdateSer
 	return nil
 }
 
-func (s *ServiceService) getManyServices(serviceIds []string) ([]*service.Service, error) {
+func (s *ServiceService) getManyServices(serviceIds []string) ([]*salon.Service, error) {
 	res, err := s.serviceRepository.FindManyByIds(serviceIds)
 	if err != nil {
 		return nil, err
@@ -149,7 +148,7 @@ func (s *ServiceService) getManyServices(serviceIds []string) ([]*service.Servic
 	return res, nil
 }
 
-func (s *ServiceService) ValidateServicesAvailability(services []*service.Service) ([]string, int, int) {
+func (s *ServiceService) ValidateServicesAvailability(services []*salon.Service) ([]string, int, int) {
 	var durationInMin int
 	var totalAmount int
 	var servicesIdsToSave []string
@@ -192,7 +191,7 @@ func (s *ServiceService) validateProfessional(professionalId string) (*professio
 	return prof, nil
 }
 
-func (s *ServiceService) validateService(serviceId string) (*service.Service, error) {
+func (s *ServiceService) validateService(serviceId string) (*salon.Service, error) {
 	ser, err := s.serviceRepository.FindById(serviceId)
 	if err != nil {
 		return nil, err

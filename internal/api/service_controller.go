@@ -6,7 +6,7 @@ import (
 
 	"github.com/fio-de-navalha/fdn-back/internal/application"
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
-	"github.com/fio-de-navalha/fdn-back/internal/domain/service"
+	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http/helpers"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/http/middlewares"
 	"github.com/fio-de-navalha/fdn-back/internal/utils"
@@ -45,7 +45,7 @@ func (h *ServiceController) Create(c *fiber.Ctx) error {
 	salonId := c.Params("salonId")
 	price, _ := strconv.Atoi(c.FormValue("price"))
 	durationInMin, _ := strconv.Atoi(c.FormValue("durationInMin"))
-	input := service.CreateServiceRequest{
+	input := salon.CreateServiceRequest{
 		SalonId:        salonId,
 		ProfessionalId: user.ID,
 		Name:           c.FormValue("name"),
@@ -78,7 +78,7 @@ func (h *ServiceController) Update(c *fiber.Ctx) error {
 	salonId := c.Params("salonId")
 	serviceId := c.Params("serviceId")
 
-	input := service.UpdateServiceRequest{
+	input := salon.UpdateServiceRequest{
 		SalonId:        salonId,
 		ProfessionalId: user.ID,
 	}

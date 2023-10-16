@@ -3,8 +3,6 @@ package salon
 import (
 	"time"
 
-	"github.com/fio-de-navalha/fdn-back/internal/domain/product"
-	"github.com/fio-de-navalha/fdn-back/internal/domain/service"
 	"github.com/google/uuid"
 )
 
@@ -17,15 +15,15 @@ type UpdateSalonRequest struct {
 }
 
 type Salon struct {
-	ID           string            `json:"id"`
-	Name         string            `json:"name"`
-	CreatedAt    time.Time         `json:"createdAt"`
-	SalonMembers []SalonMember     `json:"salonMembers"`
-	Addresses    []Address         `json:"addresses"`
-	Contacts     []Contact         `json:"contacts"`
-	Periods      []Period          `json:"periods"`
-	Services     []service.Service `json:"services"`
-	Products     []product.Product `json:"products"`
+	ID           string        `json:"id"`
+	Name         string        `json:"name"`
+	CreatedAt    time.Time     `json:"createdAt"`
+	SalonMembers []SalonMember `json:"salonMembers"`
+	Addresses    []Address     `json:"addresses"`
+	Contacts     []Contact     `json:"contacts"`
+	Periods      []Period      `json:"periods"`
+	Services     []Service     `json:"services"`
+	Products     []Product     `json:"products"`
 }
 
 func NewSalon(name string) *Salon {
@@ -34,4 +32,10 @@ func NewSalon(name string) *Salon {
 		Name:      name,
 		CreatedAt: time.Now(),
 	}
+}
+
+type SalonRepository interface {
+	FindMany() ([]*Salon, error)
+	FindById(id string) (*Salon, error)
+	Save(salon *Salon) (*Salon, error)
 }

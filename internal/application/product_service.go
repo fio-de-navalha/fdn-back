@@ -6,19 +6,19 @@ import (
 
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/image"
-	"github.com/fio-de-navalha/fdn-back/internal/domain/product"
+	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
 	"github.com/fio-de-navalha/fdn-back/internal/utils"
 )
 
 type ProductService struct {
-	productRepository   product.ProductRepository
+	productRepository   salon.ProductRepository
 	salonService        SalonService
 	professionalService ProfessionalService
 	imageStorageService image.ImageStorageService
 }
 
 func NewProductService(
-	productRepository product.ProductRepository,
+	productRepository salon.ProductRepository,
 	salonService SalonService,
 	professionalService ProfessionalService,
 	imageStorageService image.ImageStorageService,
@@ -31,7 +31,7 @@ func NewProductService(
 	}
 }
 
-func (s *ProductService) GetProductsBySalonId(salonId string) ([]*product.Product, error) {
+func (s *ProductService) GetProductsBySalonId(salonId string) ([]*salon.Product, error) {
 	log.Println("[ProductService.GetProductsBySalonId] - Validating salon:", salonId)
 	sal, err := s.salonService.GetSalonById(salonId)
 	if err != nil {
@@ -52,7 +52,7 @@ func (s *ProductService) GetProductsBySalonId(salonId string) ([]*product.Produc
 	return res, nil
 }
 
-func (s *ProductService) CreateProduct(input product.CreateProductRequest, file *multipart.FileHeader) error {
+func (s *ProductService) CreateProduct(input salon.CreateProductRequest, file *multipart.FileHeader) error {
 	log.Println("[ProductService.CreateProduct] - Validating salon:", input.SalonId)
 	sal, err := s.salonService.validateSalon(input.SalonId)
 	if err != nil {
@@ -81,7 +81,7 @@ func (s *ProductService) CreateProduct(input product.CreateProductRequest, file 
 	}
 
 	log.Println("[ProductService.CreateProduct] - Creating product")
-	newProduct := product.NewProduct(input)
+	newProduct := salon.NewProduct(input)
 	_, err = s.productRepository.Save(newProduct)
 	if err != nil {
 		return err
@@ -89,7 +89,7 @@ func (s *ProductService) CreateProduct(input product.CreateProductRequest, file 
 	return nil
 }
 
-func (s *ProductService) UpdateProduct(productId string, input product.UpdateProductRequest, file *multipart.FileHeader) error {
+func (s *ProductService) UpdateProduct(productId string, input salon.UpdateProductRequest, file *multipart.FileHeader) error {
 	log.Println("[ProductService.UpdateProduct] - Validating salon:", input.SalonId)
 	sal, err := s.salonService.validateSalon(input.SalonId)
 	if err != nil {
@@ -140,7 +140,7 @@ func (s *ProductService) UpdateProduct(productId string, input product.UpdatePro
 	return nil
 }
 
-func (s *ProductService) getManyProducts(productIds []string) ([]*product.Product, error) {
+func (s *ProductService) getManyProducts(productIds []string) ([]*salon.Product, error) {
 	res, err := s.productRepository.FindManyByIds(productIds)
 	if err != nil {
 		return nil, err
@@ -148,7 +148,7 @@ func (s *ProductService) getManyProducts(productIds []string) ([]*product.Produc
 	return res, nil
 }
 
-func (s *ProductService) validateProductsAvailability(products []*product.Product) []string {
+func (s *ProductService) validateProductsAvailability(products []*salon.Product) []string {
 	var productsIdsToSave []string
 	for _, v := range products {
 		if v.Available {
@@ -158,7 +158,7 @@ func (s *ProductService) validateProductsAvailability(products []*product.Produc
 	return productsIdsToSave
 }
 
-func (s *ProductService) validateProduct(productId string) (*product.Product, error) {
+func (s *ProductService) validateProduct(productId string) (*salon.Product, error) {
 	pro, err := s.productRepository.FindById(productId)
 	if err != nil {
 		return nil, err

@@ -1,7 +1,7 @@
 package database
 
 import (
-	"github.com/fio-de-navalha/fdn-back/internal/domain/service"
+	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
 	"gorm.io/gorm"
 )
 
@@ -15,8 +15,8 @@ func NewGormServiceRepository() *gormServiceRepository {
 	}
 }
 
-func (r *gormServiceRepository) FindManyByIds(id []string) ([]*service.Service, error) {
-	var s []*service.Service
+func (r *gormServiceRepository) FindManyByIds(id []string) ([]*salon.Service, error) {
+	var s []*salon.Service
 	result := r.db.Find(&s, "id IN ?", id)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
@@ -27,8 +27,8 @@ func (r *gormServiceRepository) FindManyByIds(id []string) ([]*service.Service, 
 	return s, nil
 }
 
-func (r *gormServiceRepository) FindById(id string) (*service.Service, error) {
-	var s service.Service
+func (r *gormServiceRepository) FindById(id string) (*salon.Service, error) {
+	var s salon.Service
 	result := r.db.First(&s, "id = ?", id)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
@@ -39,8 +39,8 @@ func (r *gormServiceRepository) FindById(id string) (*service.Service, error) {
 	return &s, nil
 }
 
-func (r *gormServiceRepository) FindBySalonId(salonId string) ([]*service.Service, error) {
-	var s []*service.Service
+func (r *gormServiceRepository) FindBySalonId(salonId string) ([]*salon.Service, error) {
+	var s []*salon.Service
 	result := r.db.Find(&s, "salon_id = ?", salonId)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
@@ -51,7 +51,7 @@ func (r *gormServiceRepository) FindBySalonId(salonId string) ([]*service.Servic
 	return s, nil
 }
 
-func (r *gormServiceRepository) Save(s *service.Service) (*service.Service, error) {
+func (r *gormServiceRepository) Save(s *salon.Service) (*salon.Service, error) {
 	result := r.db.Save(s)
 	if result.Error != nil {
 		return nil, result.Error

@@ -1,7 +1,7 @@
 package database
 
 import (
-	"github.com/fio-de-navalha/fdn-back/internal/domain/product"
+	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
 	"gorm.io/gorm"
 )
 
@@ -15,8 +15,8 @@ func NewGormProductRepository() *gormProductRepository {
 	}
 }
 
-func (r *gormProductRepository) FindManyByIds(id []string) ([]*product.Product, error) {
-	var p []*product.Product
+func (r *gormProductRepository) FindManyByIds(id []string) ([]*salon.Product, error) {
+	var p []*salon.Product
 	result := r.db.Find(&p, "id IN ?", id)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
@@ -27,8 +27,8 @@ func (r *gormProductRepository) FindManyByIds(id []string) ([]*product.Product, 
 	return p, nil
 }
 
-func (r *gormProductRepository) FindById(id string) (*product.Product, error) {
-	var p product.Product
+func (r *gormProductRepository) FindById(id string) (*salon.Product, error) {
+	var p salon.Product
 	result := r.db.First(&p, "id = ?", id)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
@@ -39,8 +39,8 @@ func (r *gormProductRepository) FindById(id string) (*product.Product, error) {
 	return &p, nil
 }
 
-func (r *gormProductRepository) FindBySalonId(salonId string) ([]*product.Product, error) {
-	var p []*product.Product
+func (r *gormProductRepository) FindBySalonId(salonId string) ([]*salon.Product, error) {
+	var p []*salon.Product
 	result := r.db.Find(&p, "salon_id = ?", salonId)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
@@ -51,7 +51,7 @@ func (r *gormProductRepository) FindBySalonId(salonId string) ([]*product.Produc
 	return p, nil
 }
 
-func (r *gormProductRepository) Save(p *product.Product) (*product.Product, error) {
+func (r *gormProductRepository) Save(p *salon.Product) (*salon.Product, error) {
 	result := r.db.Save(p)
 	if result.Error != nil {
 		return nil, result.Error
