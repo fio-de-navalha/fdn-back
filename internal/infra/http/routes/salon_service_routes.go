@@ -7,8 +7,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func setupServiceRouter(router fiber.Router) {
-	serviceController := api.NewServiceController(*container.ServiceService)
+func setupSalonServiceRouter(router fiber.Router) {
+	serviceController := api.NewSalonServiceController(*container.ServiceService)
 
 	services := router.Group("/salon/:salonId")
 

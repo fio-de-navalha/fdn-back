@@ -5,17 +5,17 @@ import (
 	"gorm.io/gorm"
 )
 
-type gormContactRepository struct {
+type gormSalonContactRepository struct {
 	db *gorm.DB
 }
 
-func NewGormContactRepository() *gormContactRepository {
-	return &gormContactRepository{
+func NewGormSalonContactRepository() *gormSalonContactRepository {
+	return &gormSalonContactRepository{
 		db: DB,
 	}
 }
 
-func (r *gormContactRepository) FindBySalonId(salonId string) ([]*salon.Contact, error) {
+func (r *gormSalonContactRepository) FindBySalonId(salonId string) ([]*salon.Contact, error) {
 	var cntt []*salon.Contact
 	res := r.db.Find(&cntt, "salon_id = ?", salonId)
 	if res.Error != nil {
@@ -24,7 +24,7 @@ func (r *gormContactRepository) FindBySalonId(salonId string) ([]*salon.Contact,
 	return cntt, nil
 }
 
-func (r *gormContactRepository) FindById(id string, salonId string) (*salon.Contact, error) {
+func (r *gormSalonContactRepository) FindById(id string, salonId string) (*salon.Contact, error) {
 	var cntt salon.Contact
 	result := r.db.First(&cntt, "id = ? AND salon_id = ?", id, salonId)
 	if result.Error != nil {
@@ -36,7 +36,7 @@ func (r *gormContactRepository) FindById(id string, salonId string) (*salon.Cont
 	return &cntt, nil
 }
 
-func (r *gormContactRepository) Save(cntt *salon.Contact) (*salon.Contact, error) {
+func (r *gormSalonContactRepository) Save(cntt *salon.Contact) (*salon.Contact, error) {
 	result := r.db.Save(cntt)
 	if result.Error != nil {
 		return nil, result.Error
@@ -44,7 +44,7 @@ func (r *gormContactRepository) Save(cntt *salon.Contact) (*salon.Contact, error
 	return cntt, nil
 }
 
-func (r *gormContactRepository) Delete(cnttId string) error {
+func (r *gormSalonContactRepository) Delete(cnttId string) error {
 	var cntt []*salon.Contact
 	res := r.db.Delete(&cntt, "id = ?", cnttId)
 	if res.Error != nil {

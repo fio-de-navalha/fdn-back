@@ -5,17 +5,17 @@ import (
 	"gorm.io/gorm"
 )
 
-type gormPeriodRepository struct {
+type gormSalonPeriodRepository struct {
 	db *gorm.DB
 }
 
-func NewGormPeriodRepository() *gormPeriodRepository {
-	return &gormPeriodRepository{
+func NewGormSalonPeriodRepository() *gormSalonPeriodRepository {
+	return &gormSalonPeriodRepository{
 		db: DB,
 	}
 }
 
-func (r *gormPeriodRepository) FindBySalonId(salonId string) ([]*salon.Period, error) {
+func (r *gormSalonPeriodRepository) FindBySalonId(salonId string) ([]*salon.Period, error) {
 	var p []*salon.Period
 	result := r.db.Find(&p, "salon_id = ?", salonId)
 	if result.Error != nil {
@@ -27,7 +27,7 @@ func (r *gormPeriodRepository) FindBySalonId(salonId string) ([]*salon.Period, e
 	return p, nil
 }
 
-func (r *gormPeriodRepository) FindBySalonAndDay(salonId string, day int) (*salon.Period, error) {
+func (r *gormSalonPeriodRepository) FindBySalonAndDay(salonId string, day int) (*salon.Period, error) {
 	var p *salon.Period
 	result := r.db.First(&p, "salon_id = ? AND day = ?", salonId, day)
 	if result.Error != nil {
@@ -39,7 +39,7 @@ func (r *gormPeriodRepository) FindBySalonAndDay(salonId string, day int) (*salo
 	return p, nil
 }
 
-func (r *gormPeriodRepository) FindById(id string, salonId string) (*salon.Period, error) {
+func (r *gormSalonPeriodRepository) FindById(id string, salonId string) (*salon.Period, error) {
 	var p salon.Period
 	result := r.db.First(&p, "id = ? AND salon_id = ?", id, salonId)
 	if result.Error != nil {
@@ -51,7 +51,7 @@ func (r *gormPeriodRepository) FindById(id string, salonId string) (*salon.Perio
 	return &p, nil
 }
 
-func (r *gormPeriodRepository) Save(s *salon.Period) (*salon.Period, error) {
+func (r *gormSalonPeriodRepository) Save(s *salon.Period) (*salon.Period, error) {
 	result := r.db.Save(s)
 	if result.Error != nil {
 		return nil, result.Error
@@ -59,7 +59,7 @@ func (r *gormPeriodRepository) Save(s *salon.Period) (*salon.Period, error) {
 	return s, nil
 }
 
-func (r *gormPeriodRepository) Delete(id string) error {
+func (r *gormSalonPeriodRepository) Delete(id string) error {
 	var p []*salon.Period
 	res := r.db.Delete(&p, "id = ?", id)
 	if res.Error != nil {

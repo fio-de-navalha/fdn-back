@@ -11,7 +11,7 @@ func FiberSetupRouters(app *fiber.App) {
 	setupCustomerRouter(router)
 	setupProfessionalRouter(router)
 	setupSalonRouter(router)
-	setupServiceRouter(router)
-	setupProductRouter(router)
+	setupSalonServiceRouter(router)
+	setupSalonProductRouter(router)
 	setupAppointmentRouter(router)
 }

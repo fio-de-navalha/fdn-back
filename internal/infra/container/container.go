@@ -20,12 +20,12 @@ func LoadContainers() {
 	salonRepo := database.NewGormSalonRepository()
 	salonMemberRepo := database.NewGormSalonMemberRepository()
 	customerRepo := database.NewGormCustomerRepository()
-	addressRepo := database.NewGormAddressRepository()
-	contactRepo := database.NewGormContactRepository()
-	periodRepo := database.NewGormPeriodRepository()
+	addressRepo := database.NewGormSalonAddressRepository()
+	contactRepo := database.NewGormSalonContactRepository()
+	periodRepo := database.NewGormSalonPeriodRepository()
 	professionalRepo := database.NewGormProfessionalRepository()
-	serviceRepo := database.NewGormServiceRepository()
-	productRepo := database.NewGormProductRepository()
+	serviceRepo := database.NewGormSalonServiceRepository()
+	productRepo := database.NewGormSalonProductRepository()
 	appointmentRepo := database.NewGormAppointmentRepository()
 
 	cloudFlareService := cloudflare.NewCloudFlareService(

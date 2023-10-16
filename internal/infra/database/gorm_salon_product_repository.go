@@ -5,17 +5,17 @@ import (
 	"gorm.io/gorm"
 )
 
-type gormProductRepository struct {
+type gormSalonProductRepository struct {
 	db *gorm.DB
 }
 
-func NewGormProductRepository() *gormProductRepository {
-	return &gormProductRepository{
+func NewGormSalonProductRepository() *gormSalonProductRepository {
+	return &gormSalonProductRepository{
 		db: DB,
 	}
 }
 
-func (r *gormProductRepository) FindManyByIds(id []string) ([]*salon.Product, error) {
+func (r *gormSalonProductRepository) FindManyByIds(id []string) ([]*salon.Product, error) {
 	var p []*salon.Product
 	result := r.db.Find(&p, "id IN ?", id)
 	if result.Error != nil {
@@ -27,7 +27,7 @@ func (r *gormProductRepository) FindManyByIds(id []string) ([]*salon.Product, er
 	return p, nil
 }
 
-func (r *gormProductRepository) FindById(id string) (*salon.Product, error) {
+func (r *gormSalonProductRepository) FindById(id string) (*salon.Product, error) {
 	var p salon.Product
 	result := r.db.First(&p, "id = ?", id)
 	if result.Error != nil {
@@ -39,7 +39,7 @@ func (r *gormProductRepository) FindById(id string) (*salon.Product, error) {
 	return &p, nil
 }
 
-func (r *gormProductRepository) FindBySalonId(salonId string) ([]*salon.Product, error) {
+func (r *gormSalonProductRepository) FindBySalonId(salonId string) ([]*salon.Product, error) {
 	var p []*salon.Product
 	result := r.db.Find(&p, "salon_id = ?", salonId)
 	if result.Error != nil {
@@ -51,7 +51,7 @@ func (r *gormProductRepository) FindBySalonId(salonId string) ([]*salon.Product,
 	return p, nil
 }
 
-func (r *gormProductRepository) Save(p *salon.Product) (*salon.Product, error) {
+func (r *gormSalonProductRepository) Save(p *salon.Product) (*salon.Product, error) {
 	result := r.db.Save(p)
 	if result.Error != nil {
 		return nil, result.Error

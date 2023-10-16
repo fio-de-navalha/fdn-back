@@ -14,17 +14,17 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type ServiceController struct {
+type SalonServiceController struct {
 	serviceService application.ServiceService
 }
 
-func NewServiceController(serviceService application.ServiceService) *ServiceController {
-	return &ServiceController{
+func NewSalonServiceController(serviceService application.ServiceService) *SalonServiceController {
+	return &SalonServiceController{
 		serviceService: serviceService,
 	}
 }
 
-func (h *ServiceController) GetBySalonId(c *fiber.Ctx) error {
+func (h *SalonServiceController) GetBySalonId(c *fiber.Ctx) error {
 	log.Println("[ServiceController.GetBySalonId] - Validating parameters")
 	salonId := c.Params("salonId")
 	res, err := h.serviceService.GetServicesBySalonId(salonId)
@@ -35,7 +35,7 @@ func (h *ServiceController) GetBySalonId(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(res)
 }
 
-func (h *ServiceController) Create(c *fiber.Ctx) error {
+func (h *SalonServiceController) Create(c *fiber.Ctx) error {
 	log.Println("[ServiceController.Create] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
@@ -68,7 +68,7 @@ func (h *ServiceController) Create(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).Send(nil)
 }
 
-func (h *ServiceController) Update(c *fiber.Ctx) error {
+func (h *SalonServiceController) Update(c *fiber.Ctx) error {
 	log.Println("[ServiceController.Update] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
