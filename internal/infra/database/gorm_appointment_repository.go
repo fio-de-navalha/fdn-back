@@ -1,7 +1,6 @@
 package database
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/fio-de-navalha/fdn-back/internal/domain/appointment"
@@ -21,7 +20,7 @@ func NewGormAppointmentRepository() *gormAppointmentRepository {
 func (r *gormAppointmentRepository) FindById(id string) (*appointment.Appointment, error) {
 	var a appointment.Appointment
 	result := r.db.
-		Select("id", "professional_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at", "canceled_at").
+		Select("id", "professional_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at").
 		Where("id = ?", id).
 		First(&a)
 
@@ -37,7 +36,7 @@ func (r *gormAppointmentRepository) FindById(id string) (*appointment.Appointmen
 func (r *gormAppointmentRepository) FindByIdWithJoins(id string) (*appointment.Appointment, error) {
 	var a appointment.Appointment
 	result := r.db.
-		Select("id", "professional_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at", "canceled_at").
+		Select("id", "professional_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at").
 		Preload("Services").
 		Preload("Products").
 		Where("id = ?", id).
@@ -55,7 +54,7 @@ func (r *gormAppointmentRepository) FindByIdWithJoins(id string) (*appointment.A
 func (r *gormAppointmentRepository) FindByProfessionalId(professionalId string, startsAt time.Time, endsAt time.Time) ([]*appointment.Appointment, error) {
 	var a []*appointment.Appointment
 	res := r.db.
-		Select("id", "professional_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at", "canceled_at").
+		Select("id", "professional_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at").
 		Preload("Services").
 		Preload("Products").
 		Where("professional_id = ? AND starts_at > ? AND ends_at < ?", professionalId, startsAt, endsAt).
@@ -70,7 +69,7 @@ func (r *gormAppointmentRepository) FindByProfessionalId(professionalId string, 
 func (r *gormAppointmentRepository) FindByCustomerId(customerId string) ([]*appointment.Appointment, error) {
 	var a []*appointment.Appointment
 	res := r.db.
-		Select("id", "professional_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at", "canceled_at").
+		Select("id", "professional_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at").
 		Preload("Services").
 		Preload("Products").
 		Where("customer_id = ?", customerId).
@@ -85,7 +84,7 @@ func (r *gormAppointmentRepository) FindByCustomerId(customerId string) ([]*appo
 func (r *gormAppointmentRepository) FindByDates(startsAt time.Time, endsAt time.Time) ([]*appointment.Appointment, error) {
 	var a []*appointment.Appointment
 	res := r.db.
-		Select("id", "professional_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at", "canceled_at").
+		Select("id", "professional_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at").
 		Where("starts_at <= ? AND ends_at > ?", endsAt, startsAt).
 		Find(&a)
 
@@ -121,8 +120,17 @@ func (r *gormAppointmentRepository) Save(
 }
 
 func (r *gormAppointmentRepository) Cancel(appo *appointment.Appointment) (*appointment.Appointment, error) {
-	result := r.db.Model(&appo).Update("canceled_at", time.Now())
-	fmt.Println(result.Error)
+	result := r.db.Where("appointment_id = ?", appo.ID).Delete(&appointment.AppointmentService{})
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	result = r.db.Where("appointment_id = ?", appo.ID).Delete(&appointment.AppointmentProduct{})
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	result = r.db.Delete(&appo)
 	if result.Error != nil {
 		return nil, result.Error
 	}

@@ -7,5 +7,4 @@ CREATE TABLE IF NOT EXISTS appointment (
 	starts_at TIMESTAMP NOT NULL, 
 	ends_at TIMESTAMP NOT NULL, 
 	created_at TIMESTAMP NOT NULL,
-	canceled_at TIMESTAMP
 );
