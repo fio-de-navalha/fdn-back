@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
+	"github.com/fio-de-navalha/fdn-back/internal/domain/professional"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
 	"github.com/fio-de-navalha/fdn-back/internal/utils"
 )
@@ -136,4 +137,56 @@ func (s *SalonService) validateSalon(salonId string) (*salon.Salon, error) {
 		}
 	}
 	return res, nil
+}
+
+func (s *SalonService) validateProfessional(professionalId string) (*professional.Professional, error) {
+	res, err := s.professionalService.validateProfessionalById(professionalId)
+	if err != nil {
+		return nil, err
+	}
+	if res == nil {
+		return nil, &utils.AppError{
+			Code:    constants.PROFESSIONAL_NOT_FOUND_ERROR_CODE,
+			Message: constants.PROFESSIONAL_NOT_FOUND_ERROR_MESSAGE,
+		}
+	}
+	return res, nil
+}
+
+func (s *SalonService) validateRequesterPermission(requesterId string, salonMembers []salon.SalonMember) error {
+	isRequesterMember := false
+	for _, member := range salonMembers {
+		if member.ProfessionalId == requesterId {
+			isRequesterMember = true
+			break
+		}
+	}
+	if !isRequesterMember {
+		return &utils.AppError{
+			Code:    constants.PERMISSION_DENIED_ERROR_CODE,
+			Message: "permisison denied",
+		}
+	}
+	return nil
+}
+
+func (s *SalonService) validatePermissionToEditSalon(salonId, requesterId string) (*salon.Salon, error) {
+	log.Println("[SalonService.validatePermissionToEditSalon] - Validating salon:", salonId)
+	sal, err := s.validateSalon(salonId)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Println("[SalonService.validatePermissionToEditSalon] - Validating professional:", requesterId)
+	prof, err := s.validateProfessional(requesterId)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Println("[SalonService.validatePermissionToEditSalon] - Validating requester permission:", requesterId)
+	if err := s.validateRequesterPermission(prof.ID, sal.SalonMembers); err != nil {
+		return nil, err
+	}
+
+	return sal, nil
 }

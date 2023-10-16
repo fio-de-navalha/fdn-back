@@ -42,20 +42,3 @@ func (s *SalonService) AddSalonMember(salonId, professionalId, role, requesterId
 	}
 	return nil
 }
-
-func (s *SalonService) validateRequesterPermission(requesterId string, salonMembers []salon.SalonMember) error {
-	isRequesterMember := false
-	for _, member := range salonMembers {
-		if member.ProfessionalId == requesterId {
-			isRequesterMember = true
-			break
-		}
-	}
-	if !isRequesterMember {
-		return &utils.AppError{
-			Code:    constants.PERMISSION_DENIED_ERROR_CODE,
-			Message: "permisison denied",
-		}
-	}
-	return nil
-}

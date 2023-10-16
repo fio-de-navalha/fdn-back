@@ -8,9 +8,9 @@ import (
 	"github.com/fio-de-navalha/fdn-back/internal/utils"
 )
 
-func (s *SalonService) AddSalonAddress(salonId string, address string) error {
-	log.Println("[SalonService.AddSalonAddress] - Validating salon:", salonId)
-	sal, err := s.validateSalon(salonId)
+func (s *SalonService) AddSalonAddress(salonId, requesterId, address string) error {
+	log.Println("[SalonService.AddSalonAddress] - Validating permissions to add address:", address)
+	sal, err := s.validatePermissionToEditSalon(salonId, requesterId)
 	if err != nil {
 		return err
 	}
@@ -23,7 +23,13 @@ func (s *SalonService) AddSalonAddress(salonId string, address string) error {
 	return nil
 }
 
-func (s *SalonService) UpdateSalonAddress(salonId string, addressId string, address string) (*salon.Address, error) {
+func (s *SalonService) UpdateSalonAddress(salonId, requesterId, addressId, address string) (*salon.Address, error) {
+	log.Println("[SalonService.UpdateSalonAddress] - Validating permissions to update address:", addressId)
+	_, err := s.validatePermissionToEditSalon(salonId, requesterId)
+	if err != nil {
+		return nil, err
+	}
+
 	log.Println("[SalonService.UpdateSalonAddress] - Validating address:", addressId)
 	addr, err := s.validateSalonAddress(addressId, salonId)
 	if err != nil {
@@ -38,7 +44,13 @@ func (s *SalonService) UpdateSalonAddress(salonId string, addressId string, addr
 	return addr, nil
 }
 
-func (s *SalonService) RemoveSalonAddress(salonId string, addressId string) error {
+func (s *SalonService) RemoveSalonAddress(salonId, requesterId, addressId string) error {
+	log.Println("[SalonService.RemoveSalonAddress] - Validating permissions to remove address:", addressId)
+	_, err := s.validatePermissionToEditSalon(salonId, requesterId)
+	if err != nil {
+		return err
+	}
+
 	log.Println("[SalonService.RemoveSalonAddress] - Validating address:", addressId)
 	addr, err := s.validateSalonAddress(addressId, salonId)
 	if err != nil {
