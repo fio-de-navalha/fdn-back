@@ -19,6 +19,11 @@ func (h *SalonController) AddSalonContact(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, "permission denied")
 	}
 
+	salonId := c.Params("salonId")
+	if err := utils.ValidUUID(salonId); err != nil {
+		return helpers.BuildErrorResponse(c, err.Error())
+	}
+
 	body := new(salon.AddSalonContactRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -30,7 +35,7 @@ func (h *SalonController) AddSalonContact(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	if err := h.salonService.AddSalonContact(user.ID, body.Contact); err != nil {
+	if err := h.salonService.AddSalonContact(salonId, user.ID, body.Contact); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 	return c.Status(fiber.StatusCreated).Send(nil)
@@ -38,7 +43,8 @@ func (h *SalonController) AddSalonContact(c *fiber.Ctx) error {
 
 func (h *SalonController) UpdateSalonContact(c *fiber.Ctx) error {
 	log.Println("[SalonController.UpdateSalonContact] - Validating parameters")
-	if _, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser); !ok {
+	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
+	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
 	}
 
@@ -55,7 +61,7 @@ func (h *SalonController) UpdateSalonContact(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	res, err := h.salonService.UpdateSalonContact(salonId, contactId, body.Contact)
+	res, err := h.salonService.UpdateSalonContact(salonId, user.ID,  contactId, body.Contact)
 	if err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
@@ -64,13 +70,14 @@ func (h *SalonController) UpdateSalonContact(c *fiber.Ctx) error {
 
 func (h *SalonController) RemoveSalonContact(c *fiber.Ctx) error {
 	log.Println("[SalonController.RemoveSalonContact] - Validating parameters")
-	if _, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser); !ok {
+	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
+	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
 	}
 
 	salonId := c.Params("salonId")
 	contactId := c.Params("contactId")
-	if err := h.salonService.RemoveSalonContact(salonId, contactId); err != nil {
+	if err := h.salonService.RemoveSalonContact(salonId, user.ID, contactId); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 	return c.Status(fiber.StatusNoContent).Send(nil)

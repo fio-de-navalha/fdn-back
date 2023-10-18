@@ -8,9 +8,9 @@ import (
 	"github.com/fio-de-navalha/fdn-back/internal/utils"
 )
 
-func (s *SalonService) AddSalonContact(salonId string, contact string) error {
-	log.Println("[SalonService.AddSalonContact] - Validating salon:", salonId)
-	sal, err := s.validateSalon(salonId)
+func (s *SalonService) AddSalonContact(salonId, requesterId, contact string) error {
+	log.Println("[SalonService.AddSalonContact] - Validating permissions to add contact:", contact)
+	sal, err := s.validatePermissionToEditSalon(salonId, requesterId)
 	if err != nil {
 		return err
 	}
@@ -23,7 +23,13 @@ func (s *SalonService) AddSalonContact(salonId string, contact string) error {
 	return nil
 }
 
-func (s *SalonService) UpdateSalonContact(salonId string, contactId string, contact string) (*salon.Contact, error) {
+func (s *SalonService) UpdateSalonContact(salonId, requesterId, contactId, contact string) (*salon.Contact, error) {
+	log.Println("[SalonService.UpdateSalonContact] - Validating permissions to update contact:", contactId)
+	_, err := s.validatePermissionToEditSalon(salonId, requesterId)
+	if err != nil {
+		return nil, err
+	}
+	
 	log.Println("[SalonService.UpdateSalonContact] - Validating contact:", contactId)
 	cntt, err := s.validateSalonContact(contactId, salonId)
 	if err != nil {
@@ -38,7 +44,13 @@ func (s *SalonService) UpdateSalonContact(salonId string, contactId string, cont
 	return cntt, nil
 }
 
-func (s *SalonService) RemoveSalonContact(salonId string, contactId string) error {
+func (s *SalonService) RemoveSalonContact(salonId, requesterId, contactId string) error {
+	log.Println("[SalonService.RemoveSalonContact] - Validating permissions to remove contact:", contactId)
+	_, err := s.validatePermissionToEditSalon(salonId, requesterId)
+	if err != nil {
+		return err
+	}
+	
 	log.Println("[SalonService.RemoveSalonContact] - Validating contact:", contactId)
 	cntt, err := s.validateSalonContact(contactId, salonId)
 	if err != nil {
