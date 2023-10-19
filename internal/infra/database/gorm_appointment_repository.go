@@ -55,6 +55,8 @@ func (r *gormAppointmentRepository) FindByProfessionalId(professionalId string, 
 	var a []*appointment.Appointment
 	res := r.db.
 		Select("id", "professional_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at").
+		Preload("Professional").
+		Preload("Customer").
 		Preload("Services").
 		Preload("Products").
 		Where("professional_id = ? AND starts_at > ? AND ends_at < ?", professionalId, startsAt, endsAt).

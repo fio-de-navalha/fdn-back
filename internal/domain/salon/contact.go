@@ -12,6 +12,8 @@ type Contact struct {
 	ID      string `json:"id"`
 	SalonId string `json:"salonId"`
 	Contact string `json:"contact"`
+
+	Salon *Salon
 }
 
 func NewContact(salonId string, contact string) *Contact {

@@ -3,9 +3,24 @@ package appointment
 import (
 	"time"
 
+	"github.com/fio-de-navalha/fdn-back/internal/domain/customer"
+	"github.com/fio-de-navalha/fdn-back/internal/domain/professional"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
 	"github.com/google/uuid"
 )
+
+type AppointmentReponse struct {
+	ID            string                             `json:"id"`
+	DurationInMin int                                `json:"durationInMin"`
+	TotalAmount   int                                `json:"totalAmount"`
+	StartsAt      time.Time                          `json:"startsAt"`
+	EndsAt        time.Time                          `json:"endsAt"`
+	CreatedAt     time.Time                          `json:"createdAt"`
+	Professional  *professional.ProfessionalResponse `json:"professional"`
+	Customer      *customer.CustomerResponse         `json:"customer"`
+	Services      []salon.Service                    `json:"services"`
+	Products      []*salon.Product                   `json:"products"`
+}
 
 type CreateAppointmentRequest struct {
 	SalonId        string    `json:"salonId" validate:"required,uuid4"`
@@ -23,16 +38,18 @@ type SaveAppointment struct {
 }
 
 type Appointment struct {
-	ID             string          `json:"id" gorm:"primaryKey"`
-	ProfessionalId string          `json:"professionalId"`
-	CustomerId     string          `json:"customerId"`
-	DurationInMin  int             `json:"durationInMin"`
-	TotalAmount    int             `json:"totalAmount"`
-	StartsAt       time.Time       `json:"startsAt"`
-	EndsAt         time.Time       `json:"endsAt"`
-	CreatedAt      time.Time       `json:"createdAt"`
-	Services       []salon.Service `json:"services" gorm:"many2many:appointment_service;"`
-	Products       []salon.Product `json:"products" gorm:"many2many:appointment_product;"`
+	ID             string                     `json:"id" gorm:"primaryKey"`
+	ProfessionalId string                     `json:"professionalId"`
+	CustomerId     string                     `json:"customerId"`
+	DurationInMin  int                        `json:"durationInMin"`
+	TotalAmount    int                        `json:"totalAmount"`
+	StartsAt       time.Time                  `json:"startsAt"`
+	EndsAt         time.Time                  `json:"endsAt"`
+	CreatedAt      time.Time                  `json:"createdAt"`
+	Professional   *professional.Professional `json:"professional"`
+	Customer       *customer.Customer         `json:"customer"`
+	Services       []salon.Service            `json:"services" gorm:"many2many:appointment_service"`
+	Products       []*salon.Product           `json:"products" gorm:"many2many:appointment_product"`
 }
 
 func NewAppointment(

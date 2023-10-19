@@ -10,6 +10,8 @@ import (
 	"github.com/fio-de-navalha/fdn-back/config"
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/appointment"
+	"github.com/fio-de-navalha/fdn-back/internal/domain/customer"
+	"github.com/fio-de-navalha/fdn-back/internal/domain/professional"
 	"github.com/fio-de-navalha/fdn-back/internal/utils"
 	"golang.org/x/exp/slices"
 )
@@ -41,7 +43,7 @@ func NewAppointmentService(
 	}
 }
 
-func (s *AppointmentService) GetProfessionalAppointments(professionalId string, startsAt time.Time) ([]*appointment.Appointment, error) {
+func (s *AppointmentService) GetProfessionalAppointments(professionalId string, startsAt time.Time) ([]*appointment.AppointmentReponse, error) {
 	log.Println("[AppointmentService.GetProfessionalAppointments] - Getting appointments from professional:", professionalId)
 	res, err := s.salonService.GetSalonByProfessionalId(professionalId)
 	if err != nil {
@@ -67,21 +69,21 @@ func (s *AppointmentService) GetProfessionalAppointments(professionalId string, 
 		endsAtHour, endsAtMinute, 0, 0,
 		startsAt.Location(),
 	)
-	a, err := s.appointmentRepository.FindByProfessionalId(professionalId, startsAt, endsAt)
+	appointmentList, err := s.appointmentRepository.FindByProfessionalId(professionalId, startsAt, endsAt)
 	if err != nil {
 		return nil, err
 	}
 
-	return a, nil
+	return s.buildAppointmentsResponse(appointmentList), nil
 }
 
-func (s *AppointmentService) GetCustomerAppointments(customerId string) ([]*appointment.Appointment, error) {
+func (s *AppointmentService) GetCustomerAppointments(customerId string) ([]*appointment.AppointmentReponse, error) {
 	log.Println("[AppointmentService.GetCustomerAppointments] - Getting appointments from customer:", customerId)
-	a, err := s.appointmentRepository.FindByCustomerId(customerId)
+	appointmentList, err := s.appointmentRepository.FindByCustomerId(customerId)
 	if err != nil {
 		return nil, err
 	}
-	return a, nil
+	return s.buildAppointmentsResponse(appointmentList), nil
 }
 
 func (s *AppointmentService) GetAppointment(id string) (*appointment.Appointment, error) {
@@ -354,4 +356,35 @@ func (s *AppointmentService) newAppointmentItems(
 	}
 
 	return servicesToSave, productsToSave
+}
+
+func (s *AppointmentService) buildAppointmentsResponse(appointmentList []*appointment.Appointment) []*appointment.AppointmentReponse {
+	var response []*appointment.AppointmentReponse
+
+	for _, a := range appointmentList {
+		response = append(response, &appointment.AppointmentReponse{
+			ID:            a.ID,
+			DurationInMin: a.DurationInMin,
+			TotalAmount:   a.TotalAmount,
+			StartsAt:      a.StartsAt,
+			EndsAt:        a.EndsAt,
+			CreatedAt:     a.CreatedAt,
+			Professional: &professional.ProfessionalResponse{
+				ID:        a.Professional.ID,
+				Name:      a.Professional.Name,
+				Email:     a.Professional.Email,
+				CreatedAt: a.Professional.CreatedAt,
+			},
+			Customer: &customer.CustomerResponse{
+				ID:        a.Customer.ID,
+				Name:      a.Customer.Name,
+				Phone:     a.Customer.Phone,
+				CreatedAt: a.Customer.CreatedAt,
+			},
+			Services: a.Services,
+			Products: a.Products,
+		})
+	}
+
+	return response
 }

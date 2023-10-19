@@ -22,6 +22,8 @@ type Period struct {
 	Day     int    `json:"day"`
 	Open    string `json:"open"`
 	Close   string `json:"close"`
+
+	Salon *Salon
 }
 
 func NewPeriod(salonId string, day int, open string, close string) *Period {

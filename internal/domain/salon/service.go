@@ -36,6 +36,8 @@ type Service struct {
 	Available     bool   `json:"available"`
 	ImageId       string `json:"imageId"`
 	ImageUrl      string `json:"imageUrl"`
+
+	Salon *Salon
 }
 
 func NewService(input CreateServiceRequest) *Service {

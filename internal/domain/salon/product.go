@@ -1,6 +1,8 @@
 package salon
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 type CreateProductRequest struct {
 	SalonId        string `json:"salonId" validate:"required,uuid4,min=1"`
@@ -30,6 +32,8 @@ type Product struct {
 	Available bool   `json:"available"`
 	ImageId   string `json:"imageId"`
 	ImageUrl  string `json:"imageUrl"`
+
+	Salon *Salon
 }
 
 func NewProduct(input CreateProductRequest) *Product {
