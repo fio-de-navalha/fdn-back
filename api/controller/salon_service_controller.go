@@ -6,7 +6,7 @@ import (
 
 	"github.com/fio-de-navalha/fdn-back/api/helpers"
 	"github.com/fio-de-navalha/fdn-back/api/middlewares"
-	"github.com/fio-de-navalha/fdn-back/application"
+	"github.com/fio-de-navalha/fdn-back/app"
 	"github.com/fio-de-navalha/fdn-back/constants"
 	"github.com/fio-de-navalha/fdn-back/domain/salon"
 	"github.com/fio-de-navalha/fdn-back/utils"
@@ -15,10 +15,10 @@ import (
 )
 
 type SalonServiceController struct {
-	serviceService application.ServiceService
+	serviceService app.ServiceService
 }
 
-func NewSalonServiceController(serviceService application.ServiceService) *SalonServiceController {
+func NewSalonServiceController(serviceService app.ServiceService) *SalonServiceController {
 	return &SalonServiceController{
 		serviceService: serviceService,
 	}

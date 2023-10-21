@@ -6,7 +6,7 @@ import (
 
 	"github.com/fio-de-navalha/fdn-back/api/helpers"
 	"github.com/fio-de-navalha/fdn-back/api/middlewares"
-	"github.com/fio-de-navalha/fdn-back/application"
+	"github.com/fio-de-navalha/fdn-back/app"
 	"github.com/fio-de-navalha/fdn-back/constants"
 	"github.com/fio-de-navalha/fdn-back/domain/appointment"
 	"github.com/fio-de-navalha/fdn-back/utils"
@@ -15,10 +15,10 @@ import (
 )
 
 type AppointmentController struct {
-	appointmentService application.AppointmentService
+	appointmentService app.AppointmentService
 }
 
-func NewAppointmentController(appointmentService application.AppointmentService) *AppointmentController {
+func NewAppointmentController(appointmentService app.AppointmentService) *AppointmentController {
 	return &AppointmentController{
 		appointmentService: appointmentService,
 	}

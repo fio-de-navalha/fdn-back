@@ -6,7 +6,7 @@ import (
 
 	"github.com/fio-de-navalha/fdn-back/api/helpers"
 	"github.com/fio-de-navalha/fdn-back/api/middlewares"
-	"github.com/fio-de-navalha/fdn-back/application"
+	"github.com/fio-de-navalha/fdn-back/app"
 	"github.com/fio-de-navalha/fdn-back/constants"
 	"github.com/fio-de-navalha/fdn-back/domain/professional"
 	"github.com/fio-de-navalha/fdn-back/utils"
@@ -15,10 +15,10 @@ import (
 )
 
 type ProfessionalController struct {
-	professionalService application.ProfessionalService
+	professionalService app.ProfessionalService
 }
 
-func NewProfessionalController(professionalService application.ProfessionalService) *ProfessionalController {
+func NewProfessionalController(professionalService app.ProfessionalService) *ProfessionalController {
 	return &ProfessionalController{
 		professionalService: professionalService,
 	}

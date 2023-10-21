@@ -6,7 +6,7 @@ import (
 
 	"github.com/fio-de-navalha/fdn-back/api/helpers"
 	"github.com/fio-de-navalha/fdn-back/api/middlewares"
-	"github.com/fio-de-navalha/fdn-back/application"
+	"github.com/fio-de-navalha/fdn-back/app"
 	"github.com/fio-de-navalha/fdn-back/constants"
 	"github.com/fio-de-navalha/fdn-back/domain/salon"
 	"github.com/fio-de-navalha/fdn-back/utils"
@@ -15,10 +15,10 @@ import (
 )
 
 type SalonProductController struct {
-	productService application.ProductService
+	productService app.ProductService
 }
 
-func NewSalonProductController(productService application.ProductService) *SalonProductController {
+func NewSalonProductController(productService app.ProductService) *SalonProductController {
 	return &SalonProductController{
 		productService: productService,
 	}

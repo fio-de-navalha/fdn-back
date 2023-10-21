@@ -1,19 +1,19 @@
 package container
 
 import (
-	"github.com/fio-de-navalha/fdn-back/application"
+	"github.com/fio-de-navalha/fdn-back/app"
 	"github.com/fio-de-navalha/fdn-back/config"
 	"github.com/fio-de-navalha/fdn-back/infra/database/repositories"
 	"github.com/fio-de-navalha/fdn-back/infra/providers/cloudflare"
 )
 
 var (
-	SalonService        *application.SalonService
-	CustomerService     *application.CustomerService
-	ProfessionalService *application.ProfessionalService
-	ServiceService      *application.ServiceService
-	ProductService      *application.ProductService
-	AppointmentService  *application.AppointmentService
+	SalonService        *app.SalonService
+	CustomerService     *app.CustomerService
+	ProfessionalService *app.ProfessionalService
+	ServiceService      *app.ServiceService
+	ProductService      *app.ProductService
+	AppointmentService  *app.AppointmentService
 )
 
 func LoadContainers() {
@@ -35,18 +35,18 @@ func LoadContainers() {
 		config.CloudFlareEditToken,
 	)
 
-	CustomerService = application.NewCustomerService(customerRepo)
-	ProfessionalService = application.NewProfessionalService(professionalRepo)
-	SalonService = application.NewSalonService(
+	CustomerService = app.NewCustomerService(customerRepo)
+	ProfessionalService = app.NewProfessionalService(professionalRepo)
+	SalonService = app.NewSalonService(
 		salonRepo, salonMemberRepo, addressRepo, contactRepo, periodRepo, *ProfessionalService,
 	)
-	ServiceService = application.NewServiceService(
+	ServiceService = app.NewServiceService(
 		serviceRepo, *SalonService, *ProfessionalService, cloudFlareService,
 	)
-	ProductService = application.NewProductService(
+	ProductService = app.NewProductService(
 		productRepo, *SalonService, *ProfessionalService, cloudFlareService,
 	)
-	AppointmentService = application.NewAppointmentService(
+	AppointmentService = app.NewAppointmentService(
 		appointmentRepo,
 		*ProfessionalService,
 		*CustomerService,

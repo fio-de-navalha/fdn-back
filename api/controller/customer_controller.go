@@ -6,7 +6,7 @@ import (
 
 	"github.com/fio-de-navalha/fdn-back/api/helpers"
 	"github.com/fio-de-navalha/fdn-back/api/middlewares"
-	"github.com/fio-de-navalha/fdn-back/application"
+	"github.com/fio-de-navalha/fdn-back/app"
 	"github.com/fio-de-navalha/fdn-back/constants"
 	"github.com/fio-de-navalha/fdn-back/domain/customer"
 	"github.com/fio-de-navalha/fdn-back/utils"
@@ -15,10 +15,10 @@ import (
 )
 
 type CustomerController struct {
-	customerService application.CustomerService
+	customerService app.CustomerService
 }
 
-func NewCustomerController(customerService application.CustomerService) *CustomerController {
+func NewCustomerController(customerService app.CustomerService) *CustomerController {
 	return &CustomerController{
 		customerService: customerService,
 	}
