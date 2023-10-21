@@ -5,10 +5,10 @@ import (
 
 	"github.com/fio-de-navalha/fdn-back/api/helpers"
 	"github.com/fio-de-navalha/fdn-back/api/middlewares"
-	"github.com/fio-de-navalha/fdn-back/internal/application"
-	"github.com/fio-de-navalha/fdn-back/internal/constants"
-	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
-	"github.com/fio-de-navalha/fdn-back/internal/utils"
+	"github.com/fio-de-navalha/fdn-back/application"
+	"github.com/fio-de-navalha/fdn-back/constants"
+	"github.com/fio-de-navalha/fdn-back/domain/salon"
+	"github.com/fio-de-navalha/fdn-back/utils"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )

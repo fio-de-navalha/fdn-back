@@ -3,7 +3,7 @@ package routes
 import (
 	"github.com/fio-de-navalha/fdn-back/api/controller"
 	"github.com/fio-de-navalha/fdn-back/api/middlewares"
-	"github.com/fio-de-navalha/fdn-back/internal/infra/container"
+	"github.com/fio-de-navalha/fdn-back/infra/container"
 	"github.com/gofiber/fiber/v2"
 )
 
