@@ -3,7 +3,7 @@ package container
 import (
 	"github.com/fio-de-navalha/fdn-back/config"
 	"github.com/fio-de-navalha/fdn-back/internal/application"
-	"github.com/fio-de-navalha/fdn-back/internal/infra/database"
+	"github.com/fio-de-navalha/fdn-back/internal/infra/database/repositories"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/providers/cloudflare"
 )
 
@@ -17,16 +17,16 @@ var (
 )
 
 func LoadContainers() {
-	salonRepo := database.NewGormSalonRepository()
-	salonMemberRepo := database.NewGormSalonMemberRepository()
-	customerRepo := database.NewGormCustomerRepository()
-	addressRepo := database.NewGormSalonAddressRepository()
-	contactRepo := database.NewGormSalonContactRepository()
-	periodRepo := database.NewGormSalonPeriodRepository()
-	professionalRepo := database.NewGormProfessionalRepository()
-	serviceRepo := database.NewGormSalonServiceRepository()
-	productRepo := database.NewGormSalonProductRepository()
-	appointmentRepo := database.NewGormAppointmentRepository()
+	salonRepo := repositories.NewGormSalonRepository()
+	salonMemberRepo := repositories.NewGormSalonMemberRepository()
+	customerRepo := repositories.NewGormCustomerRepository()
+	addressRepo := repositories.NewGormSalonAddressRepository()
+	contactRepo := repositories.NewGormSalonContactRepository()
+	periodRepo := repositories.NewGormSalonPeriodRepository()
+	professionalRepo := repositories.NewGormProfessionalRepository()
+	serviceRepo := repositories.NewGormSalonServiceRepository()
+	productRepo := repositories.NewGormSalonProductRepository()
+	appointmentRepo := repositories.NewGormAppointmentRepository()
 
 	cloudFlareService := cloudflare.NewCloudFlareService(
 		config.CloudFlareBaseURL,
