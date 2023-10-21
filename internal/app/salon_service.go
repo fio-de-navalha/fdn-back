@@ -6,7 +6,7 @@ import (
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/professional"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
-	"github.com/fio-de-navalha/fdn-back/internal/utils"
+	"github.com/fio-de-navalha/fdn-back/pkg/errors"
 )
 
 type SalonService struct {
@@ -71,14 +71,14 @@ func (s *SalonService) GetSalonByProfessionalId(professionalId string) (*salon.S
 
 	salonMember, err := s.salonMemberRepository.FindByProfessionalId(professionalId)
 	if err != nil {
-		return nil, &utils.AppError{
+		return nil, &errors.AppError{
 			Code:    constants.SALON_NOT_FOUND_ERROR_CODE,
 			Message: constants.SALON_NOT_FOUND_ERROR_MESSAGE,
 		}
 	}
 	res, err := s.salonRepository.FindById(salonMember.SalonId)
 	if err != nil {
-		return nil, &utils.AppError{
+		return nil, &errors.AppError{
 			Code:    constants.SALON_NOT_FOUND_ERROR_CODE,
 			Message: constants.SALON_NOT_FOUND_ERROR_MESSAGE,
 		}
@@ -131,7 +131,7 @@ func (s *SalonService) validateSalon(salonId string) (*salon.Salon, error) {
 		return nil, err
 	}
 	if res == nil {
-		return nil, &utils.AppError{
+		return nil, &errors.AppError{
 			Code:    constants.SALON_NOT_FOUND_ERROR_CODE,
 			Message: constants.SALON_NOT_FOUND_ERROR_MESSAGE,
 		}
@@ -145,7 +145,7 @@ func (s *SalonService) validateProfessional(professionalId string) (*professiona
 		return nil, err
 	}
 	if res == nil {
-		return nil, &utils.AppError{
+		return nil, &errors.AppError{
 			Code:    constants.PROFESSIONAL_NOT_FOUND_ERROR_CODE,
 			Message: constants.PROFESSIONAL_NOT_FOUND_ERROR_MESSAGE,
 		}
@@ -162,7 +162,7 @@ func (s *SalonService) validateRequesterPermission(requesterId string, salonMemb
 		}
 	}
 	if !isRequesterMember {
-		return &utils.AppError{
+		return &errors.AppError{
 			Code:    constants.PERMISSION_DENIED_ERROR_CODE,
 			Message: "permisison denied",
 		}

@@ -5,7 +5,8 @@ import (
 
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
-	"github.com/fio-de-navalha/fdn-back/internal/utils"
+	"github.com/fio-de-navalha/fdn-back/pkg/errors"
+	"github.com/fio-de-navalha/fdn-back/pkg/validation"
 )
 
 func (s *SalonService) GetSalonPeriodByDay(salonId string, day int) (*salon.Period, error) {
@@ -33,10 +34,10 @@ func (s *SalonService) AddSalonPeriod(salonId, requesterId string, input salon.A
 	if err := s.validateRequesterPermission(requesterId, sal.SalonMembers); err != nil {
 		return err
 	}
-	if err := utils.ValidateDatetime(input.Open, "open"); err != nil {
+	if err := validation.ValidateDatetime(input.Open, "open"); err != nil {
 		return err
 	}
-	if err := utils.ValidateDatetime(input.Close, "close"); err != nil {
+	if err := validation.ValidateDatetime(input.Close, "close"); err != nil {
 		return err
 	}
 
@@ -70,13 +71,13 @@ func (s *SalonService) UpdateSalonPeriod(salonId, requesterId, periodId string, 
 		per.Day = *input.Day
 	}
 	if input.Open != nil {
-		if err := utils.ValidateDatetime(*input.Open, "open"); err != nil {
+		if err := validation.ValidateDatetime(*input.Open, "open"); err != nil {
 			return nil, err
 		}
 		per.Open = *input.Open
 	}
 	if input.Close != nil {
-		if err := utils.ValidateDatetime(*input.Close, "close"); err != nil {
+		if err := validation.ValidateDatetime(*input.Close, "close"); err != nil {
 			return nil, err
 		}
 		per.Close = *input.Close
@@ -120,7 +121,7 @@ func (s *SalonService) validateSalonPeriod(periodId, salonId string) (*salon.Per
 		return nil, err
 	}
 	if period == nil {
-		return nil, &utils.AppError{
+		return nil, &errors.AppError{
 			Code:    constants.PERIOD_NOT_FOUND_ERROR_CODE,
 			Message: constants.PERIOD_NOT_FOUND_ERROR_MESSAGE,
 		}

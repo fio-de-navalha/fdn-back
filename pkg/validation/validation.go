@@ -1,15 +1,15 @@
-package utils
+package validation
 
 import (
 	"errors"
 	"time"
 
-	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/google/uuid"
 )
 
 func ValidateDatetime(datetimeStr string, prefix string) error {
-	parsedTime, err := time.Parse(constants.OpenCloseLayout, datetimeStr)
+	layout := "15:04"
+	parsedTime, err := time.Parse(layout, datetimeStr)
 	if err != nil {
 		return err
 	}

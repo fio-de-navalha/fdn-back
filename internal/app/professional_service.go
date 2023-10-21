@@ -6,7 +6,7 @@ import (
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/professional"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/encryption"
-	"github.com/fio-de-navalha/fdn-back/internal/utils"
+	"github.com/fio-de-navalha/fdn-back/pkg/errors"
 )
 
 type ProfessionalService struct {
@@ -60,7 +60,7 @@ func (s *ProfessionalService) RegisterProfessional(input professional.RegisterPr
 		return nil, err
 	}
 	if profExists != nil {
-		return nil, &utils.AppError{
+		return nil, &errors.AppError{
 			Code:    constants.PROFESSIONAL_ALREADY_EXISTS_ERROR_CODE,
 			Message: constants.PROFESSIONAL_ALREADY_EXISTS_ERROR_MESSAGE,
 		}
@@ -108,7 +108,7 @@ func (s *ProfessionalService) LoginProfessional(input professional.LoginProfessi
 		return nil, err
 	}
 	if res == nil {
-		return nil, &utils.AppError{
+		return nil, &errors.AppError{
 			Code:    constants.INVALID_CREDENTIAL_ERROR_CODE,
 			Message: constants.INVALID_CREDENTIAL_ERROR_MESSAGE,
 		}
@@ -116,7 +116,7 @@ func (s *ProfessionalService) LoginProfessional(input professional.LoginProfessi
 
 	validPassword := encryption.ComparePassword(res.Password, input.Password)
 	if !validPassword {
-		return nil, &utils.AppError{
+		return nil, &errors.AppError{
 			Code:    constants.INVALID_CREDENTIAL_ERROR_CODE,
 			Message: constants.INVALID_CREDENTIAL_ERROR_MESSAGE,
 		}
@@ -145,7 +145,7 @@ func (s *ProfessionalService) validateProfessionalById(professionalId string) (*
 		return nil, err
 	}
 	if prof == nil {
-		return nil, &utils.AppError{
+		return nil, &errors.AppError{
 			Code:    constants.PROFESSIONAL_NOT_FOUND_ERROR_CODE,
 			Message: constants.PROFESSIONAL_NOT_FOUND_ERROR_MESSAGE,
 		}

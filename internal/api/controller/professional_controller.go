@@ -9,7 +9,7 @@ import (
 	"github.com/fio-de-navalha/fdn-back/internal/app"
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/professional"
-	"github.com/fio-de-navalha/fdn-back/internal/utils"
+	"github.com/fio-de-navalha/fdn-back/pkg/utils"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 )

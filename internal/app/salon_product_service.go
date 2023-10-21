@@ -7,7 +7,7 @@ import (
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/image"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
-	"github.com/fio-de-navalha/fdn-back/internal/utils"
+	"github.com/fio-de-navalha/fdn-back/pkg/errors"
 )
 
 type ProductService struct {
@@ -38,7 +38,7 @@ func (s *ProductService) GetProductsBySalonId(salonId string) ([]*salon.Product,
 		return nil, err
 	}
 	if sal == nil {
-		return nil, &utils.AppError{
+		return nil, &errors.AppError{
 			Code:    constants.SALON_NOT_FOUND_ERROR_CODE,
 			Message: constants.SALON_NOT_FOUND_ERROR_MESSAGE,
 		}
@@ -164,7 +164,7 @@ func (s *ProductService) validateProduct(productId string) (*salon.Product, erro
 		return nil, err
 	}
 	if pro == nil {
-		return nil, &utils.AppError{
+		return nil, &errors.AppError{
 			Code:    constants.PRODUCT_NOT_FOUND_ERROR_CODE,
 			Message: constants.PRODUCT_NOT_FOUND_ERROR_MESSAGE,
 		}

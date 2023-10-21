@@ -11,7 +11,7 @@ import (
 
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/image"
-	"github.com/fio-de-navalha/fdn-back/internal/utils"
+	"github.com/fio-de-navalha/fdn-back/pkg/errors"
 )
 
 type CloudFlareService struct {
@@ -55,7 +55,7 @@ func (s *CloudFlareService) GetImageById(imageId string) (*image.ImageResponse, 
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode >= 500 {
-		return nil, &utils.AppError{
+		return nil, &errors.AppError{
 			Code:    constants.CLOUDFLARE_UNAVAILABLE_ERROR_CODE,
 			Message: "cloudflare service unavailable",
 		}
@@ -121,7 +121,7 @@ func (s *CloudFlareService) UploadImage(file *multipart.FileHeader) (*image.Imag
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode >= 500 {
-		return nil, &utils.AppError{
+		return nil, &errors.AppError{
 			Code:    constants.CLOUDFLARE_UNAVAILABLE_ERROR_CODE,
 			Message: "cloudflare service unavailable",
 		}
@@ -200,7 +200,7 @@ func (s *CloudFlareService) DeleteImage(imageId string) error {
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode >= 500 {
-		return &utils.AppError{
+		return &errors.AppError{
 			Code:    constants.CLOUDFLARE_UNAVAILABLE_ERROR_CODE,
 			Message: "cloudflare service unavailable",
 		}

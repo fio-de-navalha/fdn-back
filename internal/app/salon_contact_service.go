@@ -5,7 +5,7 @@ import (
 
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
-	"github.com/fio-de-navalha/fdn-back/internal/utils"
+	"github.com/fio-de-navalha/fdn-back/pkg/errors"
 )
 
 func (s *SalonService) AddSalonContact(salonId, requesterId, contact string) error {
@@ -70,7 +70,7 @@ func (s *SalonService) validateSalonContact(contactId, salonId string) (*salon.C
 		return nil, err
 	}
 	if cntt == nil {
-		return nil, &utils.AppError{
+		return nil, &errors.AppError{
 			Code:    constants.CONTACT_NOT_FOUND_ERROR_CODE,
 			Message: constants.CONTACT_NOT_FOUND_ERROR_MESSAGE,
 		}

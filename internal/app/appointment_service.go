@@ -12,7 +12,7 @@ import (
 	"github.com/fio-de-navalha/fdn-back/internal/domain/appointment"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/customer"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/professional"
-	"github.com/fio-de-navalha/fdn-back/internal/utils"
+	"github.com/fio-de-navalha/fdn-back/pkg/errors"
 	"golang.org/x/exp/slices"
 )
 
@@ -138,7 +138,7 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 			errs <- err
 		}
 		if len(services) == 0 {
-			errs <- &utils.AppError{
+			errs <- &errors.AppError{
 				Code:    constants.SERVICE_NOT_FOUND_ERROR_CODE,
 				Message: constants.SERVICE_NOT_FOUND_ERROR_MESSAGE,
 			}
@@ -214,20 +214,20 @@ func (s *AppointmentService) CancelApppointment(requesterId string, appointmentI
 		return err
 	}
 	if appo == nil {
-		return &utils.AppError{
+		return &errors.AppError{
 			Code:    constants.APPOINTMENT_NOT_FOUND_ERROR_CODE,
 			Message: constants.APPOINTMENT_NOT_FOUND_ERROR_MESSAGE,
 		}
 	}
 
 	if requesterId != appo.ProfessionalId && requesterId != appo.CustomerId {
-		return &utils.AppError{
+		return &errors.AppError{
 			Code:    constants.PERMISSION_DENIED_ERROR_CODE,
 			Message: constants.PERMISSION_DENIED_ERROR_MESSAGE,
 		}
 	}
 	if appo.StartsAt.Before(time.Now()) {
-		return &utils.AppError{
+		return &errors.AppError{
 			Code:    constants.CANNOT_CANCEL_PAST_APPOINTMENT_ERROR_CODE,
 			Message: constants.CANNOT_CANCEL_PAST_APPOINTMENT_ERROR_MESSAGE,
 		}
@@ -255,7 +255,7 @@ func (s *AppointmentService) validateEntity(
 		if context == "customer" {
 			code = constants.CUSTOMER_NOT_FOUND_ERROR_CODE
 		}
-		return &utils.AppError{
+		return &errors.AppError{
 			Code:    code,
 			Message: context + " not found",
 		}
@@ -270,7 +270,7 @@ func (s *AppointmentService) validateAppointmentTimeRange(salonId string, starts
 		return err
 	}
 	if per == nil {
-		return &utils.AppError{
+		return &errors.AppError{
 			Code:    constants.SALON_CLOSED_ERROR_CODE,
 			Message: constants.SALON_CLOSED_ERROR_MESSAGE,
 		}
@@ -281,7 +281,7 @@ func (s *AppointmentService) validateAppointmentTimeRange(salonId string, starts
 	openMinute, _ := strconv.Atoi(openHourStr[1])
 	openTime := time.Date(startsAt.Year(), startsAt.Month(), startsAt.Day(), openHour, openMinute, 0, 0, config.GMTMinus3)
 	if startsAt.Before(openTime) {
-		return &utils.AppError{
+		return &errors.AppError{
 			Code:    constants.SALON_CLOSED_ERROR_CODE,
 			Message: constants.SALON_CLOSED_ERROR_MESSAGE,
 		}
@@ -292,7 +292,7 @@ func (s *AppointmentService) validateAppointmentTimeRange(salonId string, starts
 	closeMinute, _ := strconv.Atoi(closeHourStr[1])
 	closeTime := time.Date(startsAt.Year(), startsAt.Month(), startsAt.Day(), closeHour, closeMinute, 0, 0, config.GMTMinus3)
 	if startsAt.After(closeTime) {
-		return &utils.AppError{
+		return &errors.AppError{
 			Code:    constants.SALON_CLOSED_ERROR_CODE,
 			Message: constants.SALON_CLOSED_ERROR_MESSAGE,
 		}
@@ -303,7 +303,7 @@ func (s *AppointmentService) validateAppointmentTimeRange(salonId string, starts
 		return err
 	}
 	if len(appos) > 0 {
-		return &utils.AppError{
+		return &errors.AppError{
 			Code:    constants.APPOINTMENT_TIME_UNAVAILABLE_ERROR_CODE,
 			Message: constants.APPOINTMENT_TIME_UNAVAILABLE_ERROR_MESSAGE,
 		}
@@ -327,7 +327,7 @@ func (s *AppointmentService) validateAssociation(context string, input []string,
 		if context == "products" {
 			code = constants.PRODUCT_NOT_FOUND_ERROR_CODE
 		}
-		return &utils.AppError{
+		return &errors.AppError{
 			Code:    code,
 			Message: context + " not found:" + strings.Join(itemNotFound, ", "),
 		}

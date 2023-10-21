@@ -8,7 +8,7 @@ import (
 	"github.com/fio-de-navalha/fdn-back/internal/domain/image"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/professional"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
-	"github.com/fio-de-navalha/fdn-back/internal/utils"
+	"github.com/fio-de-navalha/fdn-back/pkg/errors"
 )
 
 type ServiceService struct {
@@ -169,7 +169,7 @@ func (s *ServiceService) validateSalon(salonId string) (*salon.Salon, error) {
 		return nil, err
 	}
 	if sal == nil {
-		return nil, &utils.AppError{
+		return nil, &errors.AppError{
 			Code:    constants.SALON_NOT_FOUND_ERROR_CODE,
 			Message: constants.SALON_NOT_FOUND_ERROR_MESSAGE,
 		}
@@ -183,7 +183,7 @@ func (s *ServiceService) validateProfessional(professionalId string) (*professio
 		return nil, err
 	}
 	if prof == nil {
-		return nil, &utils.AppError{
+		return nil, &errors.AppError{
 			Code:    constants.PROFESSIONAL_NOT_FOUND_ERROR_CODE,
 			Message: "permisison denied",
 		}
@@ -197,7 +197,7 @@ func (s *ServiceService) validateService(serviceId string) (*salon.Service, erro
 		return nil, err
 	}
 	if ser == nil {
-		return nil, &utils.AppError{
+		return nil, &errors.AppError{
 			Code:    constants.SERVICE_NOT_FOUND_ERROR_CODE,
 			Message: constants.SERVICE_NOT_FOUND_ERROR_MESSAGE,
 		}
