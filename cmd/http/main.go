@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/fio-de-navalha/fdn-back/api/routes"
 	"github.com/fio-de-navalha/fdn-back/config"
-	"github.com/fio-de-navalha/fdn-back/infra/container"
+	"github.com/fio-de-navalha/fdn-back/internal/api/routes"
+	"github.com/fio-de-navalha/fdn-back/internal/infra/container"
 
 	"github.com/gofiber/contrib/swagger"
 	"github.com/gofiber/fiber/v2"
