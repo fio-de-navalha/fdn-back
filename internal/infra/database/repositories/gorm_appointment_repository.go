@@ -78,6 +78,7 @@ func (r *gormAppointmentRepository) FindByCustomerId(customerId string) ([]*appo
 		Preload("Services").
 		Preload("Products").
 		Where("customer_id = ?", customerId).
+		Order("starts_at desc").
 		Find(&a)
 
 	if res.Error != nil {
