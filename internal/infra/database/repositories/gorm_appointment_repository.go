@@ -73,6 +73,8 @@ func (r *gormAppointmentRepository) FindByCustomerId(customerId string) ([]*appo
 	var a []*appointment.Appointment
 	res := r.db.
 		Select("id", "professional_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at").
+		Preload("Professional").
+		Preload("Customer").
 		Preload("Services").
 		Preload("Products").
 		Where("customer_id = ?", customerId).
