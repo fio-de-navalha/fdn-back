@@ -5,7 +5,7 @@ import (
 
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/customer"
-	"github.com/fio-de-navalha/fdn-back/internal/infra/cryptography"
+	"github.com/fio-de-navalha/fdn-back/internal/infra/encryption"
 	"github.com/fio-de-navalha/fdn-back/internal/utils"
 )
 
@@ -54,7 +54,7 @@ func (s *CustomerService) RegisterCustomer(input customer.RegisterRequest) (*cus
 		return nil, err
 	}
 
-	hashedPassword, err := cryptography.HashPassword(input.Password)
+	hashedPassword, err := encryption.HashPassword(input.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +73,7 @@ func (s *CustomerService) RegisterCustomer(input customer.RegisterRequest) (*cus
 	}
 
 	log.Println("[CustomerService.RegisterCustomer] - Generating token")
-	token, err := cryptography.GenerateToken(cus.ID, "customer")
+	token, err := encryption.GenerateToken(cus.ID, "customer")
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ func (s *CustomerService) LoginCustomer(input customer.LoginRequest) (*customer.
 		}
 	}
 
-	validPassword := cryptography.ComparePassword(cus.Password, input.Password)
+	validPassword := encryption.ComparePassword(cus.Password, input.Password)
 	if !validPassword {
 		return nil, &utils.AppError{
 			Code:    constants.INVALID_CREDENTIAL_ERROR_CODE,
@@ -111,7 +111,7 @@ func (s *CustomerService) LoginCustomer(input customer.LoginRequest) (*customer.
 	}
 
 	log.Println("[CustomerService.LoginCustomer] - Generating token")
-	token, err := cryptography.GenerateToken(cus.ID, "customer")
+	token, err := encryption.GenerateToken(cus.ID, "customer")
 	if err != nil {
 		return nil, err
 	}

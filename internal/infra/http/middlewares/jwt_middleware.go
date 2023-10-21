@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
-	"github.com/fio-de-navalha/fdn-back/internal/infra/cryptography"
+	"github.com/fio-de-navalha/fdn-back/internal/infra/encryption"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -26,7 +26,7 @@ func extractAndValidateToken(c *fiber.Ctx) (jwt.MapClaims, error) {
 			"error": "Missing JWT Token",
 		})
 	}
-	jwtToken, err := cryptography.ParseToken(token[1])
+	jwtToken, err := encryption.ParseToken(token[1])
 	if err != nil {
 		return nil, c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "Unauthorized",

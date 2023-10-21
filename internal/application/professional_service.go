@@ -5,7 +5,7 @@ import (
 
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/professional"
-	"github.com/fio-de-navalha/fdn-back/internal/infra/cryptography"
+	"github.com/fio-de-navalha/fdn-back/internal/infra/encryption"
 	"github.com/fio-de-navalha/fdn-back/internal/utils"
 )
 
@@ -66,7 +66,7 @@ func (s *ProfessionalService) RegisterProfessional(input professional.RegisterPr
 		}
 	}
 
-	hashedPassword, err := cryptography.HashPassword(input.Password)
+	hashedPassword, err := encryption.HashPassword(input.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (s *ProfessionalService) RegisterProfessional(input professional.RegisterPr
 	}
 
 	log.Println("[ProfessionalService.RegisterProfessional] - Generating token")
-	token, err := cryptography.GenerateToken(res.ID, "professional")
+	token, err := encryption.GenerateToken(res.ID, "professional")
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +114,7 @@ func (s *ProfessionalService) LoginProfessional(input professional.LoginProfessi
 		}
 	}
 
-	validPassword := cryptography.ComparePassword(res.Password, input.Password)
+	validPassword := encryption.ComparePassword(res.Password, input.Password)
 	if !validPassword {
 		return nil, &utils.AppError{
 			Code:    constants.INVALID_CREDENTIAL_ERROR_CODE,
@@ -123,7 +123,7 @@ func (s *ProfessionalService) LoginProfessional(input professional.LoginProfessi
 	}
 
 	log.Println("[ProfessionalService.LoginProfessional] - Generating token")
-	token, err := cryptography.GenerateToken(res.ID, "professional")
+	token, err := encryption.GenerateToken(res.ID, "professional")
 	if err != nil {
 		return nil, err
 	}
