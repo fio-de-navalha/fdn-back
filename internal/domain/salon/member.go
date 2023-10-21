@@ -3,7 +3,6 @@ package salon
 import (
 	"time"
 
-	"github.com/fio-de-navalha/fdn-back/internal/domain/professional"
 	"github.com/google/uuid"
 )
 
@@ -18,9 +17,6 @@ type SalonMember struct {
 	ProfessionalId string    `json:"professionalId"`
 	Role           string    `json:"role"`
 	CreatedAt      time.Time `json:"createdAt"`
-
-	Salon        *Salon
-	Professional *professional.Professional
 }
 
 func NewSalonMember(salonId string, professionalId string, role string) *SalonMember {

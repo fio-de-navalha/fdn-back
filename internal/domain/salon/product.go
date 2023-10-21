@@ -32,8 +32,6 @@ type Product struct {
 	Available bool   `json:"available"`
 	ImageId   string `json:"imageId"`
 	ImageUrl  string `json:"imageUrl"`
-
-	Salon *Salon
 }
 
 func NewProduct(input CreateProductRequest) *Product {

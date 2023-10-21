@@ -12,8 +12,6 @@ type Address struct {
 	ID      string `json:"id"`
 	SalonId string `json:"salonId"`
 	Address string `json:"address"`
-
-	Salon *Salon
 }
 
 func NewAddress(salonId string, address string) *Address {
