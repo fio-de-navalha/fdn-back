@@ -2,13 +2,13 @@ package cloudflare
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"mime/multipart"
 	"net/http"
 
+	"github.com/bytedance/sonic"
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/image"
 	"github.com/fio-de-navalha/fdn-back/pkg/errors"
@@ -68,7 +68,7 @@ func (s *CloudFlareService) GetImageById(imageId string) (*image.ImageResponse, 
 	}
 
 	var response singleImageResponse
-	if err := json.Unmarshal(body, &response); err != nil {
+	if err := sonic.Unmarshal(body, &response); err != nil {
 		fmt.Println("Error parsing JSON:", err)
 		return nil, err
 	}
@@ -134,7 +134,7 @@ func (s *CloudFlareService) UploadImage(file *multipart.FileHeader) (*image.Imag
 	}
 
 	var response singleImageResponse
-	if err := json.Unmarshal(resBody, &response); err != nil {
+	if err := sonic.Unmarshal(resBody, &response); err != nil {
 		fmt.Println("Error parsing JSON:", err)
 		return nil, err
 	}

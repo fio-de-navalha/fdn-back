@@ -1,12 +1,13 @@
 package utils
 
 import (
-	"encoding/json"
 	"time"
+
+	"github.com/bytedance/sonic"
 )
 
 func StructStringfy(data interface{}) string {
-	dataJSON, _ := json.Marshal(data)
+	dataJSON, _ := sonic.Marshal(data)
 	return string(dataJSON)
 }
 
