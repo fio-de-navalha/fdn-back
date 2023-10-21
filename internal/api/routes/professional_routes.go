@@ -8,7 +8,8 @@ import (
 )
 
 func setupProfessionalRouter(router fiber.Router) {
-	professionalController := controller.NewProfessionalController(*container.ProfessionalService)
+	professionalService := container.LoadProfessionalService()
+	professionalController := controller.NewProfessionalController(*professionalService)
 
 	professionals := router.Group("/professional")
 	professionals.Get("/:id", professionalController.GetProfessionalById)

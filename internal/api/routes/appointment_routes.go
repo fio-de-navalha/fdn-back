@@ -8,7 +8,8 @@ import (
 )
 
 func setupAppointmentRouter(router fiber.Router) {
-	appointmentController := controller.NewAppointmentController(*container.AppointmentService)
+	appointmentService := container.LoadAppointmentService()
+	appointmentController := controller.NewAppointmentController(*appointmentService)
 
 	router.Get("/professional/:professionalId/appointments", appointmentController.GetProfessionalAppointments)
 	router.Get("/customer/:customerId/appointments", appointmentController.GetCustomerAppointments)

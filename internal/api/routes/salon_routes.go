@@ -8,7 +8,8 @@ import (
 )
 
 func setupSalonRouter(router fiber.Router) {
-	salonController := controller.NewSalonController(*container.SalonService)
+	salonService := container.LoadSalonService()
+	salonController := controller.NewSalonController(*salonService)
 
 	salons := router.Group("/salon")
 	salons.Get("/:salonId", salonController.GetSalonById)
