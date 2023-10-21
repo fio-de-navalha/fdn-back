@@ -45,7 +45,7 @@ func StartServer() {
 
 	app.Use(swagger.New(swagger.Config{
 		BasePath: "/api",
-		FilePath: "./docs/swagger.json",
+		FilePath: "./api/swagger.json",
 	}))
 
 	fmt.Println("Http Server running... 😎👍")
