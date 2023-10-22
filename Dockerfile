@@ -31,6 +31,6 @@ RUN apk --no-cache add tzdata
 COPY --from=base /app/main .
 COPY --from=base /app/.env .
 COPY --from=base /app/api ./api
-COPY --from=base /app/internal/infra/database/migrations/ ./internal/infra/database/migrations
+COPY --from=base /app/db/ ./db
 EXPOSE 8080
 CMD ["./main"]

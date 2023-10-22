@@ -1,8 +1,8 @@
 package config
 
 import (
+	"github.com/fio-de-navalha/fdn-back/db/migrations"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/database"
-	"github.com/fio-de-navalha/fdn-back/internal/infra/database/migrations"
 )
 
 func LoadConfigs() {
