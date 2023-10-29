@@ -17,22 +17,26 @@ func (h *SalonController) AddSalonContact(c *fiber.Ctx) error {
 	log.Println("[SalonController.AddSalonContact] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
+		log.Println("[SalonController.AddSalonContact] - permission denied")
 		return helpers.BuildErrorResponse(c, "permission denied")
 	}
 
 	salonId := c.Params("salonId")
 	if err := validation.ValidUUID(salonId); err != nil {
+		log.Println("[SalonController.AddSalonContact] - invalid salonId")
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
 	body := new(salon.AddSalonContactRequest)
+	log.Println("[SalonController.AddSalonContact] - Request body:", utils.StructStringfy(&body))
 	if err := c.BodyParser(&body); err != nil {
+		log.Println("[SalonController.AddSalonContact] - unable to parse body")
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[SalonController.AddSalonContact] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
+		log.Println("[SalonController.AddSalonContact] - request body validation error")
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
@@ -46,19 +50,22 @@ func (h *SalonController) UpdateSalonContact(c *fiber.Ctx) error {
 	log.Println("[SalonController.UpdateSalonContact] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
+		log.Println("[SalonController.UpdateSalonContact] - permission denied")
 		return helpers.BuildErrorResponse(c, "permission denied")
 	}
 
 	salonId := c.Params("salonId")
 	contactId := c.Params("contactId")
 	body := new(salon.AddSalonContactRequest)
+	log.Println("[SalonController.UpdateSalonContact] - Request body:", utils.StructStringfy(&body))
 	if err := c.BodyParser(&body); err != nil {
+		log.Println("[SalonController.UpdateSalonContact] - unable to parse body")
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[SalonController.UpdateSalonContact] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
+		log.Println("[SalonController.UpdateSalonContact] - request body validation error")
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
