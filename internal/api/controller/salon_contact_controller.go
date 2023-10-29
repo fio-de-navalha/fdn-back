@@ -28,12 +28,12 @@ func (h *SalonController) AddSalonContact(c *fiber.Ctx) error {
 	}
 
 	body := new(salon.AddSalonContactRequest)
-	log.Println("[SalonController.AddSalonContact] - Request body:", utils.StructStringfy(&body))
 	if err := c.BodyParser(&body); err != nil {
 		log.Println("[SalonController.AddSalonContact] - unable to parse body")
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
-
+	
+	log.Println("[SalonController.AddSalonContact] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		log.Println("[SalonController.AddSalonContact] - request body validation error")
@@ -57,12 +57,12 @@ func (h *SalonController) UpdateSalonContact(c *fiber.Ctx) error {
 	salonId := c.Params("salonId")
 	contactId := c.Params("contactId")
 	body := new(salon.AddSalonContactRequest)
-	log.Println("[SalonController.UpdateSalonContact] - Request body:", utils.StructStringfy(&body))
 	if err := c.BodyParser(&body); err != nil {
 		log.Println("[SalonController.UpdateSalonContact] - unable to parse body")
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
-
+	
+	log.Println("[SalonController.UpdateSalonContact] - Request body:", utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		log.Println("[SalonController.UpdateSalonContact] - request body validation error")
