@@ -31,3 +31,13 @@ type AuthResponse struct {
 	AccessToken string               `json:"access_token"`
 	Customer    AuthCustomerResponse `json:"customer"`
 }
+
+type ForgotPasswordRequest struct {
+	Phone    string `json:"phone"`
+	Question string `json:"question" validate:"required"`
+	Answer   string `json:"answer" validate:"required"`
+}
+
+type ForgotPasswordResponse struct {
+	VerificationCode int `json:"verificationCode"`
+}

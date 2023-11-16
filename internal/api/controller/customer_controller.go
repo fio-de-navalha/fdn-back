@@ -115,3 +115,29 @@ func (h *CustomerController) MeCustomer(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(res)
 }
+
+func (h *CustomerController) ForgotPassword(c *fiber.Ctx) error {
+	log.Println("[CustomerController.ForgotPassword] - Validating parameters")
+	body := new(customer.ForgotPasswordRequest)
+	if err := c.BodyParser(&body); err != nil {
+		return helpers.BuildErrorResponse(c, err.Error())
+	}
+
+	log.Println("[CustomerController.ForgotPassword] - Request body:", utils.StructStringfy(&body))
+	validate := validator.New()
+	if err := validate.Struct(body); err != nil {
+		return helpers.BuildErrorResponse(c, err.Error())
+	}
+
+	input := customer.ForgotPasswordRequest{
+		Phone:    body.Phone,
+		Question: body.Question,
+		Answer:   body.Answer,
+	}
+	res, err := h.customerService.ForgotPassword(input)
+	if err != nil {
+		return helpers.BuildErrorResponse(c, err.Error())
+	}
+
+	return c.Status(fiber.StatusOK).JSON(res)
+}

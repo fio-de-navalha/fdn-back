@@ -10,12 +10,20 @@ import (
 )
 
 type CustomerService struct {
-	customerRepository customer.CustomerRepository
+	customerRepository      customer.CustomerRepository
+	securityQuestionService SecurityQuestionService
+	verificationCodeService VerificationCodeService
 }
 
-func NewCustomerService(customerRepository customer.CustomerRepository) *CustomerService {
+func NewCustomerService(
+	customerRepository customer.CustomerRepository,
+	securityQuestionService SecurityQuestionService,
+	verificationCodeService VerificationCodeService,
+) *CustomerService {
 	return &CustomerService{
-		customerRepository: customerRepository,
+		customerRepository:      customerRepository,
+		securityQuestionService: securityQuestionService,
+		verificationCodeService: verificationCodeService,
 	}
 }
 
@@ -124,6 +132,47 @@ func (s *CustomerService) LoginCustomer(input customer.LoginRequest) (*customer.
 			Phone:     cus.Phone,
 			CreatedAt: cus.CreatedAt,
 		},
+	}, nil
+}
+
+func (s *CustomerService) ForgotPassword(input customer.ForgotPasswordRequest) (*customer.ForgotPasswordResponse, error) {
+	log.Println("[CustomerService.ForgotPassword] - Getting customer by phone:", input.Phone)
+	cus, err := s.customerRepository.FindByPhone(input.Phone)
+	if err != nil {
+		return nil, err
+	}
+	if cus == nil {
+		return nil, &errors.AppError{
+			Code:    constants.CUSTOMER_NOT_FOUND_ERROR_CODE,
+			Message: constants.CUSTOMER_NOT_FOUND_ERROR_MESSAGE,
+		}
+	}
+
+	log.Println("[CustomerService.ForgotPassword] - Validating security question")
+	sec, err := s.securityQuestionService.GetByUserId(cus.ID)
+	if err != nil {
+		return nil, err
+	}
+	log.Println(sec)
+
+	if sec.Question != input.Question {
+		return nil, &errors.AppError{
+			Code:    constants.SECURITY_QUESTION_ANSWER_INVALID_ERROR_CODE,
+			Message: constants.SECURITY_QUESTION_ANSWER_INVALID_ERROR_MESSAGE,
+		}
+	}
+
+	if sec.Answer != input.Answer {
+		return nil, &errors.AppError{
+			Code:    constants.SECURITY_QUESTION_ANSWER_INVALID_ERROR_CODE,
+			Message: constants.SECURITY_QUESTION_ANSWER_INVALID_ERROR_MESSAGE,
+		}
+	}
+
+	code := s.verificationCodeService.GenerateVerificationCode(cus.ID)
+
+	return &customer.ForgotPasswordResponse{
+		VerificationCode: code,
 	}, nil
 }
 

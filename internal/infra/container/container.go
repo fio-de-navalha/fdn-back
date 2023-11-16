@@ -1,15 +1,30 @@
 package container
 
 import (
+	"time"
+
 	"github.com/fio-de-navalha/fdn-back/config"
 	"github.com/fio-de-navalha/fdn-back/internal/app"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/database/repositories"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/providers/cloudflare"
 )
 
+func LoadSecurityQuestionService() *app.SecurityQuestionService {
+	securityRepo := repositories.NewGormSecurityQuestionRepository()
+	securityQuestionService := app.NewSecurityQuestionService(securityRepo)
+	return securityQuestionService
+}
+
+func LoadVerificationCodeService() *app.VerificationCodeService {
+	verificationCodeService := app.NewVerificationCodeService(2*time.Minute, 2*time.Minute)
+	return verificationCodeService
+}
+
 func LoadCustomerService() *app.CustomerService {
 	customerRepo := repositories.NewGormCustomerRepository()
-	customerService := app.NewCustomerService(customerRepo)
+	securityQuestionService := LoadSecurityQuestionService()
+	verificationCodeService := LoadVerificationCodeService()
+	customerService := app.NewCustomerService(customerRepo, *securityQuestionService, *verificationCodeService)
 	return customerService
 }
 
@@ -29,11 +44,11 @@ func LoadSalonService() *app.SalonService {
 	professionalService := LoadProfessionalService()
 
 	salonService := app.NewSalonService(
-		salonRepo, 
-		salonMemberRepo, 
-		addressRepo, 
-		contactRepo, 
-		periodRepo, 
+		salonRepo,
+		salonMemberRepo,
+		addressRepo,
+		contactRepo,
+		periodRepo,
 		*professionalService,
 	)
 	return salonService
@@ -53,9 +68,9 @@ func LoadServiceService() *app.ServiceService {
 	)
 
 	serviceService := app.NewServiceService(
-		serviceRepo, 
-		*salonService, 
-		*professionalService, 
+		serviceRepo,
+		*salonService,
+		*professionalService,
 		cloudFlareService,
 	)
 	return serviceService
@@ -75,9 +90,9 @@ func LoadProductService() *app.ProductService {
 	)
 
 	productService := app.NewProductService(
-		productRepo, 
-		*salonService, 
-		*professionalService, 
+		productRepo,
+		*salonService,
+		*professionalService,
 		cloudFlareService,
 	)
 	return productService
