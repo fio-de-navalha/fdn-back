@@ -255,6 +255,53 @@
         }
       }
     },
+    "/auth/forgot/customer": {
+      "post": {
+        "tags": ["Customer"],
+        "summary": "Forgot password for customer",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "description": "Request Body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "phone": {
+                  "type": "string"
+                },
+                "question": {
+                  "type": "string"
+                },
+                "answer": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "verificationCode": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request response",
+            "schema": {
+              "$ref": "#/definitions/400"
+            }
+          }
+        }
+      }
+    },
     "/auth/me/customer": {
       "get": {
         "tags": ["Customer"],
