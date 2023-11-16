@@ -9,7 +9,8 @@ import (
 
 func setupCustomerRouter(router fiber.Router) {
 	customerService := container.LoadCustomerService()
-	customerController := controller.NewCustomerController(*customerService)
+	verificationCodeSerice := container.LoadVerificationCodeService()
+	customerController := controller.NewCustomerController(*customerService, *verificationCodeSerice)
 
 	customers := router.Group("/customer")
 	customers.Get("/:id", middlewares.EnsureAuth(), customerController.GetCustomerById)

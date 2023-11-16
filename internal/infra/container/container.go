@@ -23,8 +23,7 @@ func LoadVerificationCodeService() *app.VerificationCodeService {
 func LoadCustomerService() *app.CustomerService {
 	customerRepo := repositories.NewGormCustomerRepository()
 	securityQuestionService := LoadSecurityQuestionService()
-	verificationCodeService := LoadVerificationCodeService()
-	customerService := app.NewCustomerService(customerRepo, *securityQuestionService, *verificationCodeService)
+	customerService := app.NewCustomerService(customerRepo, *securityQuestionService)
 	return customerService
 }
 

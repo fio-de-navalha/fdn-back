@@ -15,12 +15,17 @@ import (
 )
 
 type CustomerController struct {
-	customerService app.CustomerService
+	customerService         app.CustomerService
+	verificationCodeService app.VerificationCodeService
 }
 
-func NewCustomerController(customerService app.CustomerService) *CustomerController {
+func NewCustomerController(
+	customerService app.CustomerService,
+	verificationCodeService app.VerificationCodeService,
+) *CustomerController {
 	return &CustomerController{
-		customerService: customerService,
+		customerService:         customerService,
+		verificationCodeService: verificationCodeService,
 	}
 }
 
@@ -134,10 +139,14 @@ func (h *CustomerController) ForgotPassword(c *fiber.Ctx) error {
 		Question: body.Question,
 		Answer:   body.Answer,
 	}
-	res, err := h.customerService.ForgotPassword(input)
+	cus, err := h.customerService.ForgotPassword(input)
 	if err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	return c.Status(fiber.StatusOK).JSON(res)
+	code := h.verificationCodeService.GenerateVerificationCode(cus.ID)
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"verificationCode": code,
+	})
 }

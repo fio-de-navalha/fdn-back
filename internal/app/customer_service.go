@@ -12,18 +12,15 @@ import (
 type CustomerService struct {
 	customerRepository      customer.CustomerRepository
 	securityQuestionService SecurityQuestionService
-	verificationCodeService VerificationCodeService
 }
 
 func NewCustomerService(
 	customerRepository customer.CustomerRepository,
 	securityQuestionService SecurityQuestionService,
-	verificationCodeService VerificationCodeService,
 ) *CustomerService {
 	return &CustomerService{
 		customerRepository:      customerRepository,
 		securityQuestionService: securityQuestionService,
-		verificationCodeService: verificationCodeService,
 	}
 }
 
@@ -135,7 +132,7 @@ func (s *CustomerService) LoginCustomer(input customer.LoginRequest) (*customer.
 	}, nil
 }
 
-func (s *CustomerService) ForgotPassword(input customer.ForgotPasswordRequest) (*customer.ForgotPasswordResponse, error) {
+func (s *CustomerService) ForgotPassword(input customer.ForgotPasswordRequest) (*customer.Customer, error) {
 	log.Println("[CustomerService.ForgotPassword] - Getting customer by phone:", input.Phone)
 	cus, err := s.customerRepository.FindByPhone(input.Phone)
 	if err != nil {
@@ -169,11 +166,7 @@ func (s *CustomerService) ForgotPassword(input customer.ForgotPasswordRequest) (
 		}
 	}
 
-	code := s.verificationCodeService.GenerateVerificationCode(cus.ID)
-
-	return &customer.ForgotPasswordResponse{
-		VerificationCode: code,
-	}, nil
+	return cus, nil
 }
 
 func (s *CustomerService) validateCustomerByPhone(phone string) (*customer.Customer, error) {
