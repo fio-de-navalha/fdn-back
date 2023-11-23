@@ -2,21 +2,19 @@ package app
 
 import (
 	"log"
-	"sync"
 	"time"
 
 	"github.com/fio-de-navalha/fdn-back/pkg/utils"
 )
 
 type VerificationCodeService struct {
-	mu          sync.Mutex
 	cache       map[string]verificationEntry
 	defaultTTL  time.Duration
 	cleanupTime time.Duration
 }
 
 type verificationEntry struct {
-	code     int
+	code     interface{}
 	expireAt time.Time
 }
 
@@ -35,20 +33,26 @@ func NewVerificationCodeService(defaultTTL, cleanupTime time.Duration) *Verifica
 func (vc *VerificationCodeService) GenerateVerificationCode(key string) int {
 	log.Println(`[VerificationCodeService.GenerateVerificationCode] - Generating verification code for user:`, key)
 	code := utils.GenerateSixDigitCode()
-	vc.mu.Lock()
-	defer vc.mu.Unlock()
-	vc.cache[key] = verificationEntry{
+	vc.cache[key+":"+"code"] = verificationEntry{
 		code:     code,
 		expireAt: time.Now().Add(vc.defaultTTL),
 	}
 	return code
 }
 
-// Retrieves the verification code from the cache for the specified key
-func (vc *VerificationCodeService) GetVerificationCode(key string) (int, bool) {
-	log.Println(`[VerificationCodeService.GetVerificationCode] - Getting verification code for user:`, key)
-	vc.mu.Lock()
-	defer vc.mu.Unlock()
+// Generates a temporary token and stores it in the cache with the specified key
+func (vc *VerificationCodeService) GenerateTemporaryToken(key string) string {
+	log.Println(`[VerificationCodeService.GenerateTemporaryToken] - Generating temporary token for user:`, key)
+	code, _ := utils.GenerateRandomString(40)
+	vc.cache[key+":"+"token"] = verificationEntry{
+		code:     code,
+		expireAt: time.Now().Add(vc.defaultTTL),
+	}
+	return code
+}
+
+func (vc *VerificationCodeService) GetCacheRegistry(key string) (interface{}, bool) {
+	log.Println(`[VerificationCodeService.GetCacheRegistry] - Getting cache registry for key:`, key)
 	entry, exists := vc.cache[key]
 	if exists && time.Now().Before(entry.expireAt) {
 		return entry.code, true
@@ -60,13 +64,11 @@ func (vc *VerificationCodeService) GetVerificationCode(key string) (int, bool) {
 func (vc *VerificationCodeService) cleanupExpiredEntries() {
 	for {
 		time.Sleep(vc.cleanupTime)
-		vc.mu.Lock()
 		for key, entry := range vc.cache {
 			if time.Now().After(entry.expireAt) {
 				log.Println(`[VerificationCodeService.cleanupExpiredEntries] - Cleaning verification code for user:`, key)
 				delete(vc.cache, key)
 			}
 		}
-		vc.mu.Unlock()
 	}
 }

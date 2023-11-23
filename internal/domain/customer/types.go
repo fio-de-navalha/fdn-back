@@ -41,3 +41,12 @@ type ForgotPasswordRequest struct {
 type ForgotPasswordResponse struct {
 	VerificationCode int `json:"verificationCode"`
 }
+
+type ValidateVerificationCodeRequest struct {
+	Phone string `json:"phone" validate:"required"`
+	Code  int    `json:"code" validate:"required"`
+}
+
+type ValidateVerificationCodeResponse struct {
+	Token string `json:"token"`
+}
