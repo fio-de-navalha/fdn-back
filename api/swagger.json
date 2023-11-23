@@ -302,6 +302,94 @@
         }
       }
     },
+    "/auth/validate/code/customer": {
+      "post": {
+        "tags": ["Customer"],
+        "summary": "Validate verification code for customer password reset",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "description": "Request Body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "phone": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request response",
+            "schema": {
+              "$ref": "#/definitions/400"
+            }
+          }
+        }
+      }
+    },
+    "/auth/update/password/customer": {
+      "post": {
+        "tags": ["Customer"],
+        "summary": "Customer password update",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "description": "Request Body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request response",
+            "schema": {
+              "$ref": "#/definitions/400"
+            }
+          }
+        }
+      }
+    },
     "/auth/me/customer": {
       "get": {
         "tags": ["Customer"],
