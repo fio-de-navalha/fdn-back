@@ -5,6 +5,7 @@ import (
 
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/customer"
+	"github.com/fio-de-navalha/fdn-back/internal/domain/security"
 	"github.com/fio-de-navalha/fdn-back/internal/infra/encryption"
 	"github.com/fio-de-navalha/fdn-back/pkg/errors"
 )
@@ -64,15 +65,21 @@ func (s *CustomerService) RegisterCustomer(input customer.RegisterRequest) (*cus
 		return nil, err
 	}
 
-	input = customer.RegisterRequest{
+	log.Println("[CustomerService.RegisterCustomer] - Creating customer")
+	cus := customer.NewCustomer(customer.RegisterRequest{
 		Name:     input.Name,
 		Phone:    input.Phone,
 		Password: hashedPassword,
+	})
+	if _, err = s.customerRepository.Save(cus); err != nil {
+		return nil, err
 	}
 
-	log.Println("[CustomerService.RegisterCustomer] - Creating customer")
-	cus := customer.NewCustomer(input)
-	_, err = s.customerRepository.Save(cus)
+	_, err = s.securityQuestionService.SaveSecurityQuestion(security.SecurityQuestionRequest{
+		UserId: cus.ID,
+		Question: input.Question,
+		Answer: input.Answer,
+	})
 	if err != nil {
 		return nil, err
 	}

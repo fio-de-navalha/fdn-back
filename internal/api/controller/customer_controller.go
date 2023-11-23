@@ -58,6 +58,8 @@ func (h *CustomerController) RegisterCustomer(c *fiber.Ctx) error {
 		Name:     body.Name,
 		Phone:    body.Phone,
 		Password: body.Password,
+		Question: body.Question,
+		Answer: body.Answer,
 	}
 
 	res, err := h.customerService.RegisterCustomer(input)

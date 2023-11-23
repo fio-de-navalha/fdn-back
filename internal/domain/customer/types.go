@@ -13,6 +13,8 @@ type RegisterRequest struct {
 	Name     string `json:"name" validate:"required,min=3,max=30"`
 	Phone    string `json:"phone" validate:"required,min=9,max=15"`
 	Password string `json:"password" validate:"required,min=6"`
+	Question string `json:"Question" validate:"required"`
+	Answer string `json:"Answer" validate:"required"`
 }
 
 type LoginRequest struct {
