@@ -169,6 +169,33 @@ func (s *CustomerService) ForgotPassword(input customer.ForgotPasswordRequest) (
 	return cus, nil
 }
 
+func (s *CustomerService) UpdateCustomerPassword(phone string, password string) (*customer.Customer, error) {
+	log.Println("[CustomerService.UpdateCustomerPassword] - Getting customer by phone:", phone)
+	cus, err := s.customerRepository.FindByPhone(phone)
+	if err != nil {
+		return nil, err
+	}
+	if cus == nil {
+		return nil, &errors.AppError{
+			Code:    constants.CUSTOMER_NOT_FOUND_ERROR_CODE,
+			Message: constants.CUSTOMER_NOT_FOUND_ERROR_MESSAGE,
+		}
+	}
+
+	hashedPassword, err := encryption.HashPassword(password)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Println("[CustomerService.UpdateCustomerPassword] - Updating customer password:", cus.ID)
+	cus.Password = hashedPassword
+	if _, err = s.customerRepository.Save(cus); err != nil {
+		return nil, err
+	}
+
+	return cus, nil
+}
+
 func (s *CustomerService) validateCustomerByPhone(phone string) (*customer.Customer, error) {
 	cust, err := s.customerRepository.FindByPhone(phone)
 	if err != nil {

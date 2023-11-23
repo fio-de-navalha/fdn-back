@@ -2,6 +2,7 @@ package controller
 
 import (
 	"log"
+	"strings"
 	"time"
 
 	"github.com/fio-de-navalha/fdn-back/internal/api/helpers"
@@ -177,8 +178,34 @@ func (h *CustomerController) ValidateVerificationCode(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, "invalid verification code")
 	}
 
-	token := h.verificationCodeService.GenerateTemporaryToken(cus.ID + ":" + "token")
+	token := h.verificationCodeService.GenerateTemporaryToken(cus.ID, cus.Phone)
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"token": token,
 	})
+}
+
+func (h *CustomerController) UpdatePassword(c *fiber.Ctx) error {
+	log.Println("[CustomerController.UpdatePassword] - Validating parameters")
+	body := new(customer.UpdatePasswordRequest)
+	if err := c.BodyParser(&body); err != nil {
+		return helpers.BuildErrorResponse(c, err.Error())
+	}
+
+	log.Println("[CustomerController.UpdatePassword] - Request body:", utils.StructStringfy(&body))
+	validate := validator.New()
+	if err := validate.Struct(body); err != nil {
+		return helpers.BuildErrorResponse(c, err.Error())
+	}
+
+	token := strings.Split(body.Token, "-")
+	decodedPhone, err := utils.Base64Decode(token[1])
+	if err != nil {
+		return helpers.BuildErrorResponse(c, err.Error())
+	}
+
+	if _, err := h.customerService.UpdateCustomerPassword(decodedPhone, body.Password); err != nil {
+		return helpers.BuildErrorResponse(c, err.Error())
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"success": true})
 }

@@ -50,3 +50,8 @@ type ValidateVerificationCodeRequest struct {
 type ValidateVerificationCodeResponse struct {
 	Token string `json:"token"`
 }
+
+type UpdatePasswordRequest struct {
+	Token    string `json:"token" validate:"required"`
+	Password string `json:"password" validate:"required"`
+}

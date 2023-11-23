@@ -20,5 +20,6 @@ func setupCustomerRouter(router fiber.Router) {
 	auth.Post("/login/customer", customerController.LoginCustomer)
 	auth.Post("/forgot/customer", customerController.ForgotPassword)
 	auth.Post("/validate/code/customer", customerController.ValidateVerificationCode)
+	auth.Post("/update/password/customer", customerController.UpdatePassword)
 	auth.Get("/me/customer", middlewares.EnsureAuth(), customerController.MeCustomer)
 }

@@ -14,7 +14,7 @@ type VerificationCodeService struct {
 }
 
 type verificationEntry struct {
-	code     interface{}
+	value    interface{}
 	expireAt time.Time
 }
 
@@ -34,28 +34,30 @@ func (vc *VerificationCodeService) GenerateVerificationCode(key string) int {
 	log.Println(`[VerificationCodeService.GenerateVerificationCode] - Generating verification code for user:`, key)
 	code := utils.GenerateSixDigitCode()
 	vc.cache[key+":"+"code"] = verificationEntry{
-		code:     code,
+		value:    code,
 		expireAt: time.Now().Add(vc.defaultTTL),
 	}
 	return code
 }
 
 // Generates a temporary token and stores it in the cache with the specified key
-func (vc *VerificationCodeService) GenerateTemporaryToken(key string) string {
+func (vc *VerificationCodeService) GenerateTemporaryToken(key string, identifier string) string {
 	log.Println(`[VerificationCodeService.GenerateTemporaryToken] - Generating temporary token for user:`, key)
-	code, _ := utils.GenerateRandomString(40)
+	token, _ := utils.GenerateRandomString(40)
+	enc := utils.Base64Encode(identifier)
+	value := token + "-" + enc
 	vc.cache[key+":"+"token"] = verificationEntry{
-		code:     code,
+		value:    value,
 		expireAt: time.Now().Add(vc.defaultTTL),
 	}
-	return code
+	return value
 }
 
 func (vc *VerificationCodeService) GetCacheRegistry(key string) (interface{}, bool) {
 	log.Println(`[VerificationCodeService.GetCacheRegistry] - Getting cache registry for key:`, key)
 	entry, exists := vc.cache[key]
 	if exists && time.Now().Before(entry.expireAt) {
-		return entry.code, true
+		return entry.value, true
 	}
 	return 0, false
 }
@@ -66,7 +68,7 @@ func (vc *VerificationCodeService) cleanupExpiredEntries() {
 		time.Sleep(vc.cleanupTime)
 		for key, entry := range vc.cache {
 			if time.Now().After(entry.expireAt) {
-				log.Println(`[VerificationCodeService.cleanupExpiredEntries] - Cleaning verification code for user:`, key)
+				log.Println(`[VerificationCodeService.cleanupExpiredEntries] - Cleaning value for key:`, key)
 				delete(vc.cache, key)
 			}
 		}
