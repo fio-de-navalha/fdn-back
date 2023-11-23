@@ -51,6 +51,12 @@ func (s *CustomerService) GetCustomerByPhone(phone string) (*customer.Customer, 
 	if err != nil {
 		return nil, err
 	}
+	if cus == nil {
+		return nil, &errors.AppError{
+			Code:    constants.CUSTOMER_NOT_FOUND_ERROR_CODE,
+			Message: constants.CUSTOMER_NOT_FOUND_ERROR_MESSAGE,
+		}
+	}
 	return cus, nil
 }
 
