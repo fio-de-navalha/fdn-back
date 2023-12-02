@@ -59,7 +59,7 @@ func (h *CustomerController) RegisterCustomer(c *fiber.Ctx) error {
 		Phone:    body.Phone,
 		Password: body.Password,
 		Question: body.Question,
-		Answer: body.Answer,
+		Answer:   body.Answer,
 	}
 
 	res, err := h.customerService.RegisterCustomer(input)
@@ -147,39 +147,6 @@ func (h *CustomerController) ForgotPassword(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	code := h.verificationCodeService.GenerateVerificationCode(cus.ID)
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"verificationCode": code,
-	})
-}
-
-func (h *CustomerController) ValidateVerificationCode(c *fiber.Ctx) error {
-	log.Println("[CustomerController.ValidateVerificationCode] - Validating parameters")
-	body := new(customer.ValidateVerificationCodeRequest)
-	if err := c.BodyParser(&body); err != nil {
-		return helpers.BuildErrorResponse(c, err.Error())
-	}
-
-	log.Println("[CustomerController.ValidateVerificationCode] - Request body:", utils.StructStringfy(&body))
-	validate := validator.New()
-	if err := validate.Struct(body); err != nil {
-		return helpers.BuildErrorResponse(c, err.Error())
-	}
-
-	input := customer.ValidateVerificationCodeRequest{
-		Phone: body.Phone,
-		Code:  body.Code,
-	}
-	cus, err := h.customerService.GetCustomerByPhone(input.Phone)
-	if err != nil {
-		return helpers.BuildErrorResponse(c, err.Error())
-	}
-
-	if _, isValid := h.verificationCodeService.GetCacheRegistry(cus.ID + ":" + "code"); !isValid {
-		return helpers.BuildErrorResponse(c, "invalid verification code")
-	}
-
 	token := h.verificationCodeService.GenerateTemporaryToken(cus.ID, cus.Phone)
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"token": token,
@@ -203,6 +170,15 @@ func (h *CustomerController) UpdatePassword(c *fiber.Ctx) error {
 	decodedPhone, err := utils.Base64Decode(token[1])
 	if err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
+	}
+
+	cus, err := h.customerService.GetCustomerByPhone(decodedPhone)
+	if err != nil {
+		return helpers.BuildErrorResponse(c, err.Error())
+	}
+
+	if _, isValid := h.verificationCodeService.GetCacheRegistry(cus.ID + ":" + "token"); !isValid {
+		return helpers.BuildErrorResponse(c, "invalid temporary token")
 	}
 
 	if _, err := h.customerService.UpdateCustomerPassword(decodedPhone, body.Password); err != nil {

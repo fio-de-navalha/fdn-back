@@ -29,17 +29,6 @@ func NewVerificationCodeService(defaultTTL, cleanupTime time.Duration) *Verifica
 	return vc
 }
 
-// Generates a random 6-digit verification code and stores it in the cache with the specified key
-func (vc *VerificationCodeService) GenerateVerificationCode(key string) int {
-	log.Println(`[VerificationCodeService.GenerateVerificationCode] - Generating verification code for user:`, key)
-	code := utils.GenerateSixDigitCode()
-	vc.cache[key+":"+"code"] = verificationEntry{
-		value:    code,
-		expireAt: time.Now().Add(vc.defaultTTL),
-	}
-	return code
-}
-
 // Generates a temporary token and stores it in the cache with the specified key
 func (vc *VerificationCodeService) GenerateTemporaryToken(key string, identifier string) string {
 	log.Println(`[VerificationCodeService.GenerateTemporaryToken] - Generating temporary token for user:`, key)

@@ -14,7 +14,7 @@ type RegisterRequest struct {
 	Phone    string `json:"phone" validate:"required,min=9,max=15"`
 	Password string `json:"password" validate:"required,min=6"`
 	Question string `json:"Question" validate:"required"`
-	Answer string `json:"Answer" validate:"required"`
+	Answer   string `json:"Answer" validate:"required"`
 }
 
 type LoginRequest struct {
@@ -44,16 +44,7 @@ type ForgotPasswordResponse struct {
 	VerificationCode int `json:"verificationCode"`
 }
 
-type ValidateVerificationCodeRequest struct {
-	Phone string `json:"phone" validate:"required"`
-	Code  int    `json:"code" validate:"required"`
-}
-
-type ValidateVerificationCodeResponse struct {
-	Token string `json:"token"`
-}
-
 type UpdatePasswordRequest struct {
 	Token    string `json:"token" validate:"required"`
-	Password string `json:"password" validate:"required"`
+	Password string `json:"password" validate:"required,min=6"`
 }

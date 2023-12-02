@@ -82,9 +82,9 @@ func (s *CustomerService) RegisterCustomer(input customer.RegisterRequest) (*cus
 	}
 
 	_, err = s.securityQuestionService.SaveSecurityQuestion(security.SecurityQuestionRequest{
-		UserId: cus.ID,
+		UserId:   cus.ID,
 		Question: input.Question,
-		Answer: input.Answer,
+		Answer:   input.Answer,
 	})
 	if err != nil {
 		return nil, err
