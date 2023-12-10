@@ -1,7 +1,7 @@
 package app
 
 import (
-	"log"
+	"log/slog"
 	"strconv"
 	"strings"
 	"sync"
@@ -44,7 +44,7 @@ func NewAppointmentService(
 }
 
 func (s *AppointmentService) GetProfessionalAppointments(professionalId string, startsAt time.Time) ([]*appointment.AppointmentReponse, error) {
-	log.Println("[AppointmentService.GetProfessionalAppointments] - Getting appointments from professional:", professionalId)
+	slog.Info("[AppointmentService.GetProfessionalAppointments] - Getting appointments from professional: " + professionalId)
 	res, err := s.salonService.GetSalonByProfessionalId(professionalId)
 	if err != nil {
 		return nil, err
@@ -78,7 +78,7 @@ func (s *AppointmentService) GetProfessionalAppointments(professionalId string, 
 }
 
 func (s *AppointmentService) GetCustomerAppointments(customerId string) ([]*appointment.AppointmentReponse, error) {
-	log.Println("[AppointmentService.GetCustomerAppointments] - Getting appointments from customer:", customerId)
+	slog.Info("[AppointmentService.GetCustomerAppointments] - Getting appointments from customer: " + customerId)
 	appointmentList, err := s.appointmentRepository.FindByCustomerId(customerId)
 	if err != nil {
 		return nil, err
@@ -87,7 +87,7 @@ func (s *AppointmentService) GetCustomerAppointments(customerId string) ([]*appo
 }
 
 func (s *AppointmentService) GetAppointment(id string) (*appointment.Appointment, error) {
-	log.Println("[AppointmentService.GetAppointment] - Getting appointment:", id)
+	slog.Info("[AppointmentService.GetAppointment] - Getting appointment: " + id)
 	a, err := s.appointmentRepository.FindByIdWithJoins(id)
 	if err != nil {
 		return nil, err
@@ -132,7 +132,7 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 
 	go func() {
 		defer wg.Done()
-		log.Println("[AppointmentService.CreateApppointment] - Validating services:", input.ServiceIds)
+		slog.Info("[AppointmentService.CreateApppointment] - Validating services: " + strings.Join(input.ServiceIds, ", "))
 		services, err := s.serviceService.getManyServices(input.ServiceIds)
 		if err != nil {
 			errs <- err
@@ -156,7 +156,7 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 
 	go func() {
 		defer wg.Done()
-		log.Println("[AppointmentService.CreateApppointment] - Validating products:", input.ProductIds)
+		slog.Info("[AppointmentService.CreateApppointment] - Validating products: " + strings.Join(input.ProductIds, ", "))
 		products, err := s.productService.getManyProducts(input.ProductIds)
 		if err != nil {
 			errs <- err
@@ -175,7 +175,7 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 	close(resultServiceChan)
 	close(resultProductChan)
 	for err := range errs {
-		log.Println("[AppointmentService.CreateApppointment] - Validation error:", err)
+		slog.Error("[AppointmentService.CreateApppointment] - Validation error: " + err.Error())
 		return err
 	}
 
@@ -183,14 +183,14 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 	resultProduct := <-resultProductChan
 
 	endsAt := input.StartsAt.Add(time.Minute * time.Duration(resultService.Duration))
-	log.Println("[AppointmentService.CreateApppointment] - Validating appointment time range availability for:")
-	log.Println("[AppointmentService.CreateApppointment] - StartsAt:", input.StartsAt)
-	log.Println("[AppointmentService.CreateApppointment] - EndsAt:", endsAt)
+	slog.Info("[AppointmentService.CreateApppointment] - Validating appointment time range availability for:")
+	slog.Info("[AppointmentService.CreateApppointment] - StartsAt: " + input.StartsAt.String())
+	slog.Info("[AppointmentService.CreateApppointment] - EndsAt: " + endsAt.String())
 	if err := s.validateAppointmentTimeRange(input.SalonId, input.StartsAt, endsAt); err != nil {
 		return err
 	}
 
-	log.Println("[AppointmentService.CreateApppointment] - Creating appointment")
+	slog.Info("[AppointmentService.CreateApppointment] - Creating appointment")
 	appo := appointment.NewAppointment(
 		input.ProfessionalId,
 		input.CustomerId,
@@ -208,7 +208,7 @@ func (s *AppointmentService) CreateApppointment(input appointment.CreateAppointm
 }
 
 func (s *AppointmentService) CancelApppointment(requesterId string, appointmentId string) error {
-	log.Println("[AppointmentService.CancelApppointment] - Validating appointment:", appointmentId)
+	slog.Info("[AppointmentService.CancelApppointment] - Validating appointment: " + appointmentId)
 	appo, err := s.appointmentRepository.FindById(appointmentId)
 	if err != nil {
 		return err
@@ -233,7 +233,7 @@ func (s *AppointmentService) CancelApppointment(requesterId string, appointmentI
 		}
 	}
 
-	log.Println("[AppointmentService.CancelApppointment] - Canceling appointment:", appointmentId)
+	slog.Info("[AppointmentService.CancelApppointment] - Canceling appointment: " + appointmentId)
 	if _, err := s.appointmentRepository.Cancel(appo); err != nil {
 		return err
 	}

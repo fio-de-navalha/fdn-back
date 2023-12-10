@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"log"
+	"log/slog"
 
 	"github.com/fio-de-navalha/fdn-back/internal/api/helpers"
 	"github.com/fio-de-navalha/fdn-back/internal/api/middlewares"
@@ -14,30 +14,29 @@ import (
 )
 
 func (h *SalonController) AddSalonAddress(c *fiber.Ctx) error {
-	log.Println("[SalonController.AddSalonAddress] - Validating parameters")
+	slog.Info("[SalonController.AddSalonAddress] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
-		log.Println("[SalonController.AddSalonAddress] - permission denied")
+		slog.Info("[SalonController.AddSalonAddress] - permission denied")
 		return helpers.BuildErrorResponse(c, "permission denied")
 	}
 
 	salonId := c.Params("salonId")
 	if err := validation.ValidUUID(salonId); err != nil {
-		log.Println("[SalonController.AddSalonAddress] - invalid salonId")
+		slog.Info("[SalonController.AddSalonAddress] - invalid salonId")
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
 	body := new(salon.AddSalonAddressRequest)
 	if err := c.BodyParser(&body); err != nil {
-		log.Println("[SalonController.AddSalonAddress] - unable to parse body")
+		slog.Info("[SalonController.AddSalonAddress] - unable to parse body")
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
-	
-	
-	log.Println("[SalonController.AddSalonAddress] - Request body:", utils.StructStringfy(&body))
+
+	slog.Info("[SalonController.AddSalonAddress] - Request body: " + utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
-		log.Println("[SalonController.UpdateSalonAddress] - request body validation error")
+		slog.Info("[SalonController.UpdateSalonAddress] - request body validation error")
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
@@ -48,10 +47,10 @@ func (h *SalonController) AddSalonAddress(c *fiber.Ctx) error {
 }
 
 func (h *SalonController) UpdateSalonAddress(c *fiber.Ctx) error {
-	log.Println("[SalonController.UpdateSalonAddress] - Validating parameters")
+	slog.Info("[SalonController.UpdateSalonAddress] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
-		log.Println("[SalonController.UpdateSalonAddress] - permission denied")
+		slog.Info("[SalonController.UpdateSalonAddress] - permission denied")
 		return helpers.BuildErrorResponse(c, "permission denied")
 	}
 
@@ -59,14 +58,14 @@ func (h *SalonController) UpdateSalonAddress(c *fiber.Ctx) error {
 	addressId := c.Params("addressId")
 	body := new(salon.AddSalonAddressRequest)
 	if err := c.BodyParser(&body); err != nil {
-		log.Println("[SalonController.UpdateSalonAddress] - unable to parse body")
+		slog.Info("[SalonController.UpdateSalonAddress] - unable to parse body")
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[SalonController.UpdateSalonAddress] - Request body:", utils.StructStringfy(&body))
+	slog.Info("[SalonController.UpdateSalonAddress] - Request body: " + utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
-		log.Println("[SalonController.UpdateSalonAddress] - request body validation error")
+		slog.Info("[SalonController.UpdateSalonAddress] - request body validation error")
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
@@ -78,7 +77,7 @@ func (h *SalonController) UpdateSalonAddress(c *fiber.Ctx) error {
 }
 
 func (h *SalonController) RemoveSalonAddress(c *fiber.Ctx) error {
-	log.Println("[SalonController.RemoveSalonAddress] - Validating parameters")
+	slog.Info("[SalonController.RemoveSalonAddress] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")

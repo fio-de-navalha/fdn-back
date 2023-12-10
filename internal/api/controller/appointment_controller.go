@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"log"
+	"log/slog"
 	"time"
 
 	"github.com/fio-de-navalha/fdn-back/internal/api/helpers"
@@ -25,7 +25,7 @@ func NewAppointmentController(appointmentService app.AppointmentService) *Appoin
 }
 
 func (h *AppointmentController) GetProfessionalAppointments(c *fiber.Ctx) error {
-	log.Println("[AppointmentController.GetProfessionalAppointments] - Validating parameters")
+	slog.Info("[AppointmentController.GetProfessionalAppointments] - Validating parameters")
 	professionalId := c.Params("professionalId")
 	startsAtQuery := c.Query("startsAt")
 	if startsAtQuery == "" {
@@ -45,7 +45,7 @@ func (h *AppointmentController) GetProfessionalAppointments(c *fiber.Ctx) error 
 }
 
 func (h *AppointmentController) GetCustomerAppointments(c *fiber.Ctx) error {
-	log.Println("[AppointmentController.GetCustomerAppointments] - Validating parameters")
+	slog.Info("[AppointmentController.GetCustomerAppointments] - Validating parameters")
 	id := c.Params("customerId")
 	res, err := h.appointmentService.GetCustomerAppointments(id)
 	if err != nil {
@@ -55,7 +55,7 @@ func (h *AppointmentController) GetCustomerAppointments(c *fiber.Ctx) error {
 }
 
 func (h *AppointmentController) GetAppointment(c *fiber.Ctx) error {
-	log.Println("[AppointmentController.GetAppointment] - Validating parameters")
+	slog.Info("[AppointmentController.GetAppointment] - Validating parameters")
 	id := c.Params("id")
 	res, err := h.appointmentService.GetAppointment(id)
 	if err != nil {
@@ -65,13 +65,13 @@ func (h *AppointmentController) GetAppointment(c *fiber.Ctx) error {
 }
 
 func (h *AppointmentController) Create(c *fiber.Ctx) error {
-	log.Println("[AppointmentController.Create] - Validating parameters")
+	slog.Info("[AppointmentController.Create] - Validating parameters")
 	body := new(appointment.CreateAppointmentRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[AppointmentController.Create] - Request body:", utils.StructStringfy(&body))
+	slog.Info("[AppointmentController.Create] - Request body: " + utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -87,9 +87,9 @@ func (h *AppointmentController) Create(c *fiber.Ctx) error {
 
 	body.StartsAt = utils.ConvertToGMTMinus3(body.StartsAt)
 	if body.StartsAt.Before(time.Now()) {
-		log.Println("[AppointmentController.Create] - Cannot create appointment in the past")
-		log.Println("[AppointmentController.Create] - StartsAt:", body.StartsAt)
-		log.Println("[AppointmentController.Create] - CurrentTime:", time.Now())
+		slog.Info("[AppointmentController.Create] - Cannot create appointment in the past")
+		slog.Info("[AppointmentController.Create] - StartsAt: " + body.StartsAt.String())
+		slog.Info("[AppointmentController.Create] - CurrentTime: " + time.Now().String())
 		return helpers.BuildErrorResponse(c, "cannot create appointment in the past")
 	}
 
@@ -103,14 +103,14 @@ func (h *AppointmentController) Create(c *fiber.Ctx) error {
 	}
 	err := h.appointmentService.CreateApppointment(input)
 	if err != nil {
-		log.Println("[AppointmentController.Create] - Appointment creation error:", err)
+		slog.Error("[AppointmentController.Create] - Appointment creation error: " + err.Error())
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 	return c.Status(fiber.StatusCreated).Send(nil)
 }
 
 func (h *AppointmentController) Cancel(c *fiber.Ctx) error {
-	log.Println("[AppointmentController.Cancel] - Validating parameters")
+	slog.Info("[AppointmentController.Cancel] - Validating parameters")
 	appointmentId := c.Params("appointmentId")
 
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)

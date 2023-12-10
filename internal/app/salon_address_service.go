@@ -1,7 +1,7 @@
 package app
 
 import (
-	"log"
+	"log/slog"
 
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
@@ -9,13 +9,13 @@ import (
 )
 
 func (s *SalonService) AddSalonAddress(salonId, requesterId, address string) error {
-	log.Println("[SalonService.AddSalonAddress] - Validating permissions to add address:", address)
+	slog.Info("[SalonService.AddSalonAddress] - Validating permissions to add address: " + address)
 	sal, err := s.validatePermissionToEditSalon(salonId, requesterId)
 	if err != nil {
 		return err
 	}
 
-	log.Println("[SalonService.AddSalonAddress] - Creating address")
+	slog.Info("[SalonService.AddSalonAddress] - Creating address")
 	newAddr := salon.NewAddress(sal.ID, address)
 	if _, err := s.addressRepository.Save(newAddr); err != nil {
 		return err
@@ -24,19 +24,19 @@ func (s *SalonService) AddSalonAddress(salonId, requesterId, address string) err
 }
 
 func (s *SalonService) UpdateSalonAddress(salonId, requesterId, addressId, address string) (*salon.Address, error) {
-	log.Println("[SalonService.UpdateSalonAddress] - Validating permissions to update address:", addressId)
+	slog.Info("[SalonService.UpdateSalonAddress] - Validating permissions to update address: " + addressId)
 	_, err := s.validatePermissionToEditSalon(salonId, requesterId)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Println("[SalonService.UpdateSalonAddress] - Validating address:", addressId)
+	slog.Info("[SalonService.UpdateSalonAddress] - Validating address: " + addressId)
 	addr, err := s.validateSalonAddress(addressId, salonId)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Println("[SalonService.UpdateSalonAddress] - Updating address:", addressId)
+	slog.Info("[SalonService.UpdateSalonAddress] - Updating address: " + addressId)
 	addr.Address = address
 	if _, err := s.addressRepository.Save(addr); err != nil {
 		return nil, err
@@ -45,19 +45,19 @@ func (s *SalonService) UpdateSalonAddress(salonId, requesterId, addressId, addre
 }
 
 func (s *SalonService) RemoveSalonAddress(salonId, requesterId, addressId string) error {
-	log.Println("[SalonService.RemoveSalonAddress] - Validating permissions to remove address:", addressId)
+	slog.Info("[SalonService.RemoveSalonAddress] - Validating permissions to remove address: " + addressId)
 	_, err := s.validatePermissionToEditSalon(salonId, requesterId)
 	if err != nil {
 		return err
 	}
 
-	log.Println("[SalonService.RemoveSalonAddress] - Validating address:", addressId)
+	slog.Info("[SalonService.RemoveSalonAddress] - Validating address: " + addressId)
 	addr, err := s.validateSalonAddress(addressId, salonId)
 	if err != nil {
 		return err
 	}
 
-	log.Println("[SalonService.RemoveSalonAddress] - Deleting address:", addressId)
+	slog.Info("[SalonService.RemoveSalonAddress] - Deleting address: " + addressId)
 	if err := s.addressRepository.Delete(addr.ID); err != nil {
 		return err
 	}

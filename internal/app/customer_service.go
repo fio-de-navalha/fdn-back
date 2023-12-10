@@ -1,7 +1,7 @@
 package app
 
 import (
-	"log"
+	"log/slog"
 
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/customer"
@@ -26,7 +26,7 @@ func NewCustomerService(
 }
 
 func (s *CustomerService) GetCustomerById(id string) (*customer.CustomerResponse, error) {
-	log.Println("[CustomerService.GetCustomerById] - Getting customer:", id)
+	slog.Info("[CustomerService.GetCustomerById] - Getting customer: " + id)
 	cus, err := s.customerRepository.FindById(id)
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func (s *CustomerService) GetCustomerById(id string) (*customer.CustomerResponse
 }
 
 func (s *CustomerService) GetCustomerByPhone(phone string) (*customer.Customer, error) {
-	log.Println("[CustomerService.GetCustomerByPhone] - Getting customer by phone:", phone)
+	slog.Info("[CustomerService.GetCustomerByPhone] - Getting customer by phone: " + phone)
 	cus, err := s.customerRepository.FindByPhone(phone)
 	if err != nil {
 		return nil, err
@@ -61,7 +61,7 @@ func (s *CustomerService) GetCustomerByPhone(phone string) (*customer.Customer, 
 }
 
 func (s *CustomerService) RegisterCustomer(input customer.RegisterRequest) (*customer.AuthResponse, error) {
-	log.Println("[CustomerService.RegisterCustomer] - Getting customer by phone:", input.Phone)
+	slog.Info("[CustomerService.RegisterCustomer] - Getting customer by phone: " + input.Phone)
 	if _, err := s.validateCustomerByPhone(input.Phone); err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func (s *CustomerService) RegisterCustomer(input customer.RegisterRequest) (*cus
 		return nil, err
 	}
 
-	log.Println("[CustomerService.RegisterCustomer] - Creating customer")
+	slog.Info("[CustomerService.RegisterCustomer] - Creating customer")
 	cus := customer.NewCustomer(customer.RegisterRequest{
 		Name:     input.Name,
 		Phone:    input.Phone,
@@ -90,7 +90,7 @@ func (s *CustomerService) RegisterCustomer(input customer.RegisterRequest) (*cus
 		return nil, err
 	}
 
-	log.Println("[CustomerService.RegisterCustomer] - Generating token")
+	slog.Info("[CustomerService.RegisterCustomer] - Generating token")
 	token, err := encryption.GenerateToken(cus.ID, "customer")
 	if err != nil {
 		return nil, err
@@ -108,7 +108,7 @@ func (s *CustomerService) RegisterCustomer(input customer.RegisterRequest) (*cus
 }
 
 func (s *CustomerService) LoginCustomer(input customer.LoginRequest) (*customer.AuthResponse, error) {
-	log.Println("[CustomerService.LoginCustomer] - Getting customer by phone:", input.Phone)
+	slog.Info("[CustomerService.LoginCustomer] - Getting customer by phone: " + input.Phone)
 	cus, err := s.customerRepository.FindByPhone(input.Phone)
 	if err != nil {
 		return nil, err
@@ -128,7 +128,7 @@ func (s *CustomerService) LoginCustomer(input customer.LoginRequest) (*customer.
 		}
 	}
 
-	log.Println("[CustomerService.LoginCustomer] - Generating token")
+	slog.Info("[CustomerService.LoginCustomer] - Generating token")
 	token, err := encryption.GenerateToken(cus.ID, "customer")
 	if err != nil {
 		return nil, err
@@ -146,7 +146,7 @@ func (s *CustomerService) LoginCustomer(input customer.LoginRequest) (*customer.
 }
 
 func (s *CustomerService) ForgotPassword(input customer.ForgotPasswordRequest) (*customer.Customer, error) {
-	log.Println("[CustomerService.ForgotPassword] - Getting customer by phone:", input.Phone)
+	slog.Info("[CustomerService.ForgotPassword] - Getting customer by phone: " + input.Phone)
 	cus, err := s.customerRepository.FindByPhone(input.Phone)
 	if err != nil {
 		return nil, err
@@ -158,12 +158,11 @@ func (s *CustomerService) ForgotPassword(input customer.ForgotPasswordRequest) (
 		}
 	}
 
-	log.Println("[CustomerService.ForgotPassword] - Validating security question")
+	slog.Info("[CustomerService.ForgotPassword] - Validating security question")
 	sec, err := s.securityQuestionService.GetByUserId(cus.ID)
 	if err != nil {
 		return nil, err
 	}
-	log.Println(sec)
 
 	if sec.Question != input.Question {
 		return nil, &errors.AppError{
@@ -183,7 +182,7 @@ func (s *CustomerService) ForgotPassword(input customer.ForgotPasswordRequest) (
 }
 
 func (s *CustomerService) UpdateCustomerPassword(phone string, password string) (*customer.Customer, error) {
-	log.Println("[CustomerService.UpdateCustomerPassword] - Getting customer by phone:", phone)
+	slog.Info("[CustomerService.UpdateCustomerPassword] - Getting customer by phone: " + phone)
 	cus, err := s.customerRepository.FindByPhone(phone)
 	if err != nil {
 		return nil, err
@@ -200,7 +199,7 @@ func (s *CustomerService) UpdateCustomerPassword(phone string, password string) 
 		return nil, err
 	}
 
-	log.Println("[CustomerService.UpdateCustomerPassword] - Updating customer password:", cus.ID)
+	slog.Info("[CustomerService.UpdateCustomerPassword] - Updating customer password: " + cus.ID)
 	cus.Password = hashedPassword
 	if _, err = s.customerRepository.Save(cus); err != nil {
 		return nil, err

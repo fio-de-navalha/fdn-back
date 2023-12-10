@@ -1,7 +1,7 @@
 package app
 
 import (
-	"log"
+	"log/slog"
 
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
@@ -10,12 +10,12 @@ import (
 )
 
 func (s *SalonService) GetSalonPeriodByDay(salonId string, day int) (*salon.Period, error) {
-	log.Println("[SalonService.GetSalonPeriodByDay] - Validating salon:", salonId)
+	slog.Info("[SalonService.GetSalonPeriodByDay] - Validating salon: " + salonId)
 	if _, err := s.validateSalon(salonId); err != nil {
 		return nil, err
 	}
 
-	log.Println("[SalonService.GetSalonPeriodByDay] - Getting period")
+	slog.Info("[SalonService.GetSalonPeriodByDay] - Getting period")
 	period, err := s.periodRepository.FindBySalonAndDay(salonId, day)
 	if err != nil {
 		return nil, err
@@ -24,13 +24,13 @@ func (s *SalonService) GetSalonPeriodByDay(salonId string, day int) (*salon.Peri
 }
 
 func (s *SalonService) AddSalonPeriod(salonId, requesterId string, input salon.AddPeriodRequest) error {
-	log.Println("[SalonService.AddSalonPeriod] - Validating salon:", salonId)
+	slog.Info("[SalonService.AddSalonPeriod] - Validating salon: " + salonId)
 	sal, err := s.validateSalon(salonId)
 	if err != nil {
 		return err
 	}
 
-	log.Println("[SalonService.AddSalonPeriod] - Validating professional permission:", requesterId)
+	slog.Info("[SalonService.AddSalonPeriod] - Validating professional permission: " + requesterId)
 	if err := s.validateRequesterPermission(requesterId, sal.SalonMembers); err != nil {
 		return err
 	}
@@ -41,7 +41,7 @@ func (s *SalonService) AddSalonPeriod(salonId, requesterId string, input salon.A
 		return err
 	}
 
-	log.Println("[SalonService.AddSalonPeriod] - Creating period")
+	slog.Info("[SalonService.AddSalonPeriod] - Creating period")
 	newPeriod := salon.NewPeriod(sal.ID, input.Day, input.Open, input.Close)
 	if _, err := s.periodRepository.Save(newPeriod); err != nil {
 		return err
@@ -50,19 +50,19 @@ func (s *SalonService) AddSalonPeriod(salonId, requesterId string, input salon.A
 }
 
 func (s *SalonService) UpdateSalonPeriod(salonId, requesterId, periodId string, input salon.UpdatePeriodRequest) (*salon.Period, error) {
-	log.Println("[SalonService.UpdateSalonPeriod] - Validating salon:", salonId)
+	slog.Info("[SalonService.UpdateSalonPeriod] - Validating salon: " + salonId)
 	sal, err := s.validateSalon(salonId)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Println("[SalonService.UpdateSalonPeriod] - Validating period:", periodId)
+	slog.Info("[SalonService.UpdateSalonPeriod] - Validating period: " + periodId)
 	per, err := s.validateSalonPeriod(periodId, salonId)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Println("[SalonService.UpdateSalonPeriod] - Validating professional permission:", requesterId)
+	slog.Info("[SalonService.UpdateSalonPeriod] - Validating professional permission: " + requesterId)
 	if err := s.validateRequesterPermission(requesterId, sal.SalonMembers); err != nil {
 		return nil, err
 	}
@@ -83,7 +83,7 @@ func (s *SalonService) UpdateSalonPeriod(salonId, requesterId, periodId string, 
 		per.Close = *input.Close
 	}
 
-	log.Println("[SalonService.UpdateSalonPeriod] - Updating period:", periodId)
+	slog.Info("[SalonService.UpdateSalonPeriod] - Updating period: " + periodId)
 	if _, err := s.periodRepository.Save(per); err != nil {
 		return nil, err
 	}
@@ -91,24 +91,24 @@ func (s *SalonService) UpdateSalonPeriod(salonId, requesterId, periodId string, 
 }
 
 func (s *SalonService) RemoveSalonPeriod(salonId, requesterId, periodId string) error {
-	log.Println("[SalonService.RemoveSalonPeriod] - Validating salon:", salonId)
+	slog.Info("[SalonService.RemoveSalonPeriod] - Validating salon: " + salonId)
 	sal, err := s.validateSalon(salonId)
 	if err != nil {
 		return err
 	}
 
-	log.Println("[SalonService.RemoveSalonPeriod] - Validating period:", periodId)
+	slog.Info("[SalonService.RemoveSalonPeriod] - Validating period: " + periodId)
 	per, err := s.validateSalonPeriod(periodId, salonId)
 	if err != nil {
 		return err
 	}
 
-	log.Println("[SalonService.RemoveSalonPeriod] - Validating professional permission:", requesterId)
+	slog.Info("[SalonService.RemoveSalonPeriod] - Validating professional permission: " + requesterId)
 	if err := s.validateRequesterPermission(requesterId, sal.SalonMembers); err != nil {
 		return err
 	}
 
-	log.Println("[SalonService.RemoveSalonPeriod] - Deleting period:", periodId)
+	slog.Info("[SalonService.RemoveSalonPeriod] - Deleting period: " + periodId)
 	if err := s.periodRepository.Delete(per.ID); err != nil {
 		return err
 	}

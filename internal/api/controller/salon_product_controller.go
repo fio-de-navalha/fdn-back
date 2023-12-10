@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"log"
+	"log/slog"
 	"strconv"
 
 	"github.com/fio-de-navalha/fdn-back/internal/api/helpers"
@@ -25,7 +25,7 @@ func NewSalonProductController(productService app.ProductService) *SalonProductC
 }
 
 func (h *SalonProductController) GetBySalonId(c *fiber.Ctx) error {
-	log.Println("[ProductController.GetBySalonId] - Validating parameters")
+	slog.Info("[ProductController.GetBySalonId] - Validating parameters")
 	salonId := c.Params("salonId")
 	res, err := h.productService.GetProductsBySalonId(salonId)
 	if err != nil {
@@ -36,7 +36,7 @@ func (h *SalonProductController) GetBySalonId(c *fiber.Ctx) error {
 }
 
 func (h *SalonProductController) Create(c *fiber.Ctx) error {
-	log.Println("[ProductController.Create] - Validating parameters")
+	slog.Info("[ProductController.Create] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
@@ -51,7 +51,7 @@ func (h *SalonProductController) Create(c *fiber.Ctx) error {
 		Price:          price,
 	}
 
-	log.Println("[ProductController.Create] - Request body:", utils.StructStringfy(&input))
+	slog.Info("[ProductController.Create] - Request body: " + utils.StructStringfy(&input))
 	validate := validator.New()
 	if err := validate.Struct(input); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -67,7 +67,7 @@ func (h *SalonProductController) Create(c *fiber.Ctx) error {
 }
 
 func (h *SalonProductController) Update(c *fiber.Ctx) error {
-	log.Println("[ProductController.Update] - Validating parameters")
+	slog.Info("[ProductController.Update] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
@@ -80,7 +80,7 @@ func (h *SalonProductController) Update(c *fiber.Ctx) error {
 		ProfessionalId: user.ID,
 	}
 
-	log.Println("[ProductController.Update] - Request body:", utils.StructStringfy(&input))
+	slog.Info("[ProductController.Update] - Request body: " + utils.StructStringfy(&input))
 	if name := c.FormValue("name"); name != "" {
 		input.Name = &name
 	}

@@ -2,9 +2,8 @@ package cloudflare
 
 import (
 	"bytes"
-	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"mime/multipart"
 	"net/http"
 
@@ -36,11 +35,11 @@ func NewCloudFlareService(
 }
 
 func (s *CloudFlareService) GetImageById(imageId string) (*image.ImageResponse, error) {
-	log.Println("[CloudFlareService.GetImageById] - Getting image:", imageId)
+	slog.Info("[CloudFlareService.GetImageById] - Getting image: " + imageId)
 	url := s.baseUrl + "/" + imageId
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		fmt.Println("Error creating request:", err)
+		slog.Error("Error creating request: " + err.Error())
 		return nil, err
 	}
 
@@ -50,7 +49,7 @@ func (s *CloudFlareService) GetImageById(imageId string) (*image.ImageResponse, 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println("Error sending request:", err)
+		slog.Error("Error sending request: " + err.Error())
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -63,13 +62,13 @@ func (s *CloudFlareService) GetImageById(imageId string) (*image.ImageResponse, 
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println("Error reading response:", err)
+		slog.Error("Error reading response: " + err.Error())
 		return nil, err
 	}
 
 	var response singleImageResponse
 	if err := sonic.Unmarshal(body, &response); err != nil {
-		fmt.Println("Error parsing JSON:", err)
+		slog.Error("Error parsing JSON: " + err.Error())
 		return nil, err
 	}
 
@@ -81,10 +80,10 @@ func (s *CloudFlareService) GetImageById(imageId string) (*image.ImageResponse, 
 }
 
 func (s *CloudFlareService) UploadImage(file *multipart.FileHeader) (*image.ImageResponse, error) {
-	log.Println("[CloudFlareService.UploadImage] - Upload image:", file.Filename)
+	slog.Info("[CloudFlareService.UploadImage] - Upload image: " + file.Filename)
 	fileContent, err := file.Open()
 	if err != nil {
-		fmt.Println("Error opening file:", err)
+		slog.Error("Error opening file: " + err.Error())
 		return nil, err
 	}
 	defer fileContent.Close()
@@ -93,19 +92,19 @@ func (s *CloudFlareService) UploadImage(file *multipart.FileHeader) (*image.Imag
 	writer := multipart.NewWriter(body)
 	filePart, err := writer.CreateFormFile("file", file.Filename)
 	if err != nil {
-		fmt.Println("Error creating form file:", err)
+		slog.Error("Error creating form file: " + err.Error())
 		return nil, err
 	}
 
 	if _, err = io.Copy(filePart, fileContent); err != nil {
-		fmt.Println("Error copying file to form field:", err)
+		slog.Error("Error copying file to form field: " + err.Error())
 		return nil, err
 	}
 	writer.Close()
 
 	req, err := http.NewRequest("POST", s.baseUrl, body)
 	if err != nil {
-		fmt.Println("Error creating request:", err)
+		slog.Error("Error creating request: " + err.Error())
 		return nil, err
 	}
 
@@ -116,7 +115,7 @@ func (s *CloudFlareService) UploadImage(file *multipart.FileHeader) (*image.Imag
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println("Error sending request:", err)
+		slog.Error("Error sending request: " + err.Error())
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -129,13 +128,13 @@ func (s *CloudFlareService) UploadImage(file *multipart.FileHeader) (*image.Imag
 
 	resBody, err := io.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println("Error reading response:", err)
+		slog.Error("Error reading response: " + err.Error())
 		return nil, err
 	}
 
 	var response singleImageResponse
 	if err := sonic.Unmarshal(resBody, &response); err != nil {
-		fmt.Println("Error parsing JSON:", err)
+		slog.Error("Error parsing JSON: " + err.Error())
 		return nil, err
 	}
 
@@ -181,11 +180,11 @@ func (s *CloudFlareService) UpdateImage(imageId string, file *multipart.FileHead
 }
 
 func (s *CloudFlareService) DeleteImage(imageId string) error {
-	log.Println("[CloudFlareService.DeleteImage] - Getting image:", imageId)
+	slog.Info("[CloudFlareService.DeleteImage] - Getting image: " + imageId)
 	url := s.baseUrl + "/" + imageId
 	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
-		fmt.Println("Error creating request:", err)
+		slog.Error("Error creating request: " + err.Error())
 		return err
 	}
 
@@ -195,7 +194,7 @@ func (s *CloudFlareService) DeleteImage(imageId string) error {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println("Error sending request:", err)
+		slog.Error("Error sending request: " + err.Error())
 		return err
 	}
 	defer resp.Body.Close()

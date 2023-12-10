@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"log"
+	"log/slog"
 
 	"github.com/fio-de-navalha/fdn-back/internal/api/helpers"
 	"github.com/fio-de-navalha/fdn-back/internal/api/middlewares"
@@ -13,7 +13,7 @@ import (
 )
 
 func (h *SalonController) AddSalonMember(c *fiber.Ctx) error {
-	log.Println("[SalonController.AddSalonMember] - Validating parameters")
+	slog.Info("[SalonController.AddSalonMember] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
@@ -25,7 +25,7 @@ func (h *SalonController) AddSalonMember(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[SalonController.AddSalonMember] - Request body:", utils.StructStringfy(&body))
+	slog.Info("[SalonController.AddSalonMember] - Request body: " + utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())

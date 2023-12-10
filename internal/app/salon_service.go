@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"log/slog"
 
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
@@ -38,7 +37,7 @@ func NewSalonService(
 }
 
 func (s *SalonService) GetManySalons() ([]*salon.Salon, error) {
-	slog.Info("[SalonService.GetManySalons] - Getting many salons")
+	slog.Info("[SalonService][GetManySalons] - Getting many salons")
 	res, err := s.salonRepository.FindMany()
 	if err != nil {
 		return nil, err
@@ -47,7 +46,7 @@ func (s *SalonService) GetManySalons() ([]*salon.Salon, error) {
 }
 
 func (s *SalonService) GetSalonById(id string) (*salon.Salon, error) {
-	slog.Info(fmt.Sprintf("[SalonService.GetSalonById] - Getting salon: %s", id))
+	slog.Info("[SalonService][GetSalonById] - Getting salon: " + id)
 	res, err := s.validateSalon(id)
 	if err != nil {
 		return nil, err
@@ -65,7 +64,7 @@ func (s *SalonService) GetSalonById(id string) (*salon.Salon, error) {
 }
 
 func (s *SalonService) GetSalonByProfessionalId(professionalId string) (*salon.Salon, error) {
-	slog.Info(fmt.Sprintf("[SalonService.GetSalonByProfessionalId] - Getting salon by professional: %s", professionalId))
+	slog.Info("[SalonService][GetSalonByProfessionalId] - Getting salon by professional: " + professionalId)
 	if _, err := s.professionalService.validateProfessionalById(professionalId); err != nil {
 		return nil, err
 	}
@@ -98,19 +97,19 @@ func (s *SalonService) GetSalonByProfessionalId(professionalId string) (*salon.S
 }
 
 func (s *SalonService) CreateSalon(name string, professionalId string) (*salon.Salon, error) {
-	slog.Info(fmt.Sprintf("[SalonService.CreateSalon] - Validating professional: %s", professionalId))
+	slog.Info("[SalonService.CreateSalon] - Validating professional: " + professionalId)
 	if _, err := s.professionalService.validateProfessionalById(professionalId); err != nil {
 		return nil, err
 	}
 
-	slog.Info(fmt.Sprintf("[SalonService.CreateSalon] - Creating salon: %s", name))
+	slog.Info("[SalonService.CreateSalon] - Creating salon: " + name)
 	newSalon := salon.NewSalon(name)
 	sal, err := s.salonRepository.Save(newSalon)
 	if err != nil {
 		return nil, err
 	}
 
-	slog.Info(fmt.Sprintf("[SalonService.CreateSalon] - Adding salon owner: %s", professionalId))
+	slog.Info("[SalonService.CreateSalon] - Adding salon owner: " + professionalId)
 	newSalonMember := salon.NewSalonMember(sal.ID, professionalId, "owner")
 	salMem, err := s.salonMemberRepository.Save(newSalonMember)
 	if err != nil {
@@ -172,19 +171,19 @@ func (s *SalonService) validateRequesterPermission(requesterId string, salonMemb
 }
 
 func (s *SalonService) validatePermissionToEditSalon(salonId, requesterId string) (*salon.Salon, error) {
-	slog.Info(fmt.Sprintf("[SalonService.validatePermissionToEditSalon] - Validating salon: %s", salonId))
+	slog.Info("[SalonService][validatePermissionToEditSalon] - Validating salon: " + salonId)
 	sal, err := s.validateSalon(salonId)
 	if err != nil {
 		return nil, err
 	}
 
-	slog.Info(fmt.Sprintf("[SalonService.validatePermissionToEditSalon] - Validating professional: %s", requesterId))
+	slog.Info("[SalonService][validatePermissionToEditSalon] - Validating professional: " + requesterId)
 	prof, err := s.validateProfessional(requesterId)
 	if err != nil {
 		return nil, err
 	}
 
-	slog.Info(fmt.Sprintf("[SalonService.validatePermissionToEditSalon] - Validating requester permission: %s", requesterId))
+	slog.Info("[SalonService][validatePermissionToEditSalon] - Validating requester permission: " + requesterId)
 	if err := s.validateRequesterPermission(prof.ID, sal.SalonMembers); err != nil {
 		return nil, err
 	}

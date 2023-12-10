@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"log"
+	"log/slog"
 
 	"github.com/fio-de-navalha/fdn-back/internal/api/helpers"
 	"github.com/fio-de-navalha/fdn-back/internal/api/middlewares"
@@ -24,7 +24,7 @@ func NewSalonController(salonService app.SalonService) *SalonController {
 }
 
 func (h *SalonController) GetSalonById(c *fiber.Ctx) error {
-	log.Println("[SalonController.GetSalonById] - Validating parameters")
+	slog.Info("[SalonController.GetSalonById] - Validating parameters")
 	salonId := c.Params("salonId")
 	res, err := h.salonService.GetSalonById(salonId)
 	if err != nil {
@@ -35,7 +35,7 @@ func (h *SalonController) GetSalonById(c *fiber.Ctx) error {
 }
 
 func (h *SalonController) CraeteSalon(c *fiber.Ctx) error {
-	log.Println("[SalonController.CraeteSalon] - Validating parameters")
+	slog.Info("[SalonController.CraeteSalon] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
@@ -46,7 +46,7 @@ func (h *SalonController) CraeteSalon(c *fiber.Ctx) error {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[SalonController.CraeteSalon] - Request body:", utils.StructStringfy(&body))
+	slog.Info("[SalonController.CraeteSalon] - Request body: " + utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())

@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"log"
+	"log/slog"
 	"strconv"
 
 	"github.com/fio-de-navalha/fdn-back/internal/api/helpers"
@@ -25,7 +25,7 @@ func NewSalonServiceController(serviceService app.ServiceService) *SalonServiceC
 }
 
 func (h *SalonServiceController) GetBySalonId(c *fiber.Ctx) error {
-	log.Println("[ServiceController.GetBySalonId] - Validating parameters")
+	slog.Info("[ServiceController.GetBySalonId] - Validating parameters")
 	salonId := c.Params("salonId")
 	res, err := h.serviceService.GetServicesBySalonId(salonId)
 	if err != nil {
@@ -36,7 +36,7 @@ func (h *SalonServiceController) GetBySalonId(c *fiber.Ctx) error {
 }
 
 func (h *SalonServiceController) Create(c *fiber.Ctx) error {
-	log.Println("[ServiceController.Create] - Validating parameters")
+	slog.Info("[ServiceController.Create] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "Permission denied")
@@ -54,7 +54,7 @@ func (h *SalonServiceController) Create(c *fiber.Ctx) error {
 		DurationInMin:  durationInMin,
 	}
 
-	log.Println("[ServiceController.Create] - Request body:", utils.StructStringfy(&input))
+	slog.Info("[ServiceController.Create] - Request body: " + utils.StructStringfy(&input))
 	validate := validator.New()
 	if err := validate.Struct(input); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -69,7 +69,7 @@ func (h *SalonServiceController) Create(c *fiber.Ctx) error {
 }
 
 func (h *SalonServiceController) Update(c *fiber.Ctx) error {
-	log.Println("[ServiceController.Update] - Validating parameters")
+	slog.Info("[ServiceController.Update] - Validating parameters")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "Permission denied")
@@ -83,7 +83,7 @@ func (h *SalonServiceController) Update(c *fiber.Ctx) error {
 		ProfessionalId: user.ID,
 	}
 
-	log.Println("[ServiceController.Update] - Request body:", utils.StructStringfy(&input))
+	slog.Info("[ServiceController.Update] - Request body: " + utils.StructStringfy(&input))
 	if name := c.FormValue("name"); name != "" {
 		input.Name = &name
 	}

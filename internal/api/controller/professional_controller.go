@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"log"
+	"log/slog"
 	"time"
 
 	"github.com/fio-de-navalha/fdn-back/internal/api/helpers"
@@ -25,7 +25,7 @@ func NewProfessionalController(professionalService app.ProfessionalService) *Pro
 }
 
 func (h *ProfessionalController) GetProfessionalById(c *fiber.Ctx) error {
-	log.Println("[ProfessionalController.GetProfessionalById] - Validating parameters")
+	slog.Info("[ProfessionalController.GetProfessionalById] - Validating parameters")
 	id := c.Params("id")
 	res, err := h.professionalService.GetProfessionalById(id)
 	if err != nil {
@@ -36,13 +36,13 @@ func (h *ProfessionalController) GetProfessionalById(c *fiber.Ctx) error {
 }
 
 func (h *ProfessionalController) RegisterProfessional(c *fiber.Ctx) error {
-	log.Println("[ProfessionalController.RegisterProfessional] - Validating parameters")
+	slog.Info("[ProfessionalController.RegisterProfessional] - Validating parameters")
 	body := new(professional.RegisterProfessionalRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[ProfessionalController.RegisterProfessional] - Request body:", utils.StructStringfy(&body))
+	slog.Info("[ProfessionalController.RegisterProfessional] - Request body: " + utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -71,13 +71,13 @@ func (h *ProfessionalController) RegisterProfessional(c *fiber.Ctx) error {
 }
 
 func (h *ProfessionalController) LoginProfessional(c *fiber.Ctx) error {
-	log.Println("[ProfessionalController.LoginProfessional] - Validating parameters")
+	slog.Info("[ProfessionalController.LoginProfessional] - Validating parameters")
 	body := new(professional.LoginProfessionalRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[ProfessionalController.LoginProfessional] - Request body:", utils.StructStringfy(&body))
+	slog.Info("[ProfessionalController.LoginProfessional] - Request body: " + utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -105,7 +105,7 @@ func (h *ProfessionalController) LoginProfessional(c *fiber.Ctx) error {
 }
 
 func (h *ProfessionalController) MeProfessional(c *fiber.Ctx) error {
-	log.Println("[ProfessionalController.MeProfessional] - Validating professional")
+	slog.Info("[ProfessionalController.MeProfessional] - Validating professional")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "Permission denied")

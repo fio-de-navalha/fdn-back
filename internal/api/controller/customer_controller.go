@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"log"
+	"log/slog"
 	"strings"
 	"time"
 
@@ -31,7 +31,7 @@ func NewCustomerController(
 }
 
 func (h *CustomerController) GetCustomerById(c *fiber.Ctx) error {
-	log.Println("[CustomerController.GetCustomerById] - Validating parameters")
+	slog.Info("[CustomerController.GetCustomerById] - Validating parameters")
 	id := c.Params("id")
 	res, err := h.customerService.GetCustomerById(id)
 	if err != nil {
@@ -42,13 +42,13 @@ func (h *CustomerController) GetCustomerById(c *fiber.Ctx) error {
 }
 
 func (h *CustomerController) RegisterCustomer(c *fiber.Ctx) error {
-	log.Println("[CustomerController.RegisterCustomer] - Validating parameters")
+	slog.Info("[CustomerController.RegisterCustomer] - Validating parameters")
 	body := new(customer.RegisterRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[CustomerController.RegisterCustomer] - Request body:", utils.StructStringfy(&body))
+	slog.Info("[CustomerController.RegisterCustomer] - Request body: " + utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -79,13 +79,13 @@ func (h *CustomerController) RegisterCustomer(c *fiber.Ctx) error {
 }
 
 func (h *CustomerController) LoginCustomer(c *fiber.Ctx) error {
-	log.Println("[CustomerController.LoginCustomer] - Validating parameters")
+	slog.Info("[CustomerController.LoginCustomer] - Validating parameters")
 	body := new(customer.LoginRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[CustomerController.LoginCustomer] - Request body:", utils.StructStringfy(&body))
+	slog.Info("[CustomerController.LoginCustomer] - Request body: " + utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -112,7 +112,7 @@ func (h *CustomerController) LoginCustomer(c *fiber.Ctx) error {
 }
 
 func (h *CustomerController) MeCustomer(c *fiber.Ctx) error {
-	log.Println("[CustomerController.MeCustomer] - Validating token")
+	slog.Info("[CustomerController.MeCustomer] - Validating token")
 	user, ok := c.Locals(constants.UserContextKey).(middlewares.RquestUser)
 	if !ok {
 		return helpers.BuildErrorResponse(c, "permission denied")
@@ -125,13 +125,13 @@ func (h *CustomerController) MeCustomer(c *fiber.Ctx) error {
 }
 
 func (h *CustomerController) ForgotPassword(c *fiber.Ctx) error {
-	log.Println("[CustomerController.ForgotPassword] - Validating parameters")
+	slog.Info("[CustomerController.ForgotPassword] - Validating parameters")
 	body := new(customer.ForgotPasswordRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[CustomerController.ForgotPassword] - Request body:", utils.StructStringfy(&body))
+	slog.Info("[CustomerController.ForgotPassword] - Request body: " + utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
@@ -154,13 +154,13 @@ func (h *CustomerController) ForgotPassword(c *fiber.Ctx) error {
 }
 
 func (h *CustomerController) UpdatePassword(c *fiber.Ctx) error {
-	log.Println("[CustomerController.UpdatePassword] - Validating parameters")
+	slog.Info("[CustomerController.UpdatePassword] - Validating parameters")
 	body := new(customer.UpdatePasswordRequest)
 	if err := c.BodyParser(&body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
 	}
 
-	log.Println("[CustomerController.UpdatePassword] - Request body:", utils.StructStringfy(&body))
+	slog.Info("[CustomerController.UpdatePassword] - Request body: " + utils.StructStringfy(&body))
 	validate := validator.New()
 	if err := validate.Struct(body); err != nil {
 		return helpers.BuildErrorResponse(c, err.Error())
