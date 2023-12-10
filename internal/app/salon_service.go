@@ -2,7 +2,6 @@ package app
 
 import (
 	"fmt"
-	"log"
 	"log/slog"
 
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
@@ -39,7 +38,7 @@ func NewSalonService(
 }
 
 func (s *SalonService) GetManySalons() ([]*salon.Salon, error) {
-	log.Println("[SalonService.GetManySalons] - Getting many salons")
+	slog.Info("[SalonService.GetManySalons] - Getting many salons")
 	res, err := s.salonRepository.FindMany()
 	if err != nil {
 		return nil, err
@@ -66,7 +65,7 @@ func (s *SalonService) GetSalonById(id string) (*salon.Salon, error) {
 }
 
 func (s *SalonService) GetSalonByProfessionalId(professionalId string) (*salon.Salon, error) {
-	log.Println("[SalonService.GetSalonByProfessionalId] - Getting salon by professional:", professionalId)
+	slog.Info(fmt.Sprintf("[SalonService.GetSalonByProfessionalId] - Getting salon by professional: %s", professionalId))
 	if _, err := s.professionalService.validateProfessionalById(professionalId); err != nil {
 		return nil, err
 	}
@@ -99,19 +98,19 @@ func (s *SalonService) GetSalonByProfessionalId(professionalId string) (*salon.S
 }
 
 func (s *SalonService) CreateSalon(name string, professionalId string) (*salon.Salon, error) {
-	log.Println("[SalonService.CreateSalon] - Validating professional:", professionalId)
+	slog.Info(fmt.Sprintf("[SalonService.CreateSalon] - Validating professional: %s", professionalId))
 	if _, err := s.professionalService.validateProfessionalById(professionalId); err != nil {
 		return nil, err
 	}
 
-	log.Println("[SalonService.CreateSalon] - Creating salon:", name)
+	slog.Info(fmt.Sprintf("[SalonService.CreateSalon] - Creating salon: %s", name))
 	newSalon := salon.NewSalon(name)
 	sal, err := s.salonRepository.Save(newSalon)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Println("[SalonService.CreateSalon] - Adding salon owner:", professionalId)
+	slog.Info(fmt.Sprintf("[SalonService.CreateSalon] - Adding salon owner: %s", professionalId))
 	newSalonMember := salon.NewSalonMember(sal.ID, professionalId, "owner")
 	salMem, err := s.salonMemberRepository.Save(newSalonMember)
 	if err != nil {
@@ -173,19 +172,19 @@ func (s *SalonService) validateRequesterPermission(requesterId string, salonMemb
 }
 
 func (s *SalonService) validatePermissionToEditSalon(salonId, requesterId string) (*salon.Salon, error) {
-	log.Println("[SalonService.validatePermissionToEditSalon] - Validating salon:", salonId)
+	slog.Info(fmt.Sprintf("[SalonService.validatePermissionToEditSalon] - Validating salon: %s", salonId))
 	sal, err := s.validateSalon(salonId)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Println("[SalonService.validatePermissionToEditSalon] - Validating professional:", requesterId)
+	slog.Info(fmt.Sprintf("[SalonService.validatePermissionToEditSalon] - Validating professional: %s", requesterId))
 	prof, err := s.validateProfessional(requesterId)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Println("[SalonService.validatePermissionToEditSalon] - Validating requester permission:", requesterId)
+	slog.Info(fmt.Sprintf("[SalonService.validatePermissionToEditSalon] - Validating requester permission: %s", requesterId))
 	if err := s.validateRequesterPermission(prof.ID, sal.SalonMembers); err != nil {
 		return nil, err
 	}

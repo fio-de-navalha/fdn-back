@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"log/slog"
+	"os"
 	"time"
 
 	"github.com/fio-de-navalha/fdn-back/config"
@@ -37,6 +39,9 @@ func setupMiddlewares(app *fiber.App) {
 }
 
 func StartServer() {
+	slogger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(slogger)
+
 	app := fiber.New()
 
 	setupMiddlewares(app)
