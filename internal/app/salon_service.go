@@ -1,12 +1,11 @@
 package app
 
 import (
-	"log"
-
 	"github.com/fio-de-navalha/fdn-back/internal/constants"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/professional"
 	"github.com/fio-de-navalha/fdn-back/internal/domain/salon"
 	"github.com/fio-de-navalha/fdn-back/pkg/errors"
+	"github.com/gofiber/fiber/v2/log"
 )
 
 type SalonService struct {
@@ -37,7 +36,7 @@ func NewSalonService(
 }
 
 func (s *SalonService) GetManySalons() ([]*salon.Salon, error) {
-	log.Println("[SalonService.GetManySalons] - Getting many salons")
+	log.Info("[SalonService.GetManySalons] - Getting many salons")
 	res, err := s.salonRepository.FindMany()
 	if err != nil {
 		return nil, err
@@ -46,7 +45,7 @@ func (s *SalonService) GetManySalons() ([]*salon.Salon, error) {
 }
 
 func (s *SalonService) GetSalonById(id string) (*salon.Salon, error) {
-	log.Println("[SalonService.GetSalonById] - Getting salon:", id)
+	log.Info("[SalonService.GetSalonById] - Getting salon:", id)
 	res, err := s.validateSalon(id)
 	if err != nil {
 		return nil, err
@@ -64,7 +63,7 @@ func (s *SalonService) GetSalonById(id string) (*salon.Salon, error) {
 }
 
 func (s *SalonService) GetSalonByProfessionalId(professionalId string) (*salon.Salon, error) {
-	log.Println("[SalonService.GetSalonByProfessionalId] - Getting salon by professional:", professionalId)
+	log.Info("[SalonService.GetSalonByProfessionalId] - Getting salon by professional:", professionalId)
 	if _, err := s.professionalService.validateProfessionalById(professionalId); err != nil {
 		return nil, err
 	}
@@ -97,19 +96,19 @@ func (s *SalonService) GetSalonByProfessionalId(professionalId string) (*salon.S
 }
 
 func (s *SalonService) CreateSalon(name string, professionalId string) (*salon.Salon, error) {
-	log.Println("[SalonService.CreateSalon] - Validating professional:", professionalId)
+	log.Info("[SalonService.CreateSalon] - Validating professional:", professionalId)
 	if _, err := s.professionalService.validateProfessionalById(professionalId); err != nil {
 		return nil, err
 	}
 
-	log.Println("[SalonService.CreateSalon] - Creating salon:", name)
+	log.Info("[SalonService.CreateSalon] - Creating salon:", name)
 	newSalon := salon.NewSalon(name)
 	sal, err := s.salonRepository.Save(newSalon)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Println("[SalonService.CreateSalon] - Adding salon owner:", professionalId)
+	log.Info("[SalonService.CreateSalon] - Adding salon owner:", professionalId)
 	newSalonMember := salon.NewSalonMember(sal.ID, professionalId, "owner")
 	salMem, err := s.salonMemberRepository.Save(newSalonMember)
 	if err != nil {
@@ -171,19 +170,19 @@ func (s *SalonService) validateRequesterPermission(requesterId string, salonMemb
 }
 
 func (s *SalonService) validatePermissionToEditSalon(salonId, requesterId string) (*salon.Salon, error) {
-	log.Println("[SalonService.validatePermissionToEditSalon] - Validating salon:", salonId)
+	log.Info("[SalonService.validatePermissionToEditSalon] - Validating salon:", salonId)
 	sal, err := s.validateSalon(salonId)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Println("[SalonService.validatePermissionToEditSalon] - Validating professional:", requesterId)
+	log.Info("[SalonService.validatePermissionToEditSalon] - Validating professional:", requesterId)
 	prof, err := s.validateProfessional(requesterId)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Println("[SalonService.validatePermissionToEditSalon] - Validating requester permission:", requesterId)
+	log.Info("[SalonService.validatePermissionToEditSalon] - Validating requester permission:", requesterId)
 	if err := s.validateRequesterPermission(prof.ID, sal.SalonMembers); err != nil {
 		return nil, err
 	}
