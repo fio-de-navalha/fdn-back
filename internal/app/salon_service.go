@@ -45,6 +45,7 @@ func (s *SalonService) GetManySalons() ([]*salon.Salon, error) {
 }
 
 func (s *SalonService) GetSalonById(id string) (*salon.Salon, error) {
+	log.SetLevel(log.LevelInfo)
 	log.Info("[SalonService.GetSalonById] - Getting salon:", id)
 	res, err := s.validateSalon(id)
 	if err != nil {

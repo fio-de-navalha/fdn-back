@@ -9,7 +9,6 @@ import (
 
 	"github.com/gofiber/contrib/swagger"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/log"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/idempotency"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
@@ -19,8 +18,6 @@ import (
 )
 
 func setupMiddlewares(app *fiber.App) {
-	log.SetLevel(log.LevelInfo)
-
 	app.Use(cors.New())
 	app.Use(idempotency.New())
 	app.Use(limiter.New(limiter.Config{
