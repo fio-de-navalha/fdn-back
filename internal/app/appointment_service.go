@@ -79,7 +79,8 @@ func (s *AppointmentService) GetProfessionalAppointments(professionalId string, 
 
 func (s *AppointmentService) GetCustomerAppointments(customerId string) ([]*appointment.AppointmentReponse, error) {
 	slog.Info("[AppointmentService.GetCustomerAppointments] - Getting appointments from customer: " + customerId)
-	appointmentList, err := s.appointmentRepository.FindByCustomerId(customerId)
+	startsAt := time.Now()
+	appointmentList, err := s.appointmentRepository.FindByCustomerId(customerId, startsAt)
 	if err != nil {
 		return nil, err
 	}

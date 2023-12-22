@@ -76,7 +76,7 @@ type AppointmentRepository interface {
 	FindById(id string) (*Appointment, error)
 	FindByIdWithJoins(id string) (*Appointment, error)
 	FindByProfessionalId(professionalId string, startsAt time.Time, endsAt time.Time) ([]*Appointment, error)
-	FindByCustomerId(customerId string) ([]*Appointment, error)
+	FindByCustomerId(customerId string, startsAt time.Time) ([]*Appointment, error)
 	FindByDates(startsAt time.Time, endsAt time.Time) ([]*Appointment, error)
 	Save(appo *Appointment, services []*AppointmentService, products []*AppointmentProduct) (*Appointment, error)
 	Cancel(appo *Appointment) (*Appointment, error)

@@ -69,7 +69,7 @@ func (r *gormAppointmentRepository) FindByProfessionalId(professionalId string, 
 	return a, nil
 }
 
-func (r *gormAppointmentRepository) FindByCustomerId(customerId string) ([]*appointment.Appointment, error) {
+func (r *gormAppointmentRepository) FindByCustomerId(customerId string, startsAt time.Time) ([]*appointment.Appointment, error) {
 	var a []*appointment.Appointment
 	res := r.db.
 		Select("id", "professional_id", "customer_id", "duration_in_min", "total_amount", "starts_at", "ends_at", "created_at").
@@ -77,7 +77,7 @@ func (r *gormAppointmentRepository) FindByCustomerId(customerId string) ([]*appo
 		Preload("Customer").
 		Preload("Services").
 		Preload("Products").
-		Where("customer_id = ?", customerId).
+		Where("customer_id = ? AND starts_at > ?", customerId, startsAt).
 		Order("starts_at desc").
 		Find(&a)
 
